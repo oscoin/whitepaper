@@ -1,0 +1,111 @@
+\section{\srcrank{}}
+
+One of the fundamental mechanisms of \oscoin{} is to attribute a
+portion of newly minted tokens to high-value projects on the
+network. To choose which projects receive compensation, and in which
+proportions, the network uses \srcrank{}, which is just the well-know
+\pagerank{} algorithm \cite{pagerank} applied to the dependency graph
+between projects on the network. The output of the algorithm is a
+score associated to each project. Newly minted tokens are then
+distributed to projects proportionally to their score.
+
+\subsection{Description}
+
+The \oscoin{} network is made up of a set of registered projects which
+declare dependencies on one other. This induces a directed graph
+structure $G$, where $y \to x$ when $y$ depends on $x$. Such a
+dependency marks $x$ as being of use to $y$, and so is taken as an
+indication of $y$'s value to the network as a whole. This mirrors the
+intuition behind \pagerank{} with respect to web pages: a page is
+assumed to have value if another page links to it. A project $y$ will
+typically have many dependencies; the total number of them is denoted
+$d_y$. The \srcrank{} of a project is defined as:
+\[
+s(x) := \epsilon \sum_{y \to x} \frac{s(y)}{d_y} + \frac{1 - \epsilon}{n}
+\]
+where $\epsilon \in (0,1)$ is the \emph{damping factor}. When computing
+\pagerank{} the damping factor is usually taken to be $0.85$.
+
+In our case we are likely to choose a smaller damping factor in order
+because dependency chains can be quite short.
+
+% TODO(james): explain the above, and include stats on real dep
+% graphs.
+
+\subsection{Implementation}
+
+There are several options for making the computation of \srcrank{} not
+prohibitively expensive for the operators.
+
+\begin{itemize}
+  \item \emph{Incremental Monte Carlo.} The \srcrank{}
+    for all the projects in the network must be kept up to
+    date. Recomputing these values from scratch would be prohibitively
+    expensive, so an incremental algorithm is used instead so that
+    these values may be updated as dependency graph evolves. Rather
+    than using the classical iterative method, \srcrank{} is estimated
+    using a Monte Carlo-based algorithm: for each project on the
+    network $R$ random walks are performed which start and that node
+    and follow dependencies. At each step the walk might terminate
+    with probability $1 - \epsilon$. The approximated \srcrank{} for a
+    project $x$ is then:
+    \[
+    s(x) = \frac{W_x \epsilon}{n R}
+    \]
+    The dependency graph does not change that much from one
+    calculation to the next; only a small proportion of nodes or edges
+    are added or removed. Therefore most of the random walks that were
+    performed in the previous calculation remain valid in the updated
+    graph. For example if only a single dependency $y \to x$ has been
+    added, then a walk is invalid only if passes through $y$, for it
+    may have chosen to follow this new dependency.
+
+    In practice the operators of the network cache the set of random
+    walks from the previous calculation, and update this set by
+    removing invalid walks and replacing them with new ones. Details
+    on such an incremental algorithm can be found in
+    \cite{incr_pagerank}.
+
+    Since all the computations must be deterministic, the walks are
+    not truly random. Rather, they must use a built-in pseudo-random
+    number generator to generate the random walks. The seed for
+    generating random walks is fixed in the genesis block.
+
+\item \emph{Long epoch.} In this scenario payouts according to
+  \srcrank{} are only made infrequently, say with a duration of $t$
+  between \emph{payout} blocks (e.g.\ once every month). In this case
+  abusers might modify dependencies of several projects in
+  anticipation of the payout block. To mitigate this, dependencies
+  would be considered active for a cool-down period chosen to be
+  longer than $t$.
+\end{itemize}
+  
+\subsection{Required transactions}
+
+The \srcrank{} aspect of the network uses the following state and transactions:
+\begin{itemize}
+\item The state affected by the following transactions is the
+  dependency graph $G = (V,E)$ between projects, where $V$ is a set of
+  public keys and $E \subseteq V^2$. If $(x,y) \in E$ for a graph $G$
+  then we write $x \to_G y$.
+\item The \emph{transactions} update the dependency graph from $G =
+  (V,E)$ to $G' = (V', E')$. All transaction parameters are public
+  keys, and all must be signed by the key $x$.
+  \begin{itemize}
+  \item $\mathtt{register}(x)$. Register project onto the network. The
+    parameter $x$ is a public key. The transaction is invalid if $x
+    \in V$. After the transaction, $V' = V \cup \{x\}$.
+    % TODO: decide if one cannot register a project that has already
+    % been registered (and then unregistered).
+  \item $\mathtt{depend}(x,y)$. Declare that project $x$ depends on
+    project $y$. The transaction is invalid if $\{x,y\} \nsubseteq V$
+    or $x \to_G y$. After the transaction, $E' = E \cup \{(x,y)\}$.
+  \item $\mathtt{undepend}(x,y)$. Declare that project $x$ no longer
+    depends on project $y$. The transaction is invalid if $\{x,y\}
+    \nsubseteq V$ or if $x \not \to_G y$. After the transaction, $E' =
+    E - \{(x,y)\}$.
+  \item $\mathtt{unregister}(x)$. Un-register a project from the
+    network. Only valid if $x \in V$. After the transaction, $V' = V -
+    \{x\}$.
+  \end{itemize}
+\end{itemize}
