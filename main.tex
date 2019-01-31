@@ -1,6 +1,9 @@
-\documentclass[10pt]{amsart}
+\documentclass[a4paper, oneside, 9pt, draft]{amsart}
 
 \usepackage{amsmath, amssymb}
+\usepackage[english]{babel}
+\usepackage{multicol}
+\usepackage{enumitem}
 
 \def\oscoin{\textsc{\small{oscoin}}}
 \def\srcrank{SrcRank}
@@ -13,14 +16,44 @@
 \newcommand*\eg{e.g.\ }
 \newcommand*\ie{i.e.\ }
 
+\newenvironment{epigraph}[2][]
+{\leftskip=1cm \def\epigraph@author{#2} \smallskip\itshape}
+{\par\vspace{0.5em}\normalfont\hfill---\ \epigraph@author\hspace*{0.2cm}\par\medskip}
+\makeatother
+
+\setlist[description]{leftmargin=1.2cm, labelindent=\parindent}
+\setlist[enumerate]{leftmargin=1.2cm, labelindent=\parindent}
+
+\setlength{\textwidth}{\paperwidth}
+\addtolength{\textwidth}{-6cm}
+\setlength{\textheight}{\paperheight}
+\addtolength{\textheight}{-5cm}
+
+\calclayout
+
 \begin{document}
 
 \title{oscoin}
 
 \maketitle
 
+\setlength{\columnsep}{20pt}
+\begin{multicols}{2}
+
+\begin{epigraph}{The Open-Source Everything Manifesto}
+    \noindent It is in this light that we must recognize that only a restoration of
+    open-source culture, and all that enables across the full spectrum of
+    open-source possibilities, can allow humanity to harness the distributed
+    intelligence of the collective and create the equivalent of heaven on Earth
+    -- in other words, a world that works for all.
+\end{epigraph}
+\medskip
+
 \input{sections/02-oscoin.tex}
 \input{sections/03-source-rank.tex}
+\input{sections/04-ledger.tex}
+
+\end{multicols}
 
 \begin{thebibliography}{9}
 
