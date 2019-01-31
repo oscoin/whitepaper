@@ -33,19 +33,21 @@ State Machine} with a set of states $\state^*$, a transition function $\apply$,
 a starting state $\state_0$ or ``genesis'', a set of inputs $B_0 \dotso B_n$,
 and a set of outputs.
 
-Participation in the network protocol is \emph{open} (\ie ``permissionless''),
-which makes the replica set dynamic. To achieve consensus in the permissionless
-setting, we make use of a blockchain~\cite{bitcoin} as the underlying
-replicated data-structure (``the ledger''), with proof-of-work as the mechanism
-for Sybil resistance. Though we believe proof-of-work is currently the only
-safe choice for a decentralized network, \oscoin{} can work with any Sybil
-resistance method. Thus, the inputs $B_0 \dotso B_n$ to the state machine are
-blocks, with $B_0$ being the genesis block.
+To allow for the creation of a safe, open (``permissionless'') currency shared
+amongst all network participants, we use a blockchain protocol, as described by
+Nakamoto in \cite{bitcoin} and Wood in \cite{ethreum}.
 
-\oscoin{}'s threat model, as far as consensus goes, is identical to that
-of other proof-of-work protocols such as Bitcoin.
+Though the specific choice of the underlying consensus mechanism is not
+directly relevant to \oscoin{}, we believe that one which allows open
+participation is best for the long term health of the network. Furthermore,
+it's important that reliable support for light clients be possible. The only
+family of blockchain protocols with these characteristics are the proof-of-work
+protocols. We thus settle on Nakamoto~\cite{bitcoin} consensus.
 
-% Hashing function
+The inputs $B_0 \dotso B_n$ to the state machine are therefore blocks, with
+$B_0$ being the genesis block.
+
+% TODO: Hashing function?
 
 \subsection{Monetary Policy}
 
