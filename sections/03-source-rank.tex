@@ -160,6 +160,7 @@ For this we propose running \osrank{} in two distinct phases:
   \osrank{}.
 \end{itemize}
 
+% TODO: remove the term governance.
 We propose that the seed set be maintained by an on-chain governance
 system, aiming to choose high-value user-facing projects,
 e.g. Firefox, Debian, VLC, etc. Care must be taken to ensure the seed
@@ -197,13 +198,14 @@ will not be prohibitively expensive for operators to run.
 \item \emph{Incremental Monte Carlo.} An incremental algorithm is used
   so that \osrank{} values may be updated as network graph
   evolves. Instead of computing \osrank{} from scratch, we rely on the
-  fact that the network graph will not change that much from one
-  calculation to the next; only a small proportion of nodes or edges
-  are added or removed. Therefore most of the random walks that were
-  performed in the previous calculation remain valid in the updated
-  graph. For example if only a single dependency $x \to y$ has been
-  added, then a walk is invalid only if passes through $x$, for it may
-  have chosen to follow this new dependency.
+  fact that only a small percentage of the nodes and edges of the
+  network graph are added or removed from one calculation to the next
+  (confirmed empirically on the datasets of major code-hosting
+  platforms). Therefore most of the random walks that were performed
+  in the previous calculation remain valid in the updated graph. For
+  example if only a single dependency $x \to y$ has been added, then a
+  walk is invalid only if passes through $x$, for it may have chosen
+  to follow this new dependency.
 
   In practice the operators of the network cache the set of random
   walks from the previous calculation, and update this set by removing
