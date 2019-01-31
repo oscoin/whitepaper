@@ -8,6 +8,7 @@
 \usepackage{amsmath, amssymb}
 \usepackage{multicol}
 \usepackage{enumitem}
+\usepackage{mathtools}
 
 \usepackage{tikz}
 \usetikzlibrary{decorations.markings,arrows}
@@ -15,10 +16,15 @@
 \def\osrank{OsRank}
 \def\oscoin{\textsc{\small{oscoin}}}
 \def\pagerank{PageRank}
+\def\protocol{\mathcal{P}}
 
 \newcommand{\state}{\mathcal{S}}
 \newcommand{\ledger}{\mathcal{L}}
 \newcommand{\apply}{\Upsilon}
+\newcommand{\tuple}[1]{\langle #1 \rangle}
+\newcommand{\mathsc}[1]{\text{\normalfont\scshape#1}}
+\newcommand{\dep}{\xrightharpoondown[e]{d}}
+\newcommand{\tx}[2]{\langle \mathsc{#1}, #2 \rangle}
 
 \newcommand*\eg{e.g.\ }
 \newcommand*\ie{i.e.\ }
