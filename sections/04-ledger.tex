@@ -1,0 +1,61 @@
+\section{The Oscoin Ledger}
+
+\subsection{Projects}
+\label{s:projects}
+
+A project $P$ is described by the tuple:
+\[
+    \tuple{P_{a}, P_h, P_s}
+\]
+where $P_{a}$ is the project's address and unique identifier, $P_h$ is
+the project's current hash and $P_s$ is the canonical project source URL.
+
+The project address is used to identify the project, as well to send
+\oscoin{} to it. Each project has an account balance identified by project
+address. The project hash is a digest of the project's source code at the time
+it is entered in the ledger. As we'll see later, it is used to verify proofs
+on the project's source code, as well as to coordinate around projects. Finally,
+the project URL is there for convenience, as a means to fetch the source code.
+It must be noted that the source code retrieved from $P_s$ must always hash to
+$P_h$, otherwise the project is considered invalid.
+
+\subsubsection{Registration} Projects need to be registered on the ledger
+before they can participate in the network. This can be done with the
+\[
+    \tx{register}{P, d}
+\]
+transaction, where $d$ is a small deposit in \oscoin{} to prevent abandonned
+projects from accumulating.
+
+When a project is no longer in use, it is possible to unregister it from the
+ledger with
+\[
+    \tx{unregister}{P_a, w_a},
+\]
+where $w_a$ is the withdrawal address for the deposit.
+
+Projects registered on the ledger can be retrieved from the state $\state$ by
+using the project address, formally: $\state(P_a) \to P$.
+
+\subsubsection{Checkpointing} Any project in active development will see its
+source code change regularly. This means the project hash $P_h$ will quickly
+become out of sync with the project's latest state and will need updating. This
+is done via the
+\[
+    \tx{checkpoint}{P_a, h, s}
+\]
+transaction, where $h$ is the new project hash, and $s$ is the URL to retrieve
+the source code from.
+
+\subsection{Dependencies}
+\label{s:dependencies}
+
+A project $P^1$ depends on a project $P^2$ if it references $P^2$
+or parts of $P^2$ in its source code. Formally, we represent this dependency as
+$P^1 \to P^2$.
+
+Dependencies are recorded on the ledger with the
+\[
+    \tx{depend}{P^1, P^2}
+\]
+transaction, which records a dependency between $P^1$ and $P^2$.
