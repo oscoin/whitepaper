@@ -1,11 +1,19 @@
 \section{The \oscoin{} Ledger}
 
+\subsection{Users}
+
+Users are identified by public keys. Adding a user is done using the
+\[
+    \tx{registeruser}{U}
+\]
+transaction, which must be signed by $U$.
+
 \subsection{Projects}
 \label{s:projects}
 
-A project $P$ is described by the tuple:
+A project $P$ is a tuple:
 \[
-    \tuple{P_{a}, P_h, P_s}
+    P = \tuple{P_{a}, P_h, P_s}
 \]
 where $P_{a}$ is the project's address and unique identifier, $P_h$ is
 the project's current hash and $P_s$ is the canonical project source URL.
@@ -13,26 +21,35 @@ the project's current hash and $P_s$ is the canonical project source URL.
 The project address is used to identify the project, as well to send
 \oscoin{} to it. Each project has an account balance identified by project
 address. The project hash is a digest of the project's source code at the time
-it is entered in the ledger. As we'll see later, it is used to verify proofs
-on the project's source code, as well as to coordinate around projects. Finally,
+it is entered in the ledger. Finally,
 the project URL is there for convenience, as a means to fetch the source code.
 It must be noted that the source code retrieved from $P_s$ must always hash to
 $P_h$, otherwise the project is considered invalid.
 
-\subsubsection{Registration} Projects need to be registered on the ledger
-before they can participate in the network. This can be done with the
+\subsubsection{Registration and ownership} Projects need to be
+registered on the ledger before they can participate in the
+network. This can be done with the
 \[
-    \tx{register}{P, d}
+    \tx{registerproject}{P}
 \]
-transaction, where $d$ is a small deposit in \oscoin{} to prevent abandonned
-projects from accumulating.
+transaction, singed by a user $U$ (who becomes a project owner). Note
+that the execution of this transaction locks a small \oscoin{} deposit
+from $U$ wallet, to prevent abandoned projects from accumulating.
 
+After registration the project's \emph{owner set} is $\{U\}$, this can
+be extended with:
+\[
+    \tx{addowner}{U}
+\]
+where $U$ is an existing user not currently in the owner set.
 When a project is no longer in use, it is possible to unregister it from the
 ledger with
 \[
-    \tx{unregister}{P_a, w_a},
+    \tx{unregister}{P_a}.
 \]
-where $w_a$ is the withdrawal address for the deposit.
+which must be signed by an owner. Execution of this transaction
+returns the registration deposit to the user who originally registered
+the project.
 
 Projects registered on the ledger can be retrieved from the state $\state$ by
 using the project address, formally: $\state(P_a) \to P$.
@@ -42,28 +59,29 @@ source code change regularly. This means the project hash $P_h$ will quickly
 become out of sync with the project's latest state and will need updating. This
 is done via the
 \[
-    \tx{checkpoint}{P_a, h, s, c}
+    \tx{checkpoint}{P_a, P_h', s, c}
 \]
-transaction, where $h$ is the new project hash, $s$ is the URL to
-retrieve the source code from, and $c$ is hash-linked-list of
+transaction, where $P_h'$ is the new project hash, $s$ is the URL to
+retrieve the source code from, and $C^*$ is hash-linked-list of
 \emph{contributions}, which are tuples:
 \[
-   \tuple{\field{c}{prev}, \field{c}{commit}, \field{c}{author}, \field{c}{signoff}}
+   \tuple{\field{C}{prev}, \field{C}{commit}, \field{C}{author}, \field{C}{signoff}}
 \]
 where:
 \begin{itemize}
-\item $\field{c}{prev}$ is the hash of the previous contribution, or
+\item $\field{C}{prev}$ is the hash of the previous contribution, or
   $\varnothing$ if this is the first contribution to the whole
-  project. Note that $c$'s first item must be linked to the last
+  project. Note that $C^*$'s first item must be linked to the last
   contribution in the project's previous checkpoint.
-\item $\field{c}{commit}$ is the hash of the corresponding commit,
-\item $\field{c}{author}$ is the author of the contribution,
-\item $\field{c}{sig}$ is author's signature of the commit hash. 
-\item $\field{c}{signoff}$ is the \emph{signoff user}, which must be a
-  current maintainer of the project.
+\item $\field{C}{commit}$ is the hash of the corresponding commit,
+\item $\field{C}{author}$ is the author of the contribution,
+\item $\field{C}{sig}$ is author's signature of the commit hash. 
+\item $\field{C}{signoff}$ is the \emph{signoff user}, which must be
+  one of the current owners of the project.
 \end{itemize}
 A contribution must be signed by the signoff user. This signals the
-the contribution has been reviewed/verified by this maintainer.
+the contribution has been reviewed/verified by this maintainer. The
+checkpoint as a whole must also be signed by a current owner.
 
 Because all changes to a project's source code are signalled by
 checkpoints, it is possible to reconstruct a full hash-linked list of
@@ -100,8 +118,8 @@ Dependencies are recorded on the ledger with the
 \]
 transaction, where $P^n_n$ refers to $P^2$'s $n$th checkpoint
 ($0$-indexed from the first checkpoint). Such a transaction must be
-signed by a project maintainer. This transaction signals a variety of
-things (partly dependent of the nature of the project)
+signed by a project owner. This transaction signals a variety of
+things (partly dependent of the nature of the project):
 \begin{itemize}
 \item they have verified that $P^1$ indeed depends on this specific
   version of $P^2$,
