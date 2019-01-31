@@ -1,111 +1,209 @@
-\section{\srcrank{}}
+\section{\osrank{}}
 
-One of the fundamental mechanisms of \oscoin{} is to attribute a
+\def\Graph{\mathsf{Graph}}
+
+One of the fundamental mechanisms of \oscoin{} is to distribute a
 portion of newly minted tokens to high-value projects on the
-network. To choose which projects receive compensation, and in which
-proportions, the network uses \srcrank{}, which is just the well-know
-\pagerank{} algorithm \cite{pagerank} applied to the dependency graph
-between projects on the network. The output of the algorithm is a
-score associated to each project. Newly minted tokens are then
-distributed to projects proportionally to their score.
+network. For this we need concensus on which projects are ``high
+value''.  To choose which projects receive compensation, and in which
+proportions, the network uses \osrank{}, which is a modification of
+the well-know \pagerank{} algorithm \cite{pagerank} applied to the
+graph of relationships between projects on the network, for example
+\emph{dependencies}. The output of the algorithm is a score associated
+to each project. Newly minted tokens are then distributed to projects
+proportionally to their score.
 
-\subsection{Description}
+\subsection{Rationale}
 
-The \oscoin{} network is made up of a set of registered projects which
-declare dependencies on one other. This induces a directed graph
-structure $G$, where $y \to x$ when $y$ depends on $x$. Such a
-dependency marks $x$ as being of use to $y$, and so is taken as an
-indication of $y$'s value to the network as a whole. This mirrors the
-intuition behind \pagerank{} with respect to web pages: a page is
-assumed to have value if another page links to it. A project $y$ will
-typically have many dependencies; the total number of them is denoted
-$d_y$. The \srcrank{} of a project is defined as:
+There are many systems in which value is produced. However, while it
+may be clear that value is being produced by the system as a whole, it
+is often unclear what value particular subsystems are
+contributing. Furthermore, subsystems have inherently differing
+capacities to transform value into revenue: subsystems at the
+boundaries with other domains are at an advantage, even though they
+may (transitively) derive much of their value from other
+subsystems. This disbalance in value flows in and out of subsystems is
+detrimental to the system as a whole.
+
+Thankfully, human activity does not happen in a void\footnote{Space
+  exploration will be addressed in a subsequent paper.}: be it
+knowledge work, content/media creation, financial activity, etc.,
+entities interact with one another in meaningful ways that are highly
+influenced by the relative value each entity has with respect to the
+system as a whole. Crucially, during this activity, a trail of
+\emph{artefacts} (hypermedia links, contracts, transactions,
+dependencies, pull-requests etc.) is produced; concrete manifestations
+of the relationships between the various entities.
+
+The basic insight of \pagerank{} and similar metrics, is that by
+stochastic simulation of meaningful activity traces of system agents,
+producing trails of artefacts consistent with observations, one can
+learn about the value flows between subsystems, and hence approximate
+a projection of the underlying value distribution. In the case of
+\pagerank{} one simulates a human searching for high-value data over
+the internet, following a chain of links. A sophisticated algorithm
+would use as many heuristics as possible for choosing the next link to
+follow (as a real human would), e.g.\ evaluating the relevance of the
+link-text. If computational resources are scarce, the crudest
+algorithm simply picks the next link at random, and this is what
+produces the classic \pagerank{} formula which has seen so much
+success at ranking web pages.
+
+In the domain of open source software development, the main artefacts
+produced are:
+\begin{itemize}
+  \item Build-dependencies between projects,
+  \item Contributions of PRs from programmers to projects.
+  \item Reviews and merges of PRs by maintainers into projects.
+  \item ? % TODO:
+\end{itemize}
+
+We summarise this by the following weighted directed graph $G$, the
+weights corresponding to the relative importance of the activity,
+tweaked by our own judgement and informed by simulations we have run.
+
+% TODO: insert graph here
+% U -[contribute]-> P
+% U -[owns]-> P
+% P -[depends]-> P
+
+% TODO: include similations data.
+
+The \oscoin{} network proposes to record these artefacts as
+transactions in a blockchain, so that one may unambiguously rebuild
+(and reach consensus on) a finite directed graph $X$ over $G$ (i.e.,
+in the slice category $\Graph/G$). We'll refer to $X$ as the
+\emph{network graph}.
+
+This in turn allows global value scores to be assigned to entities
+according to a specific stochastic process simulating \emph{random
+  walks}, that is, activity traces in $X$ with sampling probabilities
+taken by projecting to $G$. For example: a contributor decides to work
+on a high value project (probably at the border), contributes a PR, in
+so doing adds a dependency to another project, which imports a bug
+from upstream. The contributor therefore switches to fixing said bug
+in the dependency, etc. Much like a simulation of a human searching
+for information by clicking through links, this simulated contributor
+activity informs us on the value flows between subsystems in OSS
+development. We are confident that this process will produce an
+accurate and objective value score for projects on the
+network. % TODO: all entities?
+
+This score, which we call \osrank{}, is used to weight the
+distribution of newly minted tokens to high value entities, thus
+compensating entities which bring value to the ecosystem.
+
+More specifically we use the following Monte Carlo-based algorithm:
+for each project on the network, $R$ random walks are performed which
+start at that node and proceed by sampling outgoing edges, according
+to the weights declared in $G$. At each step the walk might terminate
+with probability $1 - \epsilon$, (here $\epsilon$ is the \emph{damping
+  factor}, $0 < \epsilon < 1$). This produces a set $W$ of walks. The
+\osrank{} for a project $x$ is then:
 \[
-s(x) := \epsilon \sum_{y \to x} \frac{s(y)}{d_y} + \frac{1 - \epsilon}{n}
+  s(x) = \frac{W_x \epsilon}{n R}
 \]
-where $\epsilon \in (0,1)$ is the \emph{damping factor}. When computing
-\pagerank{} the damping factor is usually taken to be $0.85$.
+where $W_x$ is the number of visits of $x$, over all walks, that is:
+\[
+W_x = \sum_{w \in W} v(w,x)
+\]
+where $v(w,x)$ is the number of times path $w$ visits the vertex $x$.
 
-In our case we are likely to choose a smaller damping factor in order
-because dependency chains can be quite short.
+\subsection{Potential problems}
 
-% TODO(james): explain the above, and include stats on real dep
-% graphs.
+The main problem to avoid is compensating fake ecosystems, that is,
+project structures and relationships which have been setup in the
+network graph for the sole purpose of gaming the \osrank{} algorithm.
+
+For this we propose running \osrank{} in two distinct phases:
+\begin{itemize}
+\item In the first phase, a seed set $S$ is used as the for the
+  beginning of all walks. Specifically, a random walk always starts at
+  a vertex in $S$. Otherwise the process remains the same. The scores
+  obtained are biased towards interactions with the seed set, but they
+  are not used directly by the compensation mechanism. Instead a
+  threashold $t$ is used to determine the legitimacy of entities: any
+  entity falling below this threshold is not considered for the next
+  phase. One obtains a subgraph of the network graph $X_t$.
+\item In the seconds phase, the algorithm is ran on the subgraph $X_t$
+  as usual, with no seed set. The output of the second phase is the
+  \osrank{}.
+\end{itemize}
+
+We propose that the seed set be maintained by an on-chain governance
+system, aiming to choose high-value user-facing projects,
+e.g. Firefox, Debian, VLC, etc. Care must be taken to ensure the seed
+set is large enough to touch most legitimate projects on the network.
+
+% \subsection{Description}
+
+% The \oscoin{} network is made up of a set of registered projects which
+% declare dependencies on one other. This induces a directed graph
+% structure $G$, where $y \to x$ when $y$ depends on $x$. Such a
+% dependency marks $x$ as being of use to $y$, and so is taken as an
+% indication of $y$'s value to the network as a whole. This mirrors the
+% intuition behind \pagerank{} with respect to web pages: a page is
+% assumed to have value if another page links to it. A project $y$ will
+% typically have many dependencies; the total number of them is denoted
+% $d_y$. The \osrank{} of a project is defined as:
+% \[
+% s(x) := \epsilon \sum_{y \to x} \frac{s(y)}{d_y} + \frac{1 - \epsilon}{n}
+% \]
+% where $\epsilon \in (0,1)$ is the \emph{damping factor}. When computing
+% \pagerank{} the damping factor is usually taken to be $0.85$.
+
+% In our case we are likely to choose a smaller damping factor in order
+% because dependency chains can be quite short.
+
+% % TODO(james): explain the above, and include stats on real dep
+% % graphs.
 
 \subsection{Implementation}
 
-There are several options for making the computation of \srcrank{} not
-prohibitively expensive for the operators.
+There are several options for making sure the computation of \osrank{}
+will not be prohibitively expensive for operators to run.
 
 \begin{itemize}
-  \item \emph{Incremental Monte Carlo.} The \srcrank{}
-    for all the projects in the network must be kept up to
-    date. Recomputing these values from scratch would be prohibitively
-    expensive, so an incremental algorithm is used instead so that
-    these values may be updated as dependency graph evolves. Rather
-    than using the classical iterative method, \srcrank{} is estimated
-    using a Monte Carlo-based algorithm: for each project on the
-    network $R$ random walks are performed which start and that node
-    and follow dependencies. At each step the walk might terminate
-    with probability $1 - \epsilon$. The approximated \srcrank{} for a
-    project $x$ is then:
-    \[
-    s(x) = \frac{W_x \epsilon}{n R}
-    \]
-    The dependency graph does not change that much from one
-    calculation to the next; only a small proportion of nodes or edges
-    are added or removed. Therefore most of the random walks that were
-    performed in the previous calculation remain valid in the updated
-    graph. For example if only a single dependency $y \to x$ has been
-    added, then a walk is invalid only if passes through $y$, for it
-    may have chosen to follow this new dependency.
+\item \emph{Incremental Monte Carlo.} An incremental algorithm is used
+  so that \osrank{} values may be updated as network graph
+  evolves. Instead of computing \osrank{} from scratch, we rely on the
+  fact that the network graph will not change that much from one
+  calculation to the next; only a small proportion of nodes or edges
+  are added or removed. Therefore most of the random walks that were
+  performed in the previous calculation remain valid in the updated
+  graph. For example if only a single dependency $x \to y$ has been
+  added, then a walk is invalid only if passes through $x$, for it may
+  have chosen to follow this new dependency.
 
-    In practice the operators of the network cache the set of random
-    walks from the previous calculation, and update this set by
-    removing invalid walks and replacing them with new ones. Details
-    on such an incremental algorithm can be found in
-    \cite{incr_pagerank}.
+  In practice the operators of the network cache the set of random
+  walks from the previous calculation, and update this set by removing
+  invalid walks and replacing them with new ones. Details on such an
+  incremental algorithm used in the case of \pagerank{} can be found
+  in \cite{incr_pagerank}.
 
-    Since all the computations must be deterministic, the walks are
-    not truly random. Rather, they must use a built-in pseudo-random
-    number generator to generate the random walks. The seed for
-    generating random walks is fixed in the genesis block.
+  Since all the computations must be deterministic, the walks are not
+  truly random. Rather, they must use a built-in pseudo-random number
+  generator to generate the random walks. The seed for generating
+  random walks is fixed in the genesis block.
 
 \item \emph{Long epoch.} In this scenario payouts according to
-  \srcrank{} are only made infrequently, say with a duration of $t$
+  \osrank{} are only made infrequently, say with a duration of $d$
   between \emph{payout} blocks (e.g.\ once every month). In this case
-  abusers might modify dependencies of several projects in
-  anticipation of the payout block. To mitigate this, dependencies
-  would be considered active for a cool-down period chosen to be
-  longer than $t$.
+  abusers might modify network structures of several projects in
+  anticipation of the payout block. To mitigate this, some edges are
+  weighted by the amount of time it has existed in the last epoch. For
+  example, if a dependency is added a day before the payout block,
+  then it only has a wight proportional to $1/d$.
 \end{itemize}
   
 \subsection{Required transactions}
 
-The \srcrank{} aspect of the network uses the following state and transactions:
+In order for \osrank{} to be computable, the operators need access to the network graph, and so the following transactions must be supported at the very least:
 \begin{itemize}
-\item The state affected by the following transactions is the
-  dependency graph $G = (V,E)$ between projects, where $V$ is a set of
-  public keys and $E \subseteq V^2$. If $(x,y) \in E$ for a graph $G$
-  then we write $x \to_G y$.
-\item The \emph{transactions} update the dependency graph from $G =
-  (V,E)$ to $G' = (V', E')$. All transaction parameters are public
-  keys, and all must be signed by the key $x$.
-  \begin{itemize}
-  \item $\mathtt{register}(x)$. Register project onto the network. The
-    parameter $x$ is a public key. The transaction is invalid if $x
-    \in V$. After the transaction, $V' = V \cup \{x\}$.
-    % TODO: decide if one cannot register a project that has already
-    % been registered (and then unregistered).
-  \item $\mathtt{depend}(x,y)$. Declare that project $x$ depends on
-    project $y$. The transaction is invalid if $\{x,y\} \nsubseteq V$
-    or $x \to_G y$. After the transaction, $E' = E \cup \{(x,y)\}$.
-  \item $\mathtt{undepend}(x,y)$. Declare that project $x$ no longer
-    depends on project $y$. The transaction is invalid if $\{x,y\}
-    \nsubseteq V$ or if $x \not \to_G y$. After the transaction, $E' =
-    E - \{(x,y)\}$.
-  \item $\mathtt{unregister}(x)$. Un-register a project from the
-    network. Only valid if $x \in V$. After the transaction, $V' = V -
-    \{x\}$.
-  \end{itemize}
+\item Transactions for adding and removing projects.
+\item Transactions for adding and removing users.
+\item Transactions for adding and removing dependencies.
+\item Transactions for stating a contribution of a user to a project.
 \end{itemize}
+For more details, see the ledger section. % TODO: add reference to
+                                          % ledger section.
