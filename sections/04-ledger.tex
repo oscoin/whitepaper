@@ -85,12 +85,31 @@ relatively high trust score, according to his trust-network.
 \subsection{Dependencies}
 \label{s:dependencies}
 
-A project $P^1$ depends on a project $P^2$ if it references $P^2$
-or parts of $P^2$ in its source code. Formally, we represent this dependency as
-$P^1 \to P^2$.
+Conceptually, a project $P^1$ depends on a project $P^2$ if it is an
+``input'' to $P^1$ in some way: $P^1$ references $P^2$ or parts of
+$P^2$ in its source code, or $P^2$ is a build dependency, etc. For
+example if a project used the purely functional package manager
+\emph{Nix} (see \cite{nix}), then the dependencies declared on
+\oscoin{} should map one to one with the Nix
+dependencies. Dependencies are an important input to the \osrank{}
+metric.
 
 Dependencies are recorded on the ledger with the
 \[
-    \tx{depend}{P^1, P^2}
+    \tx{depend}{P^1, P^2_n}
 \]
-transaction, which records a dependency between $P^1$ and $P^2$.
+transaction, where $P^n_n$ refers to $P^2$'s $n$th checkpoint
+($0$-indexed from the first checkpoint). Such a transaction must be
+signed by a project maintainer. This transaction signals a variety of
+things (partly dependent of the nature of the project)
+\begin{itemize}
+\item they have verified that $P^1$ indeed depends on this specific
+  version of $P^2$,
+\item that $P^2$ is suitable as a dependency for $P^1$, \eg{} if $P^1$
+  has very high security requirements, that $P^2$ fulfils these.
+\end{itemize}
+
+% TODO: talk about how the web-of-trust parallel system can assign
+% trust scores to individual dependency txs, which means that a user
+% can form a subjective score on not only a project, but it's whole
+% set of transitive dependencies too.
