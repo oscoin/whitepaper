@@ -47,7 +47,7 @@ stochastic simulation of meaningful activity traces of system agents,
 producing trails of artefacts consistent with observations, one can
 learn about the value flows between subsystems, and hence approximate
 a projection of the underlying value distribution. In the case of
-\pagerank{} one simulates a human searching for high-value data over
+\pagerank{} one simulates a human searching for high-relevance data over
 the internet, following a chain of links. A sophisticated algorithm
 would use as many heuristics as possible for choosing the next link to
 follow (as a real human would), e.g.\ evaluating the relevance of the
@@ -116,9 +116,7 @@ from upstream. The contributor therefore switches to fixing said bug
 in the dependency, etc. Much like a simulation of a human searching
 for information by clicking through links, this simulated contributor
 activity informs us on the value flows between subsystems in OSS
-development. We are confident that this process will produce an
-accurate and objective value score for projects on the
-network. % TODO: all entities?
+development.
 
 This score, which we call \osrank{}, is used to weight the
 distribution of newly minted tokens to high value entities, thus
@@ -167,29 +165,6 @@ system, aiming to choose high-value user-facing projects,
 e.g. Firefox, Debian, VLC, etc. Care must be taken to ensure the seed
 set is large enough to touch most legitimate projects on the network.
 
-% \subsection{Description}
-
-% The \oscoin{} network is made up of a set of registered projects which
-% declare dependencies on one other. This induces a directed graph
-% structure $G$, where $y \to x$ when $y$ depends on $x$. Such a
-% dependency marks $x$ as being of use to $y$, and so is taken as an
-% indication of $y$'s value to the network as a whole. This mirrors the
-% intuition behind \pagerank{} with respect to web pages: a page is
-% assumed to have value if another page links to it. A project $y$ will
-% typically have many dependencies; the total number of them is denoted
-% $d_y$. The \osrank{} of a project is defined as:
-% \[
-% s(x) := \epsilon \sum_{y \to x} \frac{s(y)}{d_y} + \frac{1 - \epsilon}{n}
-% \]
-% where $\epsilon \in (0,1)$ is the \emph{damping factor}. When computing
-% \pagerank{} the damping factor is usually taken to be $0.85$.
-
-% In our case we are likely to choose a smaller damping factor in order
-% because dependency chains can be quite short.
-
-% % TODO(james): explain the above, and include stats on real dep
-% % graphs.
-
 \subsection{Implementation}
 
 There are several options for making sure the computation of \osrank{}
@@ -219,6 +194,8 @@ will not be prohibitively expensive for operators to run.
   generator to generate the random walks. The seed for generating
   random walks is fixed in the genesis block.
 
+  % TODO: Add details on RNG
+
 \item \emph{Long epoch.} In this scenario payouts according to
   \osrank{} are only made infrequently, say with a duration of $d$
   between \emph{payout} blocks (e.g.\ once every month). In this case
@@ -228,7 +205,7 @@ will not be prohibitively expensive for operators to run.
   example, if a dependency is added a day before the payout block,
   then it only has a wight proportional to $1/d$.
 \end{itemize}
-  
+
 \subsection{Required transactions}
 
 In order for \osrank{} to be computable, the operators need access to the network graph, and so the following transactions must be supported at the very least:

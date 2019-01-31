@@ -56,9 +56,8 @@ $B_0$ being the genesis block.
     \item Maintainers and contributors collaborate around software projects
         registered on the network.
     \item Maintainers specify what other projects their projects depend on.
-    \item Every $n$ blocks, projects within the trusted set have their $SrcRank$
-        calculated, and a token reward is calculated for each, in proportion
-        to their rank.
+    \item Every $n$ blocks, projects have their $SrcRank$ calculated, and a
+        token reward is calculated for each, in proportion to their rank.
     \item The rewards are sent to the given projects.
     \item Projects are able to use the funds how they see fit. \emph{Smart
         contracts} are used as a means for distribution of tokens from within a
@@ -104,10 +103,6 @@ a minimum threshold, under which the project doesn't receive anything. This
 threshold prevents small attacks from succeeding, while also compressing the
 rewards.
 
-It's desirable to compress the range of rewards in the system so that \oscoin{}
-benefits more projects. Hence we also apply a logarithmic function on the reward,
-such that a project with twice the $SrcRank$ receives less than twice the rewards.
-
 With this model, it’s the responsibility of a project to choose its
 dependencies well and to maintain its stated dependencies up to date, since by
 depending on a project, it is casting a vote for that project to receive money.
@@ -119,3 +114,6 @@ that it distributes according to the SrcRank metric. At scale, this has the
 potential to solve many of the issues with open source monetization and
 sustainability, as software projects receive income in the form of \oscoin{}
 by giving away their work for free.
+
+% TODO: Explain how this is non-transactional and you don't have to change the
+% way you work.
