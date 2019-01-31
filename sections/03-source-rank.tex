@@ -6,6 +6,7 @@
 \def\user{\mathsf{user}}
 \def\dep{\mathsf{dep}}
 \def\own{\mathsf{own}}
+\def\coown{\mathsf{own}^\circ}
 \def\contrib{\mathsf{contrib}}
 \def\cocontrib{\mathsf{contrib}^\circ}
 
@@ -46,15 +47,15 @@ The basic insight of \pagerank{} and similar metrics, is that by
 stochastic simulation of meaningful activity traces of system agents,
 producing trails of artefacts consistent with observations, one can
 learn about the value flows between subsystems, and hence approximate
-a projection of the underlying value distribution. In the case of
-\pagerank{} one simulates a human searching for high-relevance data over
-the internet, following a chain of links. A sophisticated algorithm
-would use as many heuristics as possible for choosing the next link to
-follow (as a real human would), e.g.\ evaluating the relevance of the
-link-text. If computational resources are scarce, the crudest
-algorithm simply picks the next link at random, and this is what
-produces the classic \pagerank{} formula which has seen so much
-success at ranking web pages.
+the underlying value distribution. In the case of \pagerank{} one
+simulates a human searching for high-relevance data over the internet,
+following a chain of links. A sophisticated algorithm would use as
+many heuristics as possible for choosing the next link to follow (as a
+real human would), \eg{} evaluating the relevance of the link-text. If
+computational resources are scarce, the crudest algorithm simply picks
+the next link at random, and this is what produces the classic
+\pagerank{} formula which has seen so much success at ranking web
+pages.
 
 In the domain of open source software development, the main artefacts
 produced are:
@@ -74,7 +75,8 @@ tweaked by our own judgement and informed by simulations we have run.
   \node[vertex] (u) at (-2,0) {$\user$};
 
   \draw[arr,looseness=10] (p) to[out=55,in=125] node[above] {$\dep$} (p);
-  \draw[arr] (p) to[out=155,in=25] node[above] {$\own$} (u);
+  \draw[arr] (p) to[out=165,in=15] node[above] {$\own$} (u);
+  \draw[arr] (u) to[out=45,in=-225] node[above] {$\coown$} (p);
   \draw[arr] (p) to[out=195,in=-15] node[above] {$\contrib$} (u);
   \draw[arr] (u) to[out=-35,in=215] node[below] {$\cocontrib$} (p);
 \end{tikzpicture}
@@ -85,36 +87,40 @@ We are using the following weights:
   edge & weight \\
   \hline
   $\dep$ & $1.0$ \\
-  $\own$ & $0.8$ \\
-  $\contrib$ & $0.4$ \\
+  $\own$ & $1.0$ \\
+  $\coown$ & $0.7$\\
+  $\contrib$ & $0.3$ \\
   $\cocontrib$ & $0.2$
   \end{tabular}
 \end{center}
 
-Note that contributions are counted as a bidirectional flow: a
-contribution of a user to a project, $\contrib$, indicates that a user
-has added value to a project. The flow in the opposite direction,
-$\cocontrib$, is taken as an indication that the project is valuable
-to the user: users are likely to contribute to projects they find
-valuable.
+Note that some of the edges are biderectional, but each direction gets
+it's own weight. For example both $\contrib$ and $\cocontrib$ point to
+the same artefact: a contribution of code from a user to a
+project. The edge $\contrib$ represents the statement \emph{``the user
+  is valuable to the project''}. The edge $\cocontrib$ going in the
+opposite direction represents the statement \emph{``the project is
+  valuable to the user''}; the rationale for this less obvious flow is
+that users are unlikely to invest time contributing to a project they
+don't find useful.
 
 % TODO: include similations data.
 
 The \oscoin{} network proposes to record these artefacts as
 transactions in a blockchain, so that one may unambiguously rebuild
-(and reach consensus on) a finite directed graph $X$ over $G$ (i.e.,
+(and reach consensus on) a finite directed graph $X$ over $G$ (\ie{}
 in the slice category $\Graph/G$). We'll refer to $X$ as the
 \emph{network graph}.
 
 This in turn allows global value scores to be assigned to entities
 according to a specific stochastic process simulating \emph{random
   walks}, that is, activity traces in $X$ with sampling probabilities
-taken by projecting to $G$. For example: a contributor decides to work
-on a high value project (probably at the border), contributes a PR, in
-so doing adds a dependency to another project, which imports a bug
-from upstream. The contributor therefore switches to fixing said bug
-in the dependency, etc. Much like a simulation of a human searching
-for information by clicking through links, this simulated contributor
+taken from $G$. For example: a contributor decides to work on a high
+value project (probably at the border), contributes a PR, in so doing
+adds a dependency to another project, which imports a bug from
+upstream. The contributor therefore switches to fixing said bug in the
+dependency, etc. Much like a simulation of a human searching for
+information by clicking through links, this simulated contributor
 activity informs us on the value flows between subsystems in OSS
 development.
 
@@ -138,7 +144,7 @@ W_x = \sum_{w \in W} v(w,x)
 \]
 where $v(w,x)$ is the number of times path $w$ visits the vertex $x$.
 
-\subsection{Potential problems}
+\subsection{Fake ecosystems}
 
 The main problem to avoid is compensating fake ecosystems, that is,
 project structures and relationships which have been setup in the
@@ -172,7 +178,7 @@ will not be prohibitively expensive for operators to run.
 
 \begin{itemize}
 \item \emph{Incremental Monte Carlo.} An incremental algorithm is used
-  so that \osrank{} values may be updated as network graph
+  so that \osrank{} values may be updated as the network graph
   evolves. Instead of computing \osrank{} from scratch, we rely on the
   fact that only a small percentage of the nodes and edges of the
   network graph are added or removed from one calculation to the next
@@ -205,15 +211,3 @@ will not be prohibitively expensive for operators to run.
   example, if a dependency is added a day before the payout block,
   then it only has a wight proportional to $1/d$.
 \end{itemize}
-
-\subsection{Required transactions}
-
-In order for \osrank{} to be computable, the operators need access to the network graph, and so the following transactions must be supported at the very least:
-\begin{itemize}
-\item Transactions for adding and removing projects.
-\item Transactions for adding and removing users.
-\item Transactions for adding and removing dependencies.
-\item Transactions for stating a contribution of a user to a project.
-\end{itemize}
-For more details, see the ledger section. % TODO: add reference to
-                                          % ledger section.
