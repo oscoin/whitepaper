@@ -13,28 +13,33 @@ transaction, which must be signed by $U$.
 
 A project $P$ is a tuple:
 \[
-    P = \tuple{P_{a}, P_h, P_s}
+    P = \tuple{P_a, P_h, P_s}
 \]
 where $P_{a}$ is the project's address and unique identifier, $P_h$ is
-the project's current hash and $P_s$ is the canonical project source URL.
+the project's current hash and $P_s$ is the canonical project source
+URL.
 
-The project address is used to identify the project, as well to send
-\oscoin{} to it. Each project has an account balance identified by project
-address. The project hash is a digest of the project's source code at the time
-it is entered in the ledger. Finally,
-the project URL is there for convenience, as a means to fetch the source code.
-It must be noted that the source code retrieved from $P_s$ must always hash to
-$P_h$, otherwise the project is considered invalid.
+The project address, an integer, is used to identify the project, as
+well as to send \oscoin{} to it. Each project has an account balance
+identified by project address. The project hash is a digest of the
+project's source code at the time it is entered in the
+ledger. Finally, the project URL is there for convenience, as a means
+to fetch the source code.  It must be noted that the source code
+retrieved from $P_s$ must always hash to $P_h$, otherwise the project
+is considered invalid.
 
 \subsubsection{Registration and ownership} Projects need to be
 registered on the ledger before they can participate in the
 network. This can be done with the
 \[
-    \tx{registerproject}{P}
+    \tx{registerproject}{P_a, P_s}
 \]
-transaction, singed by a user $U$ (who becomes a project owner). Note
+transaction, singed by a user $U$ (who becomes a project owner). The
+transaction is valid as long as the address isn't already in use. Note
 that the execution of this transaction locks a small \oscoin{} deposit
-from $U$ wallet, to prevent abandoned projects from accumulating.
+from $U$'s wallet, to prevent abandoned projects from
+accumulating. Once executed, the project is instantiated to
+$P = \tuple{P_a, P_h, P_s}$ with $P_h = \varnothing$.
 
 After registration the project's \emph{owner set} is $\{U\}$, this can
 be extended with:
@@ -61,6 +66,7 @@ is done via the
 \[
     \tx{checkpoint}{P_a, P_h', s, c}
 \]
+% TODO: what is the use of s?
 transaction, where $P_h'$ is the new project hash, $s$ is the URL to
 retrieve the source code from, and $C^*$ is hash-linked-list of
 \emph{contributions}, which are tuples:
@@ -85,47 +91,55 @@ checkpoint as a whole must also be signed by a current owner.
 
 Because all changes to a project's source code are signalled by
 checkpoints, it is possible to reconstruct a full hash-linked list of
-contributions for the entire project. Along with the project's
-repository, this gives a full historical breakdown of who authored
-which code, and which project maintainer signed them off.
+contributions for the entire project. When cross-referenced with the
+project's repository, this gives a full historical breakdown of who
+authored which code, and which project maintainer signed it off.
 
-There are two main uses for this: First of all the contributions in a
-checkpoint are used as edges in the network graph used to compute
-\osrank{} (section \ref{s:osrank}).  Second, because contributions
-reference users, combined with the subjective trust system (section
-\ref{s:web-of-trust}), this gives a particular user a view into the
-trustworthiness of the project as a whole, based on the contributions
-it is built out of. A user may judge a project as trustworthy (for
-example when deciding to add it as a dependency), if all the users
-involved in all the contributions (or at least the signoffs) have a
-relatively high trust score, according to his trust-network.
+There are two main uses for this. First of all the individual
+contributions in a checkpoint are used as edges in the network graph
+$\netgraph$ used to compute \osrank{} (\S~\ref{s:osrank}).
+Second, because contributions reference users, combined with the
+subjective trust system (\S~\ref{s:web-of-trust}), this gives a
+particular user a view into the trustworthiness of the project as a
+whole, based on the contributions it is built out of. A user may judge
+a project as trustworthy (for example when deciding to add it as a
+dependency), if all the users involved in all the contributions (or at
+least the signoffs) have a relatively high trust score, according to
+his trust-network.
 
-\subsection{Dependencies}
-\label{s:dependencies}
-
+\subsection{Dependencies}\label{s:dependencies}
 Conceptually, a project $P^1$ depends on a project $P^2$ if it is an
 ``input'' to $P^1$ in some way: $P^1$ references $P^2$ or parts of
-$P^2$ in its source code, or $P^2$ is a build dependency, etc. For
-example if a project used the purely functional package manager
-\emph{Nix} (see \cite{nix}), then the dependencies declared on
-\oscoin{} should map one to one with the Nix
+$P^2$ in its source code, or $P^2$ is a build/dev/test dependency,
+etc. For example if a project used the purely functional package
+manager \emph{Nix} (see~\cite{nix}), then the dependencies declared on
+\oscoin{} should probably map one to one with the Nix
 dependencies. Dependencies are an important input to the \osrank{}
 metric.
 
 Dependencies are recorded on the ledger with the
 \[
-    \tx{depend}{P^1, P^2_n}
+    \tx{depend}{P^1_a, P^2_a, n}
 \]
-transaction, where $P^n_n$ refers to $P^2$'s $n$th checkpoint
-($0$-indexed from the first checkpoint). Such a transaction must be
-signed by a project owner. This transaction signals a variety of
-things (partly dependent of the nature of the project):
+transaction, which refers to $P^2$'s $n$th checkpoint ($0$-indexed
+from the first checkpoint). A project may only depend on a particular
+version, and only one version at a
+time. % TODO: is this too much of a restriction?
+Such a transaction must be signed by a project owner. This transaction
+signals a variety of things (partly dependent of the nature of the
+project):
 \begin{itemize}
 \item they have verified that $P^1$ indeed depends on this specific
   version of $P^2$,
 \item that $P^2$ is suitable as a dependency for $P^1$, \eg{} if $P^1$
   has very high security requirements, that $P^2$ fulfils these.
 \end{itemize}
+
+Dependencies are removed with the
+\[
+    \tx{undepend}{P^1_a, P^2_a}
+\]
+transaction, which must be signed by a project owner.
 
 % TODO: talk about how the web-of-trust parallel system can assign
 % trust scores to individual dependency txs, which means that a user
