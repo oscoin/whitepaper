@@ -1,0 +1,118 @@
+\section{The Oscoin Network}
+
+% Objectives
+% ==========
+% * Describe how oscoin works
+% * Explain how money flows to the most valuable projects
+% * Explain how this solves the sustainability problem
+% * Explain how we tie money with OSS / how we link money with the dependency graph
+
+% TODO: Diagram that shows Dependencies -> SrcRank -> Block reward -> Distribution
+
+\noindent \oscoin{} is a protocol and currency designed to provide a solution
+to the open source sustainability problem (\S \ref{sustainability}).
+
+The \oscoin{} network is a public network of computers operating a distributed
+consensus protocol around a transaction ledger.
+
+This ledger is materialized into a shared state $\state$ which contains the
+canonical registry $\mathcal{R}$ of all open source projects participating in
+the \oscoin{} protocol; a set of accounts $\mathcal{A}$, containing the
+balances of all currency holders; and finally a  dependency graph
+$\mathcal{D}$, of all dependencies between registered projects.
+
+The purpose of this network is to secure a digital currency -- \oscoin{} -- and
+its monetary policy which rewards the most valued open source projects in the
+network, without the need for intermediaries or central control.
+
+\subsection{The Oscoin Blockchain}
+
+The \oscoin{} network is composed of a set of nodes, or \emph{replicas}, which
+execute a distributed protocol. Together, these nodes form a \emph{Replicated
+State Machine} with a set of states $\state^*$, a transition function $\apply$,
+a starting state $\state_0$ or ``genesis'', a set of inputs $B_0 \dotso B_n$,
+and a set of outputs.
+
+Participation in the network protocol is \emph{open} (\ie ``permissionless''),
+which makes the replica set dynamic. To achieve consensus in the permissionless
+setting, we make use of a blockchain~\cite{bitcoin} as the underlying
+replicated data-structure (``the ledger''), with proof-of-work as the mechanism
+for Sybil resistance. Though we believe proof-of-work is currently the only
+safe choice for a decentralized network, \oscoin{} can work with any Sybil
+resistance method. Thus, the inputs $B_0 \dotso B_n$ to the state machine are
+blocks, with $B_0$ being the genesis block.
+
+\oscoin{}'s threat model, as far as consensus goes, is identical to that
+of other proof-of-work protocols such as Bitcoin.
+
+% Hashing function
+
+\subsection{Monetary Policy}
+
+\begin{itemize}
+    \item Maintainers and contributors collaborate around software projects
+        registered on the network.
+    \item Maintainers specify what other projects their projects depend on.
+    \item Every $n$ blocks, projects within the trusted set have their $SrcRank$
+        calculated, and a token reward is calculated for each, in proportion
+        to their rank.
+    \item The rewards are sent to the given projects.
+    \item Projects are able to use the funds how they see fit. \emph{Smart
+        contracts} are used as a means for distribution of tokens from within a
+        project, to its constituent members or contributors.
+\end{itemize}
+
+Each block, the protocol is allowed to mint a certain amount $B_r$ of \oscoin{}
+(the ``block reward''), as part of what we call the \emph{coinbase}
+transaction. These coins are divided into two shares, the first serving as a
+reward to the block miner, while the second is used to supply the reward
+mechanism for open-source projects.
+
+\subsubsection{Token distribution}
+
+The key question we must answer, is how the block reward is distributed to
+projects on the network.
+
+The goal is to choose a distribution mechanism that benefits the network as a
+whole, while needing the least amount of maintenance.
+
+For this, we turn to the software dependency graph.
+
+Each project registered in the network is required to specify which other
+projects it depends on. For example, a web framework might depend on an HTTP
+library, and that HTTP library might depend on an OpenSSL implementation.
+
+Registering a project requires a small deposit. This is to prevent the ledger
+from being filled with abandonned projects, and because projects can influence
+reward distribution through the dependency graph. We make Sybil attacks and
+spam costly to the attackers this way.
+
+Still, it's possible that project maintainers act dishonnestly, by lying about
+their dependencies. We propose a way to mitigate this in \S \ref{srcrank}.
+
+\paragraph{Algorithm}. Let $T$ be the amount of \oscoin{} to be distributed to
+$N$ project severy epoch $e$. The amount $T_P$ distributed to a given project
+$P_n$ is in proportion to its $SrcRank$. SrcRank, described in \S \ref{srcrank}
+is a centrality measure that assigns a weight $P_w$ to each project by following
+links in the dependency graph $D$.
+
+The amount of tokens received every epoch by $P_n$ is thus $T_P / P_w$, with
+a minimum threshold, under which the project doesn't receive anything. This
+threshold prevents small attacks from succeeding, while also compressing the
+rewards.
+
+It's desirable to compress the range of rewards in the system so that \oscoin{}
+benefits more projects. Hence we also apply a logarithmic function on the reward,
+such that a project with twice the $SrcRank$ receives less than twice the rewards.
+
+With this model, it’s the responsibility of a project to choose its
+dependencies well and to maintain its stated dependencies up to date, since by
+depending on a project, it is casting a vote for that project to receive money.
+This is amplified for highly-weighted projects in the graph.
+
+The model we described distributes tokens on a continuous basis to the projects
+most valued by the network. It does so by periodically minting new \oscoin{}
+that it distributes according to the SrcRank metric. At scale, this has the
+potential to solve many of the issues with open source monetization and
+sustainability, as software projects receive income in the form of \oscoin{}
+by giving away their work for free.

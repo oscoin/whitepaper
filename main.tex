@@ -2,9 +2,16 @@
 
 \usepackage{amsmath, amssymb}
 
-\def\oscoin{oscoin}
+\def\oscoin{\textsc{\small{oscoin}}}
 \def\srcrank{SrcRank}
 \def\pagerank{PageRank}
+
+\newcommand{\state}{\mathcal{S}}
+\newcommand{\ledger}{\mathcal{L}}
+\newcommand{\apply}{\Upsilon}
+
+\newcommand*\eg{e.g.\ }
+\newcommand*\ie{i.e.\ }
 
 \begin{document}
 
@@ -12,6 +19,7 @@
 
 \maketitle
 
+\input{sections/02-oscoin.tex}
 \input{sections/03-source-rank.tex}
 
 \begin{thebibliography}{9}
@@ -23,7 +31,7 @@
 \bibitem{incr_pagerank} Bahmani, Bahman and Chowdhury, Abdur and Goel,
   Ashish. Fast Incremental and Personalized PageRank. Proc. VLDB
   Endow. December 2010.
-  
+
 \end{thebibliography}
 
 \end{document}
