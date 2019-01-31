@@ -9,8 +9,9 @@
 
 % TODO: Diagram that shows Dependencies -> SrcRank -> Block reward -> Distribution
 
-\noindent \oscoin{} is a protocol and currency designed to provide a solution
-to the open source sustainability problem (\S \ref{sustainability}).
+\noindent In this paper, we introduce \oscoin{}, a protocol and currency
+designed to provide a solution to the open source sustainability problem (\S
+\ref{sustainability}).
 
 The \oscoin{} network is a public network of computers operating a distributed
 consensus protocol around a transaction ledger.
@@ -92,7 +93,7 @@ spam costly to the attackers this way.
 Still, it's possible that project maintainers act dishonnestly, by lying about
 their dependencies. We propose a way to mitigate this in \S \ref{srcrank}.
 
-\paragraph{Algorithm}. Let $T$ be the amount of \oscoin{} to be distributed to
+\subsubsection{Algorithm} Let $T$ be the amount of \oscoin{} to be distributed to
 $N$ project severy epoch $e$. The amount $T_P$ distributed to a given project
 $P_n$ is in proportion to its $SrcRank$. SrcRank, described in \S \ref{srcrank}
 is a centrality measure that assigns a weight $P_w$ to each project by following
