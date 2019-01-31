@@ -28,16 +28,16 @@
     %
     % Project dependency graph
     %
-    \node[proj-s] (proj-a-4)  [right=of proj-a-3] {\small{$P^4$}}
-        child { node[proj-s] (proj-a-2)  [right=of proj-a-1] {\small{$P^2$}} }
+    \node[proj-s] (proj-a-4)  [] {\small{$P^4$}}
+        child { node[proj-s] (proj-a-2)  [] {\small{$P^2$}} }
         child {
-            node[proj-s] (proj-a-3)  [right=of proj-a-2] {\small{$P^3$}}
+            node[proj-s] (proj-a-3)  [] {\small{$P^3$}}
                 child { node[proj-s] (proj-a-1) [] {\small{$P^1$}} }
         };
 
     \begin{scope}[on background layer]
         \node (proj-a-group-1) [proj-group,
-            label=\name{Network Graph ($\netgraph$)},
+            label={Network Graph ($\netgraph$)},
             inner sep=10pt,
             fit=(proj-a-1) (proj-a-2) (proj-a-3) (proj-a-4)] {};
     \end{scope}
@@ -55,7 +55,7 @@
     \node[proj] (trusted-3)  [right=of trusted-2]     {\small{$P^3_t$}};
 
     \begin{scope}[on background layer]
-        \node [proj-group, label=\name{Seed Set (\mathcal{$\Upsilon$})},
+        \node [proj-group, label={Seed Set ($\mathcal{\Upsilon}$)},
             inner sep=10pt, fit=(trusted-1) (trusted-2) (trusted-3)] {}
                 edge [pointer] (osrank.east);
     \end{scope}
@@ -94,10 +94,10 @@
         \draw[thick-arrow] (weights.south)               to    (distribution.north);
 
         % Distribution arrows
-        \draw[arrow, -latex] (distribution)              to    (proj-b-1);
-        \draw[arrow, -latex] (distribution)              to    (proj-b-2);
-        \draw[arrow, -latex] (distribution)              to    (proj-b-3);
-        \draw[arrow, -latex] (distribution)              to    (proj-b-4);
-        \draw[arrow, -latex] (distribution)              to    (miner);
+        \draw[-latex] (distribution)              to    (proj-b-1);
+        \draw[-latex] (distribution)              to    (proj-b-2);
+        \draw[-latex] (distribution)              to    (proj-b-3);
+        \draw[-latex] (distribution)              to    (proj-b-4);
+        \draw[-latex] (distribution)              to    (miner);
     \end{scope}
 \end{tikzpicture}
