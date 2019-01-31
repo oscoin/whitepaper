@@ -1,14 +1,39 @@
-\documentclass[10pt]{amsart}
+\documentclass[a4paper, oneside, 9pt, draft]{amsart}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage[kerning=true]{microtype}
+\usepackage[english]{babel}
+\usepackage[babel=true,kerning=true]{microtype}
 
 \usepackage{amsmath, amssymb}
-  
-\def\oscoin{oscoin}
+\usepackage{multicol}
+\usepackage{enumitem}
+
 \def\osrank{OsRank}
+\def\oscoin{\textsc{\small{oscoin}}}
 \def\pagerank{PageRank}
+
+\newcommand{\state}{\mathcal{S}}
+\newcommand{\ledger}{\mathcal{L}}
+\newcommand{\apply}{\Upsilon}
+
+\newcommand*\eg{e.g.\ }
+\newcommand*\ie{i.e.\ }
+
+\newenvironment{epigraph}[2][]
+{\leftskip=1cm \def\epigraph@author{#2} \smallskip\itshape}
+{\par\vspace{0.5em}\normalfont\hfill---\ \epigraph@author\hspace*{0.2cm}\par\medskip}
+\makeatother
+
+\setlist[description]{leftmargin=1.2cm, labelindent=\parindent}
+\setlist[enumerate]{leftmargin=1.2cm, labelindent=\parindent}
+
+\setlength{\textwidth}{\paperwidth}
+\addtolength{\textwidth}{-6cm}
+\setlength{\textheight}{\paperheight}
+\addtolength{\textheight}{-5cm}
+
+\calclayout
 
 \begin{document}
 
@@ -16,7 +41,24 @@
 
 \maketitle
 
+\setlength{\columnsep}{20pt}
+\begin{multicols}{2}
+
+\begin{epigraph}{The Open-Source Everything Manifesto}
+    \noindent It is in this light that we must recognize that only a restoration of
+    open-source culture, and all that enables across the full spectrum of
+    open-source possibilities, can allow humanity to harness the distributed
+    intelligence of the collective and create the equivalent of heaven on Earth
+    -- in other words, a world that works for all.
+\end{epigraph}
+\medskip
+
+\input{sections/01-background.tex}
+\input{sections/02-oscoin.tex}
 \input{sections/03-source-rank.tex}
+%\input{sections/04-ledger.tex}
+
+\end{multicols}
 
 \begin{thebibliography}{9}
 
@@ -27,7 +69,7 @@
 \bibitem{incr_pagerank} Bahmani, Bahman and Chowdhury, Abdur and Goel,
   Ashish. Fast Incremental and Personalized PageRank. Proc. VLDB
   Endow. December 2010.
-  
+
 \end{thebibliography}
 
 \end{document}
