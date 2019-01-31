@@ -1,4 +1,5 @@
 \section{\osrank{}}
+\label{s:osrank}
 
 \def\Graph{\mathsf{Graph}}
 \def\proj{\mathsf{proj}}
@@ -74,19 +75,19 @@ tweaked by our own judgement and informed by simulations we have run.
 
   \draw[arr,looseness=10] (p) to[out=55,in=125] node[above] {$\dep$} (p);
   \draw[arr] (p) to[out=155,in=25] node[above] {$\own$} (u);
-  \draw[arr] (p) to[out=205,in=-25] node[above] {$\contrib$} (u);
-  \draw[arr] (u) to[out=-45,in=225] node[below] {$\cocontrib$} (p);
+  \draw[arr] (p) to[out=195,in=-15] node[above] {$\contrib$} (u);
+  \draw[arr] (u) to[out=-35,in=215] node[below] {$\cocontrib$} (p);
 \end{tikzpicture}
 
 We are using the following weights:
 \begin{center}
-  \begin{tabular}{ll}
+  \begin{tabular}{lr}
   edge & weight \\
   \hline
-  $\dep$ & 1 \\
-  $\own$ & 1 \\
-  $\contrib$ & 0.5 \\
-  $\cocontrib$ & 0.2
+  $\dep$ & $1.0$ \\
+  $\own$ & $0.8$ \\
+  $\contrib$ & $0.4$ \\
+  $\cocontrib$ & $0.2$
   \end{tabular}
 \end{center}
 

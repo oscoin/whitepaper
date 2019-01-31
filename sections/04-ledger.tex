@@ -42,10 +42,45 @@ source code change regularly. This means the project hash $P_h$ will quickly
 become out of sync with the project's latest state and will need updating. This
 is done via the
 \[
-    \tx{checkpoint}{P_a, h, s}
+    \tx{checkpoint}{P_a, h, s, c}
 \]
-transaction, where $h$ is the new project hash, and $s$ is the URL to retrieve
-the source code from.
+transaction, where $h$ is the new project hash, $s$ is the URL to
+retrieve the source code from, and $c$ is hash-linked-list of
+\emph{contributions}, which are tuples:
+\[
+   \tuple{\field{c}{prev}, \field{c}{commit}, \field{c}{author}, \field{c}{signoff}}
+\]
+where:
+\begin{itemize}
+\item $\field{c}{prev}$ is the hash of the previous contribution, or
+  $\varnothing$ if this is the first contribution to the whole
+  project. Note that $c$'s first item must be linked to the last
+  contribution in the project's previous checkpoint.
+\item $\field{c}{commit}$ is the hash of the corresponding commit,
+\item $\field{c}{author}$ is the author of the contribution,
+\item $\field{c}{sig}$ is author's signature of the commit hash. 
+\item $\field{c}{signoff}$ is the \emph{signoff user}, which must be a
+  current maintainer of the project.
+\end{itemize}
+A contribution must be signed by the signoff user. This signals the
+the contribution has been reviewed/verified by this maintainer.
+
+Because all changes to a project's source code are signalled by
+checkpoints, it is possible to reconstruct a full hash-linked list of
+contributions for the entire project. Along with the project's
+repository, this gives a full historical breakdown of who authored
+which code, and which project maintainer signed them off.
+
+There are two main uses for this: First of all the contributions in a
+checkpoint are used as edges in the network graph used to compute
+\osrank{} (section \ref{s:osrank}).  Second, because contributions
+reference users, combined with the subjective trust system (section
+\ref{s:web-of-trust}), this gives a particular user a view into the
+trustworthiness of the project as a whole, based on the contributions
+it is built out of. A user may judge a project as trustworthy (for
+example when deciding to add it as a dependency), if all the users
+involved in all the contributions (or at least the signoffs) have a
+relatively high trust score, according to his trust-network.
 
 \subsection{Dependencies}
 \label{s:dependencies}
