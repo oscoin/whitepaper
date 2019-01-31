@@ -10,11 +10,18 @@
 \usepackage{multicol}
 \usepackage{enumitem}
 \usepackage{mathtools}
+\usepackage{standalone}
 
 \usepackage{tikz}
-\usetikzlibrary{decorations.markings,arrows}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{arrows}
+\usetikzlibrary{fit}
+\usetikzlibrary{backgrounds}
+\usetikzlibrary{positioning}
+\usetikzlibrary{decorations.pathmorphing}
+\usetikzlibrary{arrows.meta}
 
-\def\osrank{OsRank}
+\def\osrank{\textsc{\small{osrank}}}
 \def\oscoin{\textsc{\small{oscoin}}}
 \def\pagerank{PageRank}
 \def\protocol{\mathcal{P}}
@@ -32,6 +39,15 @@
 
 \newcommand*\eg{e.g.\ }
 \newcommand*\ie{i.e.\ }
+
+% No paragraph indentation after section headers.
+\makeatletter
+\let\@afterindenttrue\@afterindentfalse
+\makeatother
+
+\newenvironment{fig}
+  {\par\bigskip\noindent\minipage{\linewidth}}
+  {\endminipage\par\bigskip}
 
 \newenvironment{epigraph}[2][]
 {\leftskip=1cm \def\epigraph@author{#2} \smallskip\itshape}
