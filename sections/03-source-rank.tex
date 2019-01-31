@@ -1,4 +1,4 @@
-\section{\osrank{}}
+\section{Osrank}
 \label{s:osrank}
 
 \def\Graph{\mathsf{Graph}}
@@ -15,7 +15,7 @@ portion of newly minted tokens to high-value projects on the
 network. For this we need concensus on which projects are ``high
 value''.  To choose which projects receive compensation, and in which
 proportions, the network uses \osrank{}, which is a modification of
-the well-know \pagerank{} algorithm \cite{pagerank} applied to the
+the well-know \pagerank{} algorithm~\cite{pagerank} applied to the
 graph of relationships between projects on the network, for example
 \emph{dependencies}. The output of the algorithm is a score associated
 to each project. Newly minted tokens are then distributed to projects
@@ -195,7 +195,7 @@ will not be prohibitively expensive for operators to run.
   walks from the previous calculation, and update this set by removing
   invalid walks and replacing them with new ones. Details on such an
   incremental algorithm used in the case of \pagerank{} can be found
-  in \cite{incr_pagerank}.
+  in \cite{incr pagerank}.
 
   Since all the computations must be deterministic, the walks are not
   truly random. Rather, they must use a built-in pseudo-random number

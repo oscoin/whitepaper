@@ -1,4 +1,5 @@
-\section{The \oscoin{} Network}
+\section{The Oscoin Network}
+\label{s:oscoin}
 
 % Objectives
 % ==========
@@ -11,7 +12,7 @@
 
 \noindent In this paper, we introduce \oscoin{}, a protocol and currency
 designed to provide a solution to the open source sustainability problem (\S
-\ref{sustainability}).
+\ref{s:sustainability}).
 
 The \oscoin{} network is a public network of computers operating a distributed
 consensus protocol around a transaction ledger.
@@ -24,10 +25,23 @@ finally a network graph $\netgraph$, of relevant relations between
 entities in the network, including in particular dependencies between
 registered projects.
 
-The purpose of this network is to secure a digital
-currency---\oscoin{}---and its monetary policy which rewards the most
-valued open source projects in the network, without the need for
-intermediaries or central control.
+The purpose of this network is to secure a digital currency---\oscoin{}---and
+its monetary policy which rewards the most valued open source projects in the
+network, without the need for intermediaries or central control.
+
+\subsection{Overview}
+
+\begin{itemize}
+    \item Maintainers and contributors collaborate around software projects
+        registered on the network.
+    \item Maintainers specify what other projects their projects depend on.
+    \item Every $n$ blocks, projects have their \osrank{} calculated, and a
+        token reward is calculated for each, in proportion to their rank.
+    \item The rewards are sent to the given projects.
+    \item Projects are able to use the funds how they see fit. \emph{Smart
+        contracts} are used as a means for distribution of tokens from within a
+        project, to its constituent members or contributors.
+\end{itemize}
 
 \subsection{The \oscoin{} Blockchain}
 
@@ -62,18 +76,6 @@ $B_0$ being the genesis block.
 \end{figure*}
 
 \subsection{Monetary Policy}
-
-\begin{itemize}
-    \item Maintainers and contributors collaborate around software projects
-        registered on the network.
-    \item Maintainers specify what other projects their projects depend on.
-    \item Every $n$ blocks, projects have their \osrank{} calculated, and a
-        token reward is calculated for each, in proportion to their rank.
-    \item The rewards are sent to the given projects.
-    \item Projects are able to use the funds how they see fit. \emph{Smart
-        contracts} are used as a means for distribution of tokens from within a
-        project, to its constituent members or contributors.
-\end{itemize}
 
 Each block, the protocol is allowed to mint a certain amount $B_r$ of \oscoin{}
 (the ``block reward''), as part of what we call the \emph{coinbase}
