@@ -1,6 +1,12 @@
 \section{\osrank{}}
 
 \def\Graph{\mathsf{Graph}}
+\def\proj{\mathsf{proj}}
+\def\user{\mathsf{user}}
+\def\dep{\mathsf{dep}}
+\def\own{\mathsf{own}}
+\def\contrib{\mathsf{contrib}}
+\def\cocontrib{\mathsf{contrib}^\circ}
 
 One of the fundamental mechanisms of \oscoin{} is to distribute a
 portion of newly minted tokens to high-value projects on the
@@ -62,10 +68,34 @@ We summarise this by the following weighted directed graph $G$, the
 weights corresponding to the relative importance of the activity,
 tweaked by our own judgement and informed by simulations we have run.
 
-% TODO: insert graph here
-% U -[contribute]-> P
-% U -[owns]-> P
-% P -[depends]-> P
+\begin{tikzpicture}[vertex/.style={draw,circle}, arr/.style={draw,thick,->}]
+  \node[vertex] (p) at (2,0) {$\proj$};
+  \node[vertex] (u) at (-2,0) {$\user$};
+
+  \draw[arr,looseness=10] (p) to[out=55,in=125] node[above] {$\dep$} (p);
+  \draw[arr] (p) to[out=155,in=25] node[above] {$\own$} (u);
+  \draw[arr] (p) to[out=205,in=-25] node[above] {$\contrib$} (u);
+  \draw[arr] (u) to[out=-45,in=225] node[below] {$\cocontrib$} (p);
+\end{tikzpicture}
+
+We are using the following weights:
+\begin{center}
+  \begin{tabular}{ll}
+  edge & weight \\
+  \hline
+  $\dep$ & 1 \\
+  $\own$ & 1 \\
+  $\contrib$ & 0.5 \\
+  $\cocontrib$ & 0.2
+  \end{tabular}
+\end{center}
+
+Note that contributions are counted as a bidirectional flow: a
+contribution of a user to a project, $\contrib$, indicates that a user
+has added value to a project. The flow in the opposite direction,
+$\cocontrib$, is taken as an indication that the project is valuable
+to the user: users are likely to contribute to projects they find
+valuable.
 
 % TODO: include similations data.
 
