@@ -5,8 +5,8 @@
 Users are identified by public keys. Adding a user is done using the
 \[
     \tx{registeruser}{U}
-\]
-transaction, which must be signed by $U$.
+  \]
+transaction, where $U$ is a public key, which must be signed by $U$.
 
 \subsection{Projects}
 \label{s:projects}
@@ -64,12 +64,14 @@ source code change regularly. This means the project hash $P_h$ will quickly
 become out of sync with the project's latest state and will need updating. This
 is done via the
 \[
-    \tx{checkpoint}{P_a, P_h', s, c}
+    \tx{checkpoint}{P_a, P_h', s, C^*, D^*}
 \]
 % TODO: what is the use of s?
 transaction, where $P_h'$ is the new project hash, $s$ is the URL to
 retrieve the source code from, and $C^*$ is hash-linked-list of
-\emph{contributions}, which are tuples:
+\emph{contributions}, and $D^*$ is a list of \emph{dependency updates}.
+
+Contributions are tuples:
 \[
    \tuple{\field{C}{prev}, \field{C}{commit}, \field{C}{author}, \field{C}{signoff}}
 \]
@@ -107,39 +109,37 @@ dependency), if all the users involved in all the contributions (or at
 least the signoffs) have a relatively high trust score, according to
 his trust-network.
 
-\subsection{Dependencies}\label{s:dependencies}
-Conceptually, a project $P^1$ depends on a project $P^2$ if it is an
-``input'' to $P^1$ in some way: $P^1$ references $P^2$ or parts of
-$P^2$ in its source code, or $P^2$ is a build/dev/test dependency,
+\label{s:dependencies}
+Conceptually, a project $P$ depends on a project $P'$ if it is an
+``input'' to $P$ in some way: $P$ references $P'$ or parts of
+$P'$ in its source code, or $P'$ is a build/dev/test dependency,
 etc. For example if a project used the purely functional package
 manager \emph{Nix} (see~\cite{nix}), then the dependencies declared on
 \oscoin{} should probably map one to one with the Nix
 dependencies. Dependencies are an important input to the \osrank{}
 metric.
 
-Dependencies are recorded on the ledger with the
+The dependencies updates list $D^*$ is a list of \emph{dependency
+  updates}, which are one of
 \[
-    \tx{depend}{P^1_a, P^2_a, n}
+    \depend(P'_a, n) \quad \text{or} \quad \undepend(P'_a, n)
 \]
-transaction, which refers to $P^2$'s $n$th checkpoint ($0$-indexed
-from the first checkpoint). A project may only depend on a particular
-version, and only one version at a
-time. % TODO: is this too much of a restriction?
-Such a transaction must be signed by a project owner. This transaction
-signals a variety of things (partly dependent of the nature of the
-project):
-\begin{itemize}
-\item they have verified that $P^1$ indeed depends on this specific
-  version of $P^2$,
-\item that $P^2$ is suitable as a dependency for $P^1$, \eg{} if $P^1$
-  has very high security requirements, that $P^2$ fulfils these.
-\end{itemize}
+which refers to the $n$th checkpoint of a project $P'$ ($0$-indexed
+from the first checkpoint). The $\depend$ update adds a new dependency
+while the $\undepend$ update removes a dependency. The updates are
+processed in order with $\depend$ only being valid if it adds a
+dependency that the project doesn't already depend on and $\undepend$
+only being valid for current dependencies. The checkpoint is invalid
+if the update list contains duplicates.
 
-Dependencies are removed with the
-\[
-    \tx{undepend}{P^1_a, P^2_a}
-\]
-transaction, which must be signed by a project owner.
+As a project owner, adding a dependency signals a variety of things
+(partly dependent of the nature of the project):
+\begin{itemize}
+\item they have verified that $P$ indeed depends on this specific
+  version of $P'$,
+\item that $P'$ is suitable as a dependency for $P$, \eg{} if $P$ has
+  very high security requirements, that $P'$ fulfils these.
+\end{itemize}
 
 % TODO: talk about how the web-of-trust parallel system can assign
 % trust scores to individual dependency txs, which means that a user
