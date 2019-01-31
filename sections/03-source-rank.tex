@@ -89,8 +89,8 @@ We are using the following weights:
   $\dep$ & $1.0$ \\
   $\own$ & $1.0$ \\
   $\coown$ & $0.7$\\
-  $\contrib$ & $0.3$ \\
-  $\cocontrib$ & $0.2$
+  $\contrib$ & $0.02$ \\
+  $\cocontrib$ & $0.01$
   \end{tabular}
 \end{center}
 
@@ -104,25 +104,27 @@ opposite direction represents the statement \emph{``the project is
 that users are unlikely to invest time contributing to a project they
 don't find useful.
 
+The main reason the weights of $\contrib$ and $\cocontrib$ are so low in comparison to the other weights is because these relationships are much more numerous in $\netgraph$.
+
 % TODO: include similations data.
 
 The \oscoin{} network proposes to record these artefacts as
 transactions in a blockchain, so that one may unambiguously rebuild
-(and reach consensus on) a finite directed graph $X$ over $G$ (\ie{}
-in the slice category $\Graph/G$). We'll refer to $X$ as the
-\emph{network graph}.
+(and reach consensus on) a finite directed graph $\netgraph$ over $G$
+(\ie{} in the slice category $\Graph/G$). We'll refer to $\netgraph$
+as the \emph{network graph}.
 
 This in turn allows global value scores to be assigned to entities
 according to a specific stochastic process simulating \emph{random
-  walks}, that is, activity traces in $X$ with sampling probabilities
-taken from $G$. For example: a contributor decides to work on a high
-value project (probably at the border), contributes a PR, in so doing
-adds a dependency to another project, which imports a bug from
-upstream. The contributor therefore switches to fixing said bug in the
-dependency, etc. Much like a simulation of a human searching for
-information by clicking through links, this simulated contributor
-activity informs us on the value flows between subsystems in OSS
-development.
+  walks}, that is, activity traces in $\netgraph$ with sampling
+probabilities taken from $G$. For example: a contributor decides to
+work on a high value project (probably at the border), contributes a
+PR, in so doing adds a dependency to another project, which imports a
+bug from upstream. The contributor therefore switches to fixing said
+bug in the dependency, etc. Much like a simulation of a human
+searching for information by clicking through links, this simulated
+contributor activity informs us on the value flows between subsystems
+in OSS development.
 
 This score, which we call \osrank{}, is used to weight the
 distribution of newly minted tokens to high value entities, thus
@@ -159,10 +161,10 @@ For this we propose running \osrank{} in two distinct phases:
   are not used directly by the compensation mechanism. Instead a
   threashold $t$ is used to determine the legitimacy of entities: any
   entity falling below this threshold is not considered for the next
-  phase. One obtains a subgraph of the network graph $X_t$.
-\item In the seconds phase, the algorithm is ran on the subgraph $X_t$
-  as usual, with no seed set. The output of the second phase is the
-  \osrank{}.
+  phase. One obtains a subgraph of the network graph $\netgraph_t$.
+\item In the seconds phase, the algorithm is ran on the subgraph
+  $\netgraph_t$ as usual, with no seed set. The output of the second
+  phase is the \osrank{}.
 \end{itemize}
 
 % TODO: remove the term governance.

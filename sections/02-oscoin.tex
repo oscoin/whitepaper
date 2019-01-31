@@ -1,4 +1,4 @@
-\section{The Oscoin Network}
+\section{The \oscoin{} Network}
 
 % Objectives
 % ==========
@@ -16,21 +16,24 @@ designed to provide a solution to the open source sustainability problem (\S
 The \oscoin{} network is a public network of computers operating a distributed
 consensus protocol around a transaction ledger.
 
-This ledger is materialized into a shared state $\state$ which contains the
-canonical registry $\mathcal{R}$ of all open source projects participating in
-the \oscoin{} protocol; a set of accounts $\mathcal{A}$, containing the
-balances of all currency holders; and finally a  dependency graph
-$\mathcal{D}$, of all dependencies between registered projects.
+This ledger is materialized into a shared state $\state$ which
+contains the canonical registry $\mathcal{R}$ of all open source
+projects participating in the \oscoin{} protocol; a set of accounts
+$\mathcal{A}$, containing the balances of all currency holders; and
+finally a network graph $\netgraph$, of relevant relations between
+entities in the network, including in particular dependencies between
+registered projects.
 
-The purpose of this network is to secure a digital currency -- \oscoin{} -- and
-its monetary policy which rewards the most valued open source projects in the
-network, without the need for intermediaries or central control.
+The purpose of this network is to secure a digital
+currency---\oscoin{}---and its monetary policy which rewards the most
+valued open source projects in the network, without the need for
+intermediaries or central control.
 
-\subsection{The Oscoin Blockchain}
+\subsection{The \oscoin{} Blockchain}
 
 The \oscoin{} network is composed of a set of nodes, or \emph{replicas}, which
 execute a distributed protocol. Together, these nodes form a \emph{Replicated
-State Machine} with a set of states $\state^*$, a transition function $\apply$,
+State Machine} with a set of states $\state$, a transition function $\apply$,
 a starting state $\state_0$ or ``genesis'', a set of inputs $B_0 \dotso B_n$,
 and a set of outputs.
 
@@ -56,7 +59,7 @@ $B_0$ being the genesis block.
     \item Maintainers and contributors collaborate around software projects
         registered on the network.
     \item Maintainers specify what other projects their projects depend on.
-    \item Every $n$ blocks, projects have their $SrcRank$ calculated, and a
+    \item Every $n$ blocks, projects have their \osrank{} calculated, and a
         token reward is calculated for each, in proportion to their rank.
     \item The rewards are sent to the given projects.
     \item Projects are able to use the funds how they see fit. \emph{Smart
@@ -78,7 +81,8 @@ projects on the network.
 The goal is to choose a distribution mechanism that benefits the network as a
 whole, while needing the least amount of maintenance.
 
-For this, we turn to the software dependency graph.
+For this, we turn to the network graph $\netgraph$, which includes in
+particular the graph of dependencies between projects.
 
 Each project registered in the network is required to specify which other
 projects it depends on. For example, a web framework might depend on an HTTP
@@ -86,17 +90,16 @@ library, and that HTTP library might depend on an OpenSSL implementation.
 
 Registering a project requires a small deposit. This is to prevent the ledger
 from being filled with abandonned projects, and because projects can influence
-reward distribution through the dependency graph. We make Sybil attacks and
-spam costly to the attackers this way.
+reward distribution through the dependency graph. This also makes  Sybil attacks and spam costly to attackers.
 
 Still, it's possible that project maintainers act dishonnestly, by lying about
 their dependencies. We propose a way to mitigate this in \S \ref{srcrank}.
 
 \subsubsection{Algorithm} Let $T$ be the amount of \oscoin{} to be distributed to
-$N$ project severy epoch $e$. The amount $T_P$ distributed to a given project
-$P_n$ is in proportion to its $SrcRank$. SrcRank, described in \S \ref{srcrank}
+$N$ project every epoch. The amount $T_P$ distributed to a given project
+$P_n$ is in proportion to its \osrank{}. \osrank{}, described in \S \ref{srcrank}
 is a centrality measure that assigns a weight $P_w$ to each project by following
-links in the dependency graph $D$.
+links in the network graph $\netgraph$.
 
 The amount of tokens received every epoch by $P_n$ is thus $T_P / P_w$, with
 a minimum threshold, under which the project doesn't receive anything. This
@@ -110,7 +113,7 @@ This is amplified for highly-weighted projects in the graph.
 
 The model we described distributes tokens on a continuous basis to the projects
 most valued by the network. It does so by periodically minting new \oscoin{}
-that it distributes according to the SrcRank metric. At scale, this has the
+that it distributes according to the \osrank{} metric. At scale, this has the
 potential to solve many of the issues with open source monetization and
 sustainability, as software projects receive income in the form of \oscoin{}
 by giving away their work for free.
