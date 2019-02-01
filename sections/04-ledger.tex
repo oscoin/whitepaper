@@ -1,12 +1,19 @@
-\section{The \oscoin{} Ledger}
+\section{The Oscoin Ledger}
+\label{s:ledger}
 
-\subsection{Users}
+\subsubsection{Supply}
 
-Users are identified by public keys. Adding a user is done using the
-\[
-    \tx{registeruser}{U}
-  \]
-transaction, where $U$ is a public key, which must be signed by $U$.
+The supply of \oscoin{} is subject to an inflation $\protocol_{\iota} \in
+\mathbb{N}$, carried out by the protocol every epoch $e$, and determined by a
+logarithmic function $f : e \to e_{\iota}$, such that $\lim_{e \to \infty} f(e)
+= 0$.
+
+\subsubsection{Accounts}
+\label{s:accounts}
+
+Currency is held in \emph{accounts} which can be unlocked by the signature of
+the account holder. Accounts have addresses which are used to send and receive
+\oscoin{}. The set of all accounts is known as $\mathcal{A}$.
 
 \subsection{Projects}
 \label{s:projects}
