@@ -70,32 +70,21 @@ weights corresponding to the relative importance of the activity, tweaked by
 our own judgement and informed by simulations we have run.
 
 \begin{center}
-\begin{tikzpicture}[vertex/.style={draw,circle}, arr/.style={draw,thick,-latex}]
-  \node[vertex] (p) at (2,0) {$\proj$};
-  \node[vertex] (u) at (-2,0) {$\user$};
+\begin{tikzpicture}[vertex/.style={draw,circle}, arr/.style={draw,thick,->}]
+  \node[vertex] (p) at (2,0)  {\small $\proj$};
+  \node[vertex] (u) at (-2,0) {\small $\user$};
 
-  \draw[arr,looseness=10] (p) to[out=55,in=125] node[above] {$\dep$} (p);
-  \draw[arr] (p) to[out=165,in=15] node[above] {$\own$} (u);
-  \draw[arr] (u) to[out=45,in=-225] node[above] {$\coown$} (p);
-  \draw[arr] (p) to[out=195,in=-15] node[above] {$\contrib$} (u);
-  \draw[arr] (u) to[out=-35,in=215] node[below] {$\cocontrib$} (p);
+  \draw[arr,looseness=9] (p) to[out=95,in=25] node[above] {\small $\dep \ (4/7)$} (p);
+  \draw[arr] (p) to[out=165,in=15] node[above]   {\small $\own \ (2/7)$} (u);
+  \draw[arr] (u) to[out=55,in=125] node[above]   {\small $\coown \ (3/5)$} (p);
+  \draw[arr] (p) to[out=195,in=-15] node[below]  {\small $\contrib \ (1/7)$} (u);
+  \draw[arr] (u) to[out=-55,in=-125] node[below] {\small $\cocontrib \ (2/5)$} (p);
 \end{tikzpicture}
 \captionof{figure}{Network Graph $G$}
 \label{fig:G}
 \end{center}
 
-We are using the following weights:
-\begin{center}
-  \begin{tabular}{lr}
-  edge & weight \\
-  \hline
-  $\dep$ & $1.0$ \\
-  $\own$ & $1.0$ \\
-  $\coown$ & $0.7$\\
-  $\contrib$ & $0.02$ \\
-  $\cocontrib$ & $0.01$
-  \end{tabular}
-\end{center}
+The weights on all edges outgoing from a vertex sum to $1$.
 
 Note that some of the edges are biderectional, but each direction gets
 it's own weight. For example both $\contrib$ and $\cocontrib$ point to
@@ -106,10 +95,6 @@ opposite direction represents the statement \emph{``the project is
   valuable to the user''}; the rationale for this less obvious flow is
 that users are unlikely to invest time contributing to a project they
 don't find useful.
-
-The main reason the weights of $\contrib$ and $\cocontrib$ are so low in
-comparison to the other weights is because these relationships are much more
-numerous in $\netgraph$.
 
 % TODO: include similations data.
 
