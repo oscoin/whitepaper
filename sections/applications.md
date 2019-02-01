@@ -1,0 +1,18 @@
+5. Applications and future work
+
+The oscoin platform is a domain specific blockchain / platform that has the potential to enable novel applications for open source software communities. In comparison to a general purpose computer like Ethereum, Oscoin provides primitives focused towards code collaboration (see section 4) and enables developers to combine them in flexible ways. 
+
+While it’s hard to describe all the possible ways that oscoin might be used, we believe that the following categories of applications benefit from oscoin’s ledger architecture. Specifically:
+
+1. Governance & collective decision making apps
+2. Trust minimization apps for software development processes
+3. Incentivization apps
+
+In the first category, we believe that developers could leverage oscoin’s ability to enumerate maintainers, contributors, dependents and supporters of an open source project in order to create decentralized autonomous organizations (DAOs) around open source software projects. Combining the above with the described financial support of SrcRank (see section 3), developers will have the ability to design smart contracts that aim to align interests between all network participants of an open source project and incentivize further participation. In addition, smart contracts can be used within these organizations in order to coordinate around other contentious decisions, using a diverse set of decision making modules.
+
+The second category of apps, leverages the availability of source code histories on chain, in order to imagine new software development processes that minimize trust between network participants. Rather than relying on the weak trust model of existing centralized hosting providers, oscoin can be used to create powerful continuous integration pipelines that use cryptography in order to ensure that every merge commit can be trusted.
+
+Finally, the last category of apps we envision is the one related with developer incentives. The experiences we imagine, include applications that a) expose paid work within the oscoin network, b) allow users to specify bounties with a flexible set of agreed reviewers, c) describe and enforce service level agreements between projects and their dependents, d) issue collectibles and non fungible tokens unique to each software development community and e) help creators crowdfund their efforts through a unique set of interactions between their patrons and them.
+
+[Need to add future work]
+
