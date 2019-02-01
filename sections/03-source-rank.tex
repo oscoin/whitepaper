@@ -65,11 +65,12 @@ are:
   \item Contributions of PRs from users to projects.
 \end{itemize}
 
-We summarise this by the following weighted directed graph $G$, the
-weights corresponding to the relative importance of the activity,
-tweaked by our own judgement and informed by simulations we have run.
+We summarise this by the weighted directed graph $G$ (Figure~\ref{fig:G}), the
+weights corresponding to the relative importance of the activity, tweaked by
+our own judgement and informed by simulations we have run.
 
-\begin{tikzpicture}[vertex/.style={draw,circle}, arr/.style={draw,thick,->}]
+\begin{center}
+\begin{tikzpicture}[vertex/.style={draw,circle}, arr/.style={draw,thick,-latex}]
   \node[vertex] (p) at (2,0) {$\proj$};
   \node[vertex] (u) at (-2,0) {$\user$};
 
@@ -79,6 +80,9 @@ tweaked by our own judgement and informed by simulations we have run.
   \draw[arr] (p) to[out=195,in=-15] node[above] {$\contrib$} (u);
   \draw[arr] (u) to[out=-35,in=215] node[below] {$\cocontrib$} (p);
 \end{tikzpicture}
+\captionof{figure}{Network Graph $G$}
+\label{fig:G}
+\end{center}
 
 We are using the following weights:
 \begin{center}
@@ -103,7 +107,9 @@ opposite direction represents the statement \emph{``the project is
 that users are unlikely to invest time contributing to a project they
 don't find useful.
 
-The main reason the weights of $\contrib$ and $\cocontrib$ are so low in comparison to the other weights is because these relationships are much more numerous in $\netgraph$.
+The main reason the weights of $\contrib$ and $\cocontrib$ are so low in
+comparison to the other weights is because these relationships are much more
+numerous in $\netgraph$.
 
 % TODO: include similations data.
 
