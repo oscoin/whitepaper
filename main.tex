@@ -1,4 +1,4 @@
-\documentclass[a4paper, oneside, 9pt, draft]{amsart}
+\documentclass[a4paper, oneside, 11pt, draft]{amsart}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -59,7 +59,7 @@
 
 \newenvironment{epigraph}[2][]
 {\leftskip=1cm \def\epigraph@author{#2} \smallskip\itshape}
-{\par\vspace{0.5em}\normalfont\hfill---\ \epigraph@author\hspace*{0.2cm}\par\medskip}
+{\par\vspace{0.5em}\normalfont\hfill---\ \Small\epigraph@author\hspace*{0.2cm}\par\medskip}
 \makeatother
 
 \setlist[description]{leftmargin=0.8cm, labelindent=\parindent}
@@ -67,9 +67,9 @@
 \setlist[enumerate]{leftmargin=0.8cm, labelindent=\parindent}
 
 \setlength{\textwidth}{\paperwidth}
-\addtolength{\textwidth}{-6cm}
+\addtolength{\textwidth}{-4cm}
 \setlength{\textheight}{\paperheight}
-\addtolength{\textheight}{-5cm}
+\addtolength{\textheight}{-4cm}
 
 \calclayout
 
@@ -80,27 +80,18 @@
 \date{2019}
 
 \begin{abstract}
-While cryptocurrencies introduced a solution to the problem of digital scarcity
-and enumeration, they have failed to create sustainable incentives for the
-developers that participate in them.
-
-In this paper we introduce a cryptocurrency that rewards and provisions
-open-source software, as well as a platform for establishing trust and
-transparency in open source communities.
+\small While cryptocurrencies introduced a solution to the problem of digital
+scarcity and enumeration, they have failed to create sustainable incentives for
+the developers that participate in them.  In this paper we introduce a
+cryptocurrency that rewards and provisions open-source software, as well as a
+platform for establishing trust and transparency in open source communities.
 \end{abstract}
 
 \maketitle
 
-\setlength{\columnsep}{20pt}
+\setlength{\columnsep}{1cm}
 \begin{multicols}{2}
 
-\begin{epigraph}{The Open-Source Everything Manifesto}
-    \noindent It is in this light that we must recognize that only a restoration of
-    open-source culture, and all that enables across the full spectrum of
-    open-source possibilities, can allow humanity to harness the distributed
-    intelligence of the collective and create the equivalent of heaven on Earth
-    -- in other words, a world that works for all.
-\end{epigraph}
 \medskip
 
 \input{sections/01-background.tex}
