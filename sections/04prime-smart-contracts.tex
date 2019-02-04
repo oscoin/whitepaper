@@ -1,0 +1,13 @@
+\section{Smart contracts}
+
+The \oscoin{} blockchain uses smart contracts as a way to distribute funds that
+a project has received.
+
+\begin{lstlisting}
+{:on-network-reward
+ (fn [proj reward]
+   (let [cs    (lookup :contributors p)
+         n     (length cs)
+         share (div reward n)]
+     (map (fn [c] [:transfer (lookup :address p) (lookup :address c) share]) cs)))}
+\end{lstlisting}
