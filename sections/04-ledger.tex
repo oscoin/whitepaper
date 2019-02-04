@@ -41,10 +41,10 @@ network. This can be done with the
 \[
     \tx{register}{P_a, P_s}
 \]
-transaction, singed by a user $U$ (who becomes a project owner). The
-transaction is valid as long as the address isn't already in use. Note
+transaction, signed by a key $U$ which must be used to update the project . The
+transaction is valid as long as the address $P_a$ isn't already in use. Note
 that the execution of this transaction locks a small \oscoin{} deposit
-from $U$'s wallet, to prevent abandoned projects from
+from the account associated with $U$, to prevent abandoned projects from
 accumulating. Once executed, the project is instantiated to
 $P = \tuple{P_a, P_h, P_s}$ with $P_h = \varnothing$.
 
