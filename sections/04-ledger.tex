@@ -39,7 +39,7 @@ is considered invalid.
 registered on the ledger before they can participate in the
 network. This can be done with the
 \[
-    \tx{registerproject}{P_a, P_s}
+    \tx{register}{P_a, P_s}
 \]
 transaction, singed by a user $U$ (who becomes a project owner). The
 transaction is valid as long as the address isn't already in use. Note
@@ -51,7 +51,7 @@ $P = \tuple{P_a, P_h, P_s}$ with $P_h = \varnothing$.
 After registration the project's \emph{owner set} is $\{U\}$, this can
 be extended with:
 \[
-    \tx{addowner}{U}
+    \tx{addkey}{U}
 \]
 where $U$ is an existing user not currently in the owner set.
 When a project is no longer in use, it is possible to unregister it from the
