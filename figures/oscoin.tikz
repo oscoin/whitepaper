@@ -18,7 +18,7 @@
     \tikzset{edge from parent/.style={draw, latex-}}
 
     \tikzstyle{thick-arrow} = [thick, -latex]
-    \tikzstyle{proj}        = [draw, double, fill=black!10, circle, minimum height=3em, minimum width=3em, node distance=2em];
+    \tikzstyle{proj-seed}   = [draw, double, fill=black!10, circle, minimum height=2em, minimum width=2em, node distance=2em];
     \tikzstyle{proj-s}      = [draw, fill=black!10, circle, minimum height=2em, minimum width=2em, node distance=2em];
     \tikzstyle{user-s}      = [draw, fill=black!4, circle, minimum height=2em, minimum width=2em, node distance=2em];
     \tikzstyle{miner}       = [draw, fill=black!10, circle, minimum height=2em, minimum width=2em, node distance=2em];
@@ -52,11 +52,11 @@
     \node[process] (osrank) [below=of proj-a-group-1] {\osrank{}};
 
     %
-    % Trusted seed projects
+    % Seed set projects
     %
-    \node[proj] (trusted-1)  [right=2cm of osrank]    {\small{$P^1_t$}};
-    \node[proj] (trusted-2)  [right=of trusted-1]     {\small{$P^2_t$}};
-    \node[proj] (trusted-3)  [right=of trusted-2]     {\small{$P^3_t$}};
+    \node[proj-seed] (trusted-1)  [right=2cm of osrank]    {\small{$P^1_t$}};
+    \node[proj-seed] (trusted-2)  [right=of trusted-1]     {\small{$P^2_t$}};
+    \node[proj-seed] (trusted-3)  [right=of trusted-2]     {\small{$P^3_t$}};
 
     \begin{scope}[on background layer]
         \node [proj-group, label={Seed Set ($\seedset$)},
