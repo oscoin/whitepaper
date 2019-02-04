@@ -37,7 +37,7 @@ entities interact with one another in meaningful ways that are highly
 influenced by the relative value each entity has with respect to the
 system as a whole. Crucially, during this activity, a trail of
 \emph{artefacts} (hypermedia links, contracts, transactions,
-dependencies, pull-requests etc.) is produced; concrete manifestations
+dependencies etc.) is produced; concrete manifestations
 of the relationships between the various entities.
 
 The basic insight of \pagerank{} and similar metrics, is that by
@@ -54,10 +54,12 @@ the next link at random, and this is what produces the classic
 \pagerank{} formula which has seen so much success at ranking web
 pages.
 
+\subsection{Ranking entities in \oscoin{}}
+
 The artefacts related to OSS development which are captured on the \oscoin{}
 ledger are:
 \begin{itemize}
-  \item Ownership of a project by a user,
+  \item Ownership of a project by a key,
   \item Dependencies between projects,
   \item Contributions of code from users to projects.
 \end{itemize}
@@ -67,16 +69,16 @@ ledger are:
   \node[vertex] (p) at (2,0)  {\small $\proj$};
   \node[vertex] (u) at (-2,0) {\small $\user$};
 
-  \draw[arr,looseness=9] (p) to[out=95,in=25] node[above] {\small $\dep \ (4/7)$} (p);
-  \draw[arr] (p) to[out=165,in=15] node[above]   {\small $\own \ (2/7)$} (u);
-  \draw[arr] (u) to[out=55,in=125] node[above]   {\small $\coown \ (3/5)$} (p);
-  \draw[arr] (p) to[out=195,in=-15] node[below]  {\small $\contrib \ (1/7)$} (u);
-  \draw[arr] (u) to[out=-55,in=-125] node[below] {\small $\cocontrib \ (2/5)$} (p);
+  \draw[arr,looseness=9] (p) to[out=95,in=25] node[above] {\small $\dep \ (\frac{4}{7})$} (p);
+  \draw[arr] (p) to[out=165,in=15] node[above]   {\small $\own \ (\frac{2}{7})$} (u);
+  \draw[arr] (u) to[out=55,in=125] node[above]   {\small $\coown \ (\frac{3}{5})$} (p);
+  \draw[arr] (p) to[out=195,in=-15] node[below]  {\small $\contrib \ (\frac{1}{7})$} (u);
+  \draw[arr] (u) to[out=-55,in=-125] node[below] {\small $\cocontrib \ (\frac{2}{5})$} (p);
 \end{tikzpicture}
 \captionof{figure}{\small Entity relations in open source software development. \label{fig:G}}
 \end{center}
 
-We summarise this these interactions with a weighted directed graph $G$
+We summarise these interactions with a weighted directed graph $G$
 (Figure~\ref{fig:G}), the weights corresponding to the relative importance of
 the edge, tweaked by our own judgement and informed by simulations we have
 run.
@@ -86,12 +88,12 @@ run.
 The weights on all edges outgoing from a vertex sum to $1$.
 
 Note that some of the edges are biderectional, but each direction gets
-it's own weight. For example both $\contrib$ and $\cocontrib$ point to
+its own weight. For example both $\contrib$ and $\cocontrib$ pertain to
 the same artefact: a contribution of code from a user to a
-project. The edge $\contrib$ represents the statement \emph{``the user
-  is valuable to the project''}. The edge $\cocontrib$ going in the
-opposite direction represents the statement \emph{``the project is
-  valuable to the user''}; the rationale for this less obvious flow is
+project. The edge $\contrib$ represents the statement \emph{the user
+  is valuable to the project}. The edge $\cocontrib$ going in the
+opposite direction represents the statement \emph{the project is
+  valuable to the user}; the rationale for this less obvious flow is
 that users are unlikely to invest time contributing to a project they
 don't find useful.
 
@@ -99,7 +101,7 @@ don't find useful.
 
 The \oscoin{} network proposes to record these artefacts as
 transactions in a blockchain, so that one may unambiguously rebuild
-(and reach consensus on) a finite directed graph $\netgraph$ over $G$
+and reach consensus on a finite directed graph $\netgraph$ over $G$
 (\ie{} in the slice category $\Graph/G$). We'll refer to $\netgraph$
 as the \emph{network graph}.
 
@@ -108,12 +110,13 @@ according to a specific stochastic process simulating \emph{random
   walks}, that is, activity traces in $\netgraph$ with sampling
 probabilities taken from $G$. For example: a contributor decides to
 work on a high value project (probably at the border), contributes a
-PR, in so doing adds a dependency to another project, which imports a
+changeset, in so doing adds a dependency to another project, which imports a
 bug from upstream. The contributor therefore switches to fixing said
 bug in the dependency, etc. Much like a simulation of a human
 searching for information by clicking through links, this simulated
 contributor activity informs us on the value flows between subsystems
 in OSS development.
+% TODO: I think the above example mixes too many value flows.
 
 This score, which we call \osrank{}, is used to weight the
 distribution of newly minted tokens to high value entities, thus
@@ -121,20 +124,21 @@ compensating entities which bring value to the ecosystem.
 
 \subsection{Definition}
 
-More specifically we use the following Monte Carlo-based algorithm: for each
+To implement \osrank{}, we use the following Monte Carlo-based algorithm: for each
 project on the network, $R$ random walks are performed which start at that
 node. To decide which next vertex to visit during a random walk, first a type of
 outgoing edge is decided by sampling outgoing edges according to the weights in
-$G$. The next choice is the specific to the edge:
+$G$. The next choice is specific to the edge:
 
 \begin{itemize}
-\item In the cases of $\dep$, $\own$, all vertices are equiprobable.
+\item In the cases of $\dep$ and $\own$, all vertices are equiprobable.
 \item In the cases of $\coown$ and $\cocontrib$ the projects to choose from are
   weighted according to the number of contributions of the owner/user to these
   projects,
 \item In the case of $\contrib$, the users are weighted by the number of
   contributions they have made to $P$.
 \end{itemize}
+% TODO: ^ Should it be "proportion of total contributions"?
 
 At each step the walk might terminate with probability $1 - \epsilon$, (here
 $\epsilon$ is the \emph{damping factor}, $0 < \epsilon < 1$). This produces a
@@ -147,8 +151,10 @@ where $W_x$ is the number of visits of $x$, over all walks, that is:
 W_x = \sum_{w \in W} v(w,x)
 \]
 where $v(w,x)$ is the number of times path $w$ visits the vertex $x$.
+% TODO: ^ Rephrase
 
 \subsection{Fake ecosystems}
+% TODO: Better name for "Fake"
 
 The main problem to avoid is compensating fake ecosystems, that is,
 project structures and relationships which have been setup in the
@@ -156,29 +162,33 @@ network graph for the sole purpose of gaming the \osrank{} algorithm.
 
 For this we propose running \osrank{} in two distinct phases:
 \begin{itemize}
-\item In the first phase, a seed set $S$ is used as the for the
+\item In the first phase, a seed set $\seedset$ is used as the [TODO] for the
   beginning of all walks. Specifically, a random walk always starts at
-  a vertex in $S$. Otherwise the process remains the same. The scores
+  a vertex in $\seedset$. Otherwise the process remains the same. The scores
   obtained are biased towards interactions with the seed set, but they
   are not used directly by the compensation mechanism. Instead a
   threashold $t$ is used to determine the legitimacy of entities: any
   entity falling below this threshold is not considered for the next
-  phase. One obtains a subgraph of the network graph $\netgraph_t$.
-\item In the seconds phase, the algorithm is ran on the subgraph
+  phase. The output of this phase is a subgraph $\netgraph_t$ of the network
+  graph.
+  % TODO: Use of words: "entity" or "vertex"?
+\item In the second phase, the algorithm is ran on the subgraph
   $\netgraph_t$ as usual, with no seed set. The output of the second
   phase is the \osrank{}.
 \end{itemize}
 
 % TODO: remove the term governance.
-We propose that the seed set be maintained by an on-chain governance
-system, aiming to choose high-value user-facing projects,
-e.g. Firefox, Debian, VLC, etc. Care must be taken to ensure the seed
-set is large enough to touch most legitimate projects on the network.
+We propose that the seed set be maintained by an on-chain governance system,
+aiming to choose high-value user-facing projects, e.g. Firefox, Debian, VLC,
+etc. Naturally these projects must be open source.  Care must be taken to
+ensure the seed set is large enough to touch most legitimate projects on the
+network.
 
 \subsection{Implementation}
 
 There are several options for making sure the computation of \osrank{}
-will not be prohibitively expensive for operators to run.
+will not be prohibitively expensive for network operators to run.
+% TODO: Has "operators" been defined?
 
 \begin{itemize}
 \item \emph{Incremental Monte Carlo.} An incremental algorithm is used
@@ -190,8 +200,9 @@ will not be prohibitively expensive for operators to run.
   platforms). Therefore most of the random walks that were performed
   in the previous calculation remain valid in the updated graph. For
   example if only a single dependency $x \to y$ has been added, then a
-  walk is invalid only if passes through $x$, for it may have chosen
+  walk is invalid only if it passes through $x$, for it may have chosen
   to follow this new dependency.
+  % TODO: I don't understand the last sentence
 
   In practice the operators of the network cache the set of random
   walks from the previous calculation, and update this set by removing
@@ -211,7 +222,7 @@ will not be prohibitively expensive for operators to run.
   between \emph{payout} blocks (e.g.\ once every month). In this case
   abusers might modify network structures of several projects in
   anticipation of the payout block. To mitigate this, some edges are
-  weighted by the amount of time it has existed in the last epoch. For
+  weighted by the amount of time they have existed in the last epoch. For
   example, if a dependency is added a day before the payout block,
-  then it only has a wight proportional to $1/d$.
+  then it only has a weight proportional to $1/d$.
 \end{itemize}
