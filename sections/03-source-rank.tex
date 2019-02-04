@@ -10,28 +10,25 @@
 \def\contrib{\mathsf{contrib}}
 \def\cocontrib{\mathsf{contrib}^\circ}
 
-One of the fundamental mechanisms of \oscoin{} is to distribute a
-portion of newly minted tokens to high-value projects on the
-network. For this we need concensus on which projects are ``high
-value''.  To choose which projects receive compensation, and in which
-proportions, the network uses \osrank{}, which is a modification of
-the well-know \pagerank{} algorithm~\cite{pagerank} applied to the
-graph of relationships between projects on the network, for example
-\emph{dependencies}. The output of the algorithm is a score associated
-to each project. Newly minted tokens are then distributed to projects
-proportionally to their score.
+Since one of the fundamental mechanisms of \oscoin{} is to distribute a portion
+of newly minted tokens to high-value projects on the network, the protocol needs
+to reach consensus on which projects are ``high value''. To choose which
+projects receive compensation, and in which proportions, the network uses
+\osrank{}, which is a modification of the well-know \pagerank{}
+algorithm~\cite{pagerank} applied to the graph of relationships between projects
+on the network, and in particular \emph{dependencies} between projects. The
+output of the algorithm is a score $\omega(P)$ associated to each project
+$P$.
 
 \subsection{Rationale}
 
-There are many systems in which value is produced. However, while it
-may be clear that value is being produced by the system as a whole, it
-is often unclear what value particular subsystems are
-contributing. Furthermore, subsystems have inherently differing
-capacities to transform value into revenue: subsystems at the
-boundaries with other domains are at an advantage, even though they
-may (transitively) derive much of their value from other
-subsystems. This disbalance in value flows in and out of subsystems is
-detrimental to the system as a whole.
+While it may be clear that value is being produced by a system as a whole, it is
+often unclear how much value particular subsystems are
+contributing. Furthermore, subsystems have inherently differing capacities to
+transform value into revenue: subsystems at the boundaries with other domains
+are at an advantage, even though they may (transitively) derive much of their
+value from other subsystems. This disbalance in value flows in and out of
+subsystems is detrimental to the system as a whole.
 
 Thankfully, human activity does not happen in a void\footnote{Space
   exploration will be addressed in a subsequent paper.}: be it
@@ -57,17 +54,20 @@ the next link at random, and this is what produces the classic
 \pagerank{} formula which has seen so much success at ranking web
 pages.
 
-In the domain of open source software development, the main artefacts
-are:
+The artefacts related to OSS development which are captured on the \oscoin{}
+ledger are:
 \begin{itemize}
   \item Ownership of a project by a user,
   \item Dependencies between projects,
-  \item Contributions of PRs from users to projects.
+  \item Contributions of code from users to projects.
 \end{itemize}
 
-We summarise this by the weighted directed graph $G$ (Figure~\ref{fig:G}), the
-weights corresponding to the relative importance of the activity, tweaked by
-our own judgement and informed by simulations we have run.
+We summarise this these interactions with a weighted directed graph $G$
+(Figure~\ref{fig:G}), the weights corresponding to the relative importance of
+the edge, tweaked by our own judgement and informed by simulations we have
+run.
+
+% TODO: include simulations description and results here.
 
 \begin{center}
 \begin{tikzpicture}[vertex/.style={draw,circle}, arr/.style={draw,thick,->}]
@@ -80,7 +80,8 @@ our own judgement and informed by simulations we have run.
   \draw[arr] (p) to[out=195,in=-15] node[below]  {\small $\contrib \ (1/7)$} (u);
   \draw[arr] (u) to[out=-55,in=-125] node[below] {\small $\cocontrib \ (2/5)$} (p);
 \end{tikzpicture}
-\captionof{figure}{Network Graph $G$}
+\captionof{figure}{Graph or relations in between entities during OSS
+  development.}
 \label{fig:G}
 \end{center}
 

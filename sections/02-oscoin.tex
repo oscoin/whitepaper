@@ -17,6 +17,9 @@ designed to provide a solution to the open source sustainability problem (\S
 The \oscoin{} network is a public network of computers operating a distributed
 consensus protocol around a transaction ledger.
 
+% TODO: Move formalities and mathematical notation to after the 'overview';
+% i.e. make this lighter.
+
 This ledger is materialized into a shared state $\state$ which
 contains the canonical registry $\mathcal{R}$ of all open source
 projects participating in the \oscoin{} protocol; a set of accounts
@@ -38,6 +41,7 @@ network, without the need for intermediaries or central control.
     \item Every $n$ blocks, projects have their \osrank{} calculated, and a
         token reward is calculated for each, in proportion to their rank.
     \item The rewards are sent to the given projects.
+    % TODO: We need to talk about smart-contracts somewhere else in the paper.    
     \item Projects are able to use the funds how they see fit. \emph{Smart
         contracts} are used as a means for distribution of tokens from within a
         project, to its constituent members or contributors.
@@ -45,10 +49,14 @@ network, without the need for intermediaries or central control.
 
 \subsection{The Oscoin Blockchain}
 
+% TODO: Is the notation introduced here used anywhere else? At the moment the
+% 'transactions' section is rather loose. I think either we make the ledger
+% section more formal in terms of $\state$, etc. or we drop the notation here.
+
 The \oscoin{} network is composed of a set of nodes, or \emph{replicas}, which
 execute a distributed protocol. Together, these nodes form a \emph{Replicated
-State Machine} with a set of states $\state$, a transition function $\apply$,
-a starting state $\state_0$ or ``genesis'', a set of inputs $B_0 \dotso B_n$,
+  State Machine} with a set of states $\state$, a transition function $\apply$,
+a starting state $\state_0$ or ``genesis'', a set of inputs $B_0, \ldots, B_n$,
 and a set of outputs.
 
 To allow for the creation of a safe, open (``permissionless'') currency shared
@@ -62,7 +70,7 @@ it's important that reliable support for light clients be possible. The only
 family of blockchain protocols with these characteristics are the proof-of-work
 protocols. We thus settle on Nakamoto~\cite{bitcoin} consensus.
 
-The inputs $B_0 \dotso B_n$ to the state machine are therefore blocks, with
+The inputs $B_0, \ldots, B_n$ to the state machine are therefore blocks, with
 $B_0$ being the genesis block.
 
 % TODO: Hashing function?
@@ -98,23 +106,30 @@ Each project registered in the network is required to specify which other
 projects it depends on. For example, a web framework might depend on an HTTP
 library, and that HTTP library might depend on an OpenSSL implementation.
 
+% TODO: The following 2 paragraphs feel a bit to much like details in this
+% section: registration is covered in Ledger section, and dishonest deps should
+% be dealt with at length somewhere else.
 Registering a project requires a small deposit. This is to prevent the ledger
 from being filled with abandonned projects, and because projects can influence
 reward distribution through the dependency graph. This also makes Sybil attacks
 and spam costly to attackers.
 
 Still, it's possible that project maintainers act dishonnestly, by lying about
-their dependencies. We propose a way to mitigate this in \S \ref{srcrank}.
+their dependencies. We propose a way to mitigate this in \S \ref{s:osrank}.
 
-\subsubsection{Algorithm} Let $T$ be the amount of \oscoin{} to be distributed to
-$N$ project every epoch. The amount $T_P$ distributed to a given project
-$P_n$ is in proportion to its \osrank{}. \osrank{}, described in \S \ref{srcrank}
-is a centrality measure that assigns a weight $P_w$ to each project by following
-links in the network graph $\netgraph$.
+% TODO: 'epoch' is undefined at this point.
+\subsubsection{Algorithm} Let $T$ be the amount of \oscoin{} to be distributed
+to $N$ projects every epoch. The amount $T_P$ distributed to a given project $P$
+is in proportion to its \osrank{}. \osrank{}, described in \S \ref{s:osrank} is
+a centrality measure that assigns a weight $\omega(P)$ to each project by
+following links in the network graph $\netgraph$.
 
-The amount of tokens received every epoch by $P_n$ is thus $T_P / P_w$, with
-a minimum threshold, under which the project doesn't receive anything. This
-threshold prevents small attacks from succeeding, while also compressing the
+The amount of tokens received every epoch by $P$ is governed by the
+\emph{payment function} $\psi(T, \omega(P), \field{P}{stake})$, where
+$\field{P}{stake}$ is the amount of \oscoin{} that is staked behind a project by
+the community (see \S ref{s:staking}). The payment function takes into account a
+minimum threshold, under which the project doesn't receive anything. This
+threshold prevents small attacks from succeeding, while also concentrating the
 rewards.
 
 With this model, it’s the responsibility of a project to choose its
@@ -122,6 +137,7 @@ dependencies well and to maintain its stated dependencies up to date, since by
 depending on a project, it is casting a vote for that project to receive money.
 This is amplified for highly-weighted projects in the graph.
 
+% TODO: the first 2 sentences of this paragraph are a bit redundant.
 The model we described distributes tokens on a continuous basis to the projects
 most valued by the network. It does so by periodically minting new \oscoin{}
 that it distributes according to the \osrank{} metric. At scale, this has the
