@@ -1,19 +1,27 @@
 \section{The Oscoin Ledger}
 \label{s:ledger}
 
-\subsubsection{Supply}
+% TODO: Introduce the state and transactions.
+
+\subsection{Supply}
 
 The supply of \oscoin{} is subject to an inflation $\protocol_{\iota} \in
 \mathbb{N}$, carried out by the protocol every epoch $e$, and determined by a
 logarithmic function $f : e \to e_{\iota}$, such that $\lim_{e \to \infty} f(e)
 = 0$.
 
-\subsubsection{Accounts}
+\subsection{Accounts}
 \label{s:accounts}
 
 Currency is held in \emph{accounts} which can be unlocked by the signature of
 the account holder. Accounts have addresses which are used to send and receive
 \oscoin{}. The set of all accounts is known as $\mathcal{A}$.
+
+Accounts are created by sending \oscoin{} to them (Section \ref{s:sending}),
+and are removed from the ledger when their balance reaches zero.
+
+The account balance $A_b$ of an account $A$ is held in the state $\state$, and
+can be accessed with the account address $A_a$. Formally, $\state(A_a) \to A_b$.
 
 \subsection{Projects}
 \label{s:projects}
@@ -42,26 +50,29 @@ network. This can be done with the
 \[
     \tx{register}{P_a, P_s}
 \]
-transaction, signed by a key $k_1$ which must be used to update the project . The
-transaction is valid as long as the address $P_a$ isn't already in use. Note
-that the execution of this transaction locks a small \oscoin{} deposit
-from the account associated with $k_1$, to prevent abandoned projects from
-accumulating. Once executed, the project is instantiated to
-$P = \tuple{P_a, P_h, P_s}$ with $P_h = \varnothing$.
+transaction, signed by a key $k_1$ which must be used when updating the project
+at a later time. The transaction is valid as long as the address $P_a$ isn't
+already in use, and $P_s$ is a valid URL.
 
-The project's \emph{owner set} is $\{k_1\}$. This can be extended with:
+On successful execution, the transaction locks a small amount of \oscoin{} from
+the account associated with $k_1$. This helps ensures that abandonned projects
+don't clutter the ledger.  Once executed, the project is instantiated to $P =
+\tuple{P_a, P_h, P_s}$ with $P_h = \varnothing$.
+
+The project $P$'s current \emph{owner set} is $\{k_1\}$. This can be extended
+with:
 \[
-    \tx{addkey}{k_2}
+    \tx{addkey}{k}
 \]
-where $k_2$ is a valid key not present in the owner set.
+where $k$ is a valid key not present in the owner set.
 When a project is no longer in use, it is possible to unregister it from the
 ledger with
 \[
     \tx{unregister}{P_a},
 \]
-which must be signed by an owner (either $k_1$ or $k_2$ in the above example).
-Execution of this transaction returns the registration deposit to the user who
-originally registered the project.
+which must be signed by an owner ($k_1$ in the above example).
+Execution of this transaction returns the registration deposit to the account
+associated with the registration key.
 
 Projects registered on the ledger can be retrieved from the state $\state$ by
 using the project address, formally: $\state(P_a) \to P$.
@@ -155,7 +166,8 @@ As a project owner, adding a dependency signals a variety of things
 
 \def\posnat{\mathbb{N}_{\geq 1}}
 
-\subsection{Transfering Oscoin}
+\subsection{Sending \oscoin{}}
+\label{s:sending}
 
 Both users and projects are associated with an \oscoin{} balance.  The
 set of \emph{balance addresses} is the coproduct of user keys and
