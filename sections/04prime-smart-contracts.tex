@@ -1,10 +1,15 @@
-\section{Smart contracts}
+\section{Project smart contracts}
 
-The \oscoin{} blockchain uses smart contracts as a way to distribute funds that
-a project has received. These smart contracts are added with special
-transactions which modify the behaviour of a project. For example to control how
-funds from the core mechanism payouts are distributed, a project could use the
-following code:
+Since projects have no single key in control, transactions which transfer funds
+from the projects account can only originate from within a \emph{smart
+  contract}: a piece of code that is added to a project and which triggers when
+certain events arise. When a contributor decides to contribute code to a
+project, she may inspect the contracts currently in place (and what their
+guaranteed lifetimes are), so that she may be assured to be renumerated for her
+work.
+
+For example, the project owners may have added the following function to the
+$\mathsf{onReward}$ slot:
 
 \begin{lstlisting}
 (fn [proj reward]
@@ -12,7 +17,10 @@ following code:
         n     (length cs)
         share (div reward n)]
     (map (fn [c]
-           [:transfer (lookup :address p) (lookup :address c) share])
+           [:transfer
+            (lookup :address p)
+            (lookup :address c)
+            share])
          cs)))
 \end{lstlisting}
 
@@ -21,3 +29,25 @@ reward. The argument \texttt{proj} is a dictionary containing the project
 metadata, while \texttt{reward} is a natural number representing the amount of
 oscoin that was awarded to the project. The function must return a list
 transactions.
+
+The complete list of slots associated to a project are:
+\begin{itemize}
+\item On reward
+\item Check can modify handler
+\item On added dependency
+\item On contribution
+\item etc. % TODO: think about these
+\end{itemize}
+
+Each handler returns a list of project transactions.
+
+For the specifics of project transactions, see \S ref{s:ledger}.
+
+For the language, we will use a modification of \radicle{}, the language we have
+developped for P2P code collaboration. The main characteristics are:
+\begin{itemize}
+\item Lisp-like, with Clojure-like syntax,
+\item Deterministic,
+\item Reduction-counting, for charging execution of code against a projects
+  funds, and preventing unbounded computations.
+\end{itemize}
