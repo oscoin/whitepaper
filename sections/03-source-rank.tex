@@ -121,15 +121,28 @@ This score, which we call \osrank{}, is used to weight the
 distribution of newly minted tokens to high value entities, thus
 compensating entities which bring value to the ecosystem.
 
-More specifically we use the following Monte Carlo-based algorithm:
-for each project on the network, $R$ random walks are performed which
-start at that node and proceed by sampling outgoing edges, according
-to the weights declared in $G$. At each step the walk might terminate
-with probability $1 - \epsilon$, (here $\epsilon$ is the \emph{damping
-  factor}, $0 < \epsilon < 1$). This produces a set $W$ of walks. The
-\osrank{} for a project $x$ is then:
+\subsection{Definition}
+
+More specifically we use the following Monte Carlo-based algorithm: for each
+project on the network, $R$ random walks are performed which start at that
+node. To decide which next vertex to visit during a random walk, first a type of
+outgoing edge is decided by sampling outgoing edges according to the weights in
+$G$. The next choice is the specific to the edge:
+
+\begin{itemize}
+\item In the cases of $\dep$, $\own$, all vertices are equiprobable.
+\item In the cases of $\coown$ and $\cocontrib$ the projects to choose from are
+  weighted according to the number of contributions of the owner/user to these
+  projects,
+\item In the case of $\contrib$, the users are weighted by the number of
+  contributions they have made to $P$.
+\end{itemize}
+
+At each step the walk might terminate with probability $1 - \epsilon$, (here
+$\epsilon$ is the \emph{damping factor}, $0 < \epsilon < 1$). This produces a
+set $W$ of walks. The \osrank{} for a project $x$ is then:
 \[
-  s(x) = \frac{W_x \epsilon}{n R}
+  \omega(x) = \frac{W_x \epsilon}{n R}
 \]
 where $W_x$ is the number of visits of $x$, over all walks, that is:
 \[
