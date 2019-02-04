@@ -188,10 +188,10 @@ Transfers to and from balances are performed by the
 \[
 \tx{transfer}{x,y,n} \mid x,y \in \accAddrs, n \in \mathbb{N}_{\geq 1}
 \]
-transaction. If $x \in \users$ then the transaction is valid if signed
-by $x$. If $x \in \projs$ then the transaction is valid if it is
-signed by any one of the owners of the project $x$. In any case, for
-the transaction to be valid $\bal(x) \leq n$ must hold, and after the
-transaction $x$'s balance is decremented by $n$ and $y$'s is
-incremented by $n$.
+transaction. If $x \in \users$ then the transaction is valid if signed by
+$x$. If $x \in \projs$ then the transaction is valid if the contract at slot
+$\mathtt{validTransfer}$ asserts that it is (see \ref{s:smart-contracts}). The
+default will require at a signature from all owners. In any case, for the
+transaction to be valid $\bal(x) \geq n$ must hold, and after the transaction
+$x$'s balance is decremented by $n$ and $y$'s is incremented by $n$.
 

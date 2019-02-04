@@ -1,19 +1,49 @@
 \section{Project smart contracts}
 
-Since projects have no single key in control, transactions which transfer funds
-from the projects account can only originate from within a \emph{smart
-  contract}: a piece of code that is added to a project and which triggers when
+Most transactions relating to a project can be signed by any one of the
+project's owners. This includes transferring funds to and from the project's
+account. In order to ensure that funds distributed through \osrank{} (and
+possibly donations) is spent in a responsible manner, the protocol requires that
+transfers from project accounts be accepted by a \emph{smart contract}, a
+function written in a special purpose programming language which triggers when
 certain events arise. When a contributor decides to contribute code to a
-project, she may inspect the contracts currently in place (and what their
-guaranteed lifetimes are), so that she may be assured to be renumerated for her
-work.
+project, she may inspect the contracts currently in place (and under what
+conditions they may be updated, etc.), so that she may be assured to be
+renumerated for her work.
+ 
+For the language, we will use a modification of \radicle{}, the language we have
+developped for P2P code collaboration. The main characteristics are:
+\begin{itemize}
+\item Lisp-like, with Clojure-like syntax,
+\item Completely deterministic,
+\item Reduction-counting, for preventing unbounded computations.
+\end{itemize}
 
-For example, the project owners may have added the following function to the
-$\mathsf{onReward}$ slot:
+The most important contract for a project is the one used to distribute rewards
+to contributors. This function is invoked every epoch, if the project gets a
+payout according to it's \osrank{}. The function is called with two arguments:
+\texttt{proj} is a dictionary containing the project data and \texttt{reward} is
+a natural number representing the amount of oscoin that was awarded to the
+project that epoch. The function must return a list transactions which the
+project is authorised to make.
+
+When a project is first registered it's reward distribution function is set to
+the default:
+
+\begin{lstlisting}
+(fn [proj reward] [])
+\end{lstlisting}
+
+This means that no transactions will take place; funds will just accumalte in
+the project fund.
+
+Once the owners have decided on a policy, they may issue a transaction to update
+this function. For example, the project owners may decide that all contributors
+should get an equal share of the reward:
 
 \begin{lstlisting}
 (fn [proj reward]
-  (let [cs    (lookup :contributors p)
+  (let [cs    (lookup :contributors proj)
         n     (length cs)
         share (div reward n)]
     (map (fn [c]
@@ -24,30 +54,40 @@ $\mathsf{onReward}$ slot:
          cs)))
 \end{lstlisting}
 
-This is a function which is invoked every time project $P$ gets a network
-reward. The argument \texttt{proj} is a dictionary containing the project
-metadata, while \texttt{reward} is a natural number representing the amount of
-oscoin that was awarded to the project. The function must return a list
-transactions.
+Code updates are issued using
+\[
+    \tx{projectcontract}{s, c, v}
+\]
+transactions, signed by a project owner, where $s$ is the \emph{slot} to be
+updated, $c$ is the code for the new function, and $\mathtt{v}$ is a set of
+\emph{votes}: a collection of signatures the owner has collected for the
+update. The previous function is an example that would be used for the
+$\mathtt{onReward}$ slot.
 
-The complete list of slots associated to a project are:
-\begin{itemize}
-\item On reward
-\item Check can modify handler
-\item On added dependency
-\item On contribution
-\item etc. % TODO: think about these
-\end{itemize}
+Of course the owners cannot just update contracts whenever they want, to
+whatever they like. How contracts can be updated is controlled by another slot:
+$\mathtt{validContractUpdate}$. This is a function which takes 3 arguments:
+$\mathtt{proj}$, the project data, $\mathtt{votes}$, the list of public keys
+which signed votes for the contract update transaction. The default code at this
+slot is:
 
-Each handler returns a list of project transactions.
+\begin{lstlisting}
+(fn [proj votes]
+  (subset? (lookup :owners proj) votes))
+\end{lstlisting}
 
-For the specifics of project transactions, see \S ref{s:ledger}.
+which specifies that all the current owners must sign any contract update.
 
-For the language, we will use a modification of \radicle{}, the language we have
-developped for P2P code collaboration. The main characteristics are:
-\begin{itemize}
-\item Lisp-like, with Clojure-like syntax,
-\item Deterministic,
-\item Reduction-counting, for charging execution of code against a projects
-  funds, and preventing unbounded computations.
-\end{itemize}
+In order to specify that contract updates must be accepted by a majority of all
+contributors, the code at this slot could be updated to:
+
+\begin{lstlisting}
+(fn [proj votes]
+  (let [cs (lookup :contributors proj) 
+        half+ (+ (div (count cs) 2) 1)
+        c-votes (count (intersection cs votes))]
+    (> c-votes half+)))
+\end{lstlisting}
+
+The exact specification of the contract language, and which built-in functions
+are available, will be specified in a subsequent paper.
