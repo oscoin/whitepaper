@@ -26,6 +26,7 @@ where $P_{a}$ is the project's address and unique identifier, $P_h$ is
 the project's current hash and $P_s$ is the canonical project source
 URL.
 
+% TODO: Project address is not an integer
 The project address, an integer, is used to identify the project, as
 well as to send \oscoin{} to it. Each project has an account balance
 identified by project address. The project hash is a digest of the
@@ -41,27 +42,26 @@ network. This can be done with the
 \[
     \tx{register}{P_a, P_s}
 \]
-transaction, signed by a key $U$ which must be used to update the project . The
+transaction, signed by a key $k_1$ which must be used to update the project . The
 transaction is valid as long as the address $P_a$ isn't already in use. Note
 that the execution of this transaction locks a small \oscoin{} deposit
-from the account associated with $U$, to prevent abandoned projects from
+from the account associated with $k_1$, to prevent abandoned projects from
 accumulating. Once executed, the project is instantiated to
 $P = \tuple{P_a, P_h, P_s}$ with $P_h = \varnothing$.
 
-After registration the project's \emph{owner set} is $\{U\}$, this can
-be extended with:
+The project's \emph{owner set} is $\{k_1\}$. This can be extended with:
 \[
-    \tx{addkey}{U}
+    \tx{addkey}{k_2}
 \]
-where $U$ is an existing user not currently in the owner set.
+where $k_2$ is a valid key not present in the owner set.
 When a project is no longer in use, it is possible to unregister it from the
 ledger with
 \[
-    \tx{unregister}{P_a}.
+    \tx{unregister}{P_a},
 \]
-which must be signed by an owner. Execution of this transaction
-returns the registration deposit to the user who originally registered
-the project.
+which must be signed by an owner (either $k_1$ or $k_2$ in the above example).
+Execution of this transaction returns the registration deposit to the user who
+originally registered the project.
 
 Projects registered on the ledger can be retrieved from the state $\state$ by
 using the project address, formally: $\state(P_a) \to P$.
@@ -71,11 +71,11 @@ source code change regularly. This means the project hash $P_h$ will quickly
 become out of sync with the project's latest state and will need updating. This
 is done via the
 \[
-    \tx{checkpoint}{P_a, P_h', s, C^*, D^*}
+    \tx{checkpoint}{P_a, P_{h'}, P_{s'}, C^*, D^*}
 \]
 % TODO: what is the use of s?
-transaction, where $P_h'$ is the new project hash, $s$ is the URL to
-retrieve the source code from, and $C^*$ is hash-linked-list of
+transaction, where $P_{h'}$ is the new project hash, $P_{s'}$ is the URL to
+retrieve the source code from, $C^*$ is a hash-linked-list of
 \emph{contributions}, and $D^*$ is a list of \emph{dependency updates}.
 
 Contributions are tuples:
