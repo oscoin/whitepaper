@@ -6,13 +6,14 @@
             matrix of nodes,
             row sep=-\pgflinewidth,
             column sep=-\pgflinewidth,
-            nodes={rectangle,draw=black,text width=8ex,align=center},
-            text depth=0.25ex,
-            text height=3ex,
+            anchor=center,
+            nodes={rectangle, draw=black, text width=7ex, align=center},
+            text depth=0.2ex,
+            text height=1.6ex,
             nodes in empty cells
         },
         texto/.style={font=\footnotesize\sffamily},
-        title/.style={font=\small\sffamily}
+        title/.style={font=\footnotesize\sffamily}
     }
     \tikzset{edge from parent/.style={draw, latex-}}
 
@@ -36,7 +37,7 @@
                 child { node[proj-s] (proj-a-1) [] {\small{$P^1$}} }
         };
 
-    \node[user-s] (user-a) [left=of proj-a-2] {$U^1$};
+    \node[user-s] (user-a) [left=of proj-a-2] {\small{$U^1$}};
 
     \begin{scope}[on background layer]
         \node (proj-a-group-1) [proj-group,
@@ -63,22 +64,22 @@
                 edge [pointer] (osrank.east);
     \end{scope}
 
-    \matrix[table, below=of osrank] (weights) {
-        |[]| \small{\textbf{project}} & \small{\textbf{weight}} \\
+    \matrix[table, below=0.6cm of osrank] (weights) {
+        |[title]| \small{project} & |[title]| \small{weight} \\
         \hline
-        |[]| $P^4$            & 0.5             \\
-        |[]| $P^3$            & 0.3             \\
-        |[]| $P^2$            & 0.1             \\
-        |[]| $P^1$            & 0.1             \\
+        |[texto]| $P^4$            & |[texto]| 0.5             \\
+        |[texto]| $P^3$            & |[texto]| 0.3             \\
+        |[texto]| $P^2$            & |[texto]| 0.1             \\
+        |[texto]| $P^1$            & |[texto]| 0.1             \\
     };
 
     %
     % Distribution
     %
-    \node[process, minimum width=9em] (distribution) [below=of weights] {Core Mechanism};
+    \node[process, minimum width=9em] (distribution) [below=0.6cm of weights] {\textsf{Core Mechanism}};
 
     % Coinbase
-    \node[coinbase, right of=distribution, node distance=12em] {Coinbase ($B_r$)} edge [pointer] (distribution.east);
+    \node[coinbase, right of=distribution, node distance=12em] {\textsf{Coinbase} ($B_r$)} edge [pointer] (distribution.east);
 
     %
     % Projects receiving oscoin
@@ -89,7 +90,7 @@
     \node[proj-s] (proj-b-4)  [right=of proj-b-3]             {\small{$P^4$}};
 
     % Miner
-    \node[miner]  (miner)     [left=of distribution]          {\small{\emph{Miner}}};
+    \node[miner]  (miner)     [left=of distribution]          {\small{\textsf{Miner}}};
 
     \begin{scope}[on background layer]
         \draw[thick-arrow] (proj-a-group-1.south)        to    (osrank.north);
