@@ -59,12 +59,16 @@ the account associated with $k_1$. This helps ensures that abandonned projects
 don't clutter the ledger.  Once executed, the project is instantiated to $P =
 \tuple{P_a, P_h, P_s}$ with $P_h = \varnothing$.
 
-The project $P$'s current \emph{owner set} is $\{k_1\}$. This can be extended
+The project $P$'s current key set $P_K$ is $\{k_1\}$. This can be extended
 with:
 \[
     \tx{addkey}{k}
 \]
-where $k$ is a valid key not present in the owner set.
+where $k$ is a valid key not present in $P_K$. Keys can also be removed, with:
+\[
+    \tx{removekey}{k}
+\]
+where $k$ is a key present in the $P_K$.
 When a project is no longer in use, it is possible to unregister it from the
 ledger with
 \[
