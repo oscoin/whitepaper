@@ -1,13 +1,23 @@
 \section{Smart contracts}
 
 The \oscoin{} blockchain uses smart contracts as a way to distribute funds that
-a project has received.
+a project has received. These smart contracts are added with special
+transactions which modify the behaviour of a project. For example to control how
+funds from the core mechanism payouts are distributed, a project could use the
+following code:
 
 \begin{lstlisting}
-{:on-network-reward
- (fn [proj reward]
-   (let [cs    (lookup :contributors p)
-         n     (length cs)
-         share (div reward n)]
-     (map (fn [c] [:transfer (lookup :address p) (lookup :address c) share]) cs)))}
+(fn [proj reward]
+  (let [cs    (lookup :contributors p)
+        n     (length cs)
+        share (div reward n)]
+    (map (fn [c]
+           [:transfer (lookup :address p) (lookup :address c) share])
+         cs)))
 \end{lstlisting}
+
+This is a function which is invoked every time project $P$ gets a network
+reward. The argument \texttt{proj} is a dictionary containing the project
+metadata, while \textt{reward} is a natural number representing the amount of
+oscoin that was awarded to the project. The function must return a list
+transactions.
