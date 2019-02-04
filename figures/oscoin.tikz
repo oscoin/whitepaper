@@ -35,7 +35,7 @@
             node[proj-s] (proj-a-3)  [] {\small{$P^3$}}
                 child { node[proj-s] (proj-a-1) [] {\small{$P^1$}} }
         };
-    
+
     \node[user-s] (user-a) [left=of proj-a-2] {$U^1$};
 
     \begin{scope}[on background layer]
@@ -58,7 +58,7 @@
     \node[proj] (trusted-3)  [right=of trusted-2]     {\small{$P^3_t$}};
 
     \begin{scope}[on background layer]
-        \node [proj-group, label={Seed Set ($\mathcal{\Upsilon}$)},
+        \node [proj-group, label={Seed Set ($\seedset$)},
             inner sep=10pt, fit=(trusted-1) (trusted-2) (trusted-3)] {}
                 edge [pointer] (osrank.east);
     \end{scope}
@@ -102,7 +102,7 @@
         \draw[-latex] (distribution)              to    (proj-b-3);
         \draw[-latex] (distribution)              to    (proj-b-4);
         \draw[-latex] (distribution)              to    (miner);
-        
+
         % Owner arrows
         \draw[-latex,dashed] (user-a) to[out=-15,in=-165] (proj-a-2);
         \draw[-latex] (proj-a-2) to[out=165,in=15] (user-a);
