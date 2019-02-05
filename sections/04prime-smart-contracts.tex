@@ -1,50 +1,35 @@
 \section{Project smart contracts}
+\label{s:smart-contracts}
 
 Most transactions relating to a project can be signed by any one of the
 project's owners. This includes transferring funds to and from the project's
 account. In order to ensure that funds distributed through \osrank{} (and
-possibly donations) is spent in a responsible manner, the protocol requires that
-transfers from project accounts be accepted by a \emph{smart contract}, a
-function written in a special purpose programming language which triggers when
-certain events arise. When a contributor decides to contribute code to a
-project, she may inspect the contracts currently in place (and under what
-conditions they may be updated, etc.), so that she may be assured to be
-renumerated for her work.
- 
-For the language, we will use a modification of \radicle{}, the language we have
-developped for P2P code collaboration. The main characteristics are:
-\begin{itemize}
-\item Lisp-like, with Clojure-like syntax,
-\item Completely deterministic,
-\item Reduction-counting, for preventing unbounded computations.
-\end{itemize}
+possibly donations) are spent in a responsible manner, the protocol deposits
+these into a separate account, the \emph{project fund}. The protocol requires
+that transfers from the project fund only be issued from within \emph{smart
+  contracts}, functions written in a special purpose programming language which
+triggers when certain events arise. When a contributor decides to contribute
+code to a project, she may inspect the contracts currently in place (and under
+what conditions they may be updated, etc.), so that she may be assured to be
+remunerated for her work.
 
 The most important contract for a project is the one used to distribute rewards
 to contributors. This function is invoked every epoch, if the project gets a
 payout according to it's \osrank{}. The function is called with two arguments:
-\texttt{proj} is a dictionary containing the project data and \texttt{reward} is
-a natural number representing the amount of oscoin that was awarded to the
-project that epoch. The function must return a list transactions which the
-project is authorised to make.
+$p$ is a dictionary containing the project data and $f \in \posnat$ represents
+the amount of \oscoin{} currently in the project fund.
 
-When a project is first registered it's reward distribution function is set to
-the default:
-
-\begin{algorithmic}[1]
-\Procedure{onReward}{$p, r$}
-\EndProcedure
-\end{algorithmic}
-
-This means that no transactions will take place; funds will just accumalte in
-the project fund.
+When a project is first registered its reward distribution function is set to a
+no-op. This means that no transactions will take place; funds will just
+accumulate in the project fund.
 
 Once the owners have decided on a policy, they may issue a transaction to update
 this function. For example, the project owners may decide that all contributors
 should get an equal share of the reward:
 
 \begin{algorithmic}[1]
-\Procedure{onReward}{$p, r$}
-\State $s \gets r \sslash \fn{count}{\prop{p}{contributors}}$
+\Procedure{onReward}{$p, f$}
+\State $s \gets f \sslash \fn{count}{\prop{p}{contributors}}$
 \For{$c \gets \prop{p}{contributors}$}
   \State $\tx{transfer}{\prop{p}{addr}, \prop{c}{addr}, s}$
 \EndFor
@@ -56,17 +41,15 @@ Code updates are issued using
     \tx{projectcontract}{s, c, v}
 \]
 transactions, signed by a project owner, where $s$ is the \emph{slot} to be
-updated, $c$ is the code for the new function, and $\mathtt{v}$ is a set of
-\emph{votes}: a collection of signatures the owner has collected for the
-update. The previous function is an example that would be used for the
-$\mathtt{onReward}$ slot.
+updated, $c$ is the code for the new function, and $v$ is a set of \emph{votes}:
+a collection of signatures the owner has collected for the update. The previous
+function is an example that would be used for the $\mathtt{onReward}$ slot.
 
 Of course the owners cannot just update contracts whenever they want, to
 whatever they like. How contracts can be updated is controlled by another slot:
-$\mathtt{validContractUpdate}$. This is a function which takes 3 arguments:
-$\mathtt{proj}$, the project data, $\mathtt{votes}$, the list of public keys
-which signed votes for the contract update transaction. The default code at this
-slot is:
+$\mathtt{validContractUpdate}$. This is a function which takes 2 arguments: $p$,
+the project data, and $v$, the list of public keys which signed votes for the
+contract update transaction. The default code at this slot is:
 
 \begin{algorithmic}[1]
 \Procedure{validContractUpdate}{$p, v$}
