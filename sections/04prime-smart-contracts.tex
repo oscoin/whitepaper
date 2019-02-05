@@ -30,9 +30,10 @@ project is authorised to make.
 When a project is first registered it's reward distribution function is set to
 the default:
 
-\begin{lstlisting}
-(fn [proj reward] [])
-\end{lstlisting}
+\begin{algorithmic}[1]
+\Procedure{onReward}{$p, r$}
+\EndProcedure
+\end{algorithmic}
 
 This means that no transactions will take place; funds will just accumalte in
 the project fund.
@@ -41,18 +42,14 @@ Once the owners have decided on a policy, they may issue a transaction to update
 this function. For example, the project owners may decide that all contributors
 should get an equal share of the reward:
 
-\begin{lstlisting}
-(fn [proj reward]
-  (let [cs    (lookup :contributors proj)
-        n     (length cs)
-        share (div reward n)]
-    (map (fn [c]
-           [:transfer
-            (lookup :address p)
-            (lookup :address c)
-            share])
-         cs)))
-\end{lstlisting}
+\begin{algorithmic}[1]
+\Procedure{onReward}{$p, r$}
+\State $s \gets r \sslash \fn{count}{\prop{p}{contributors}}$
+\For{$c \gets \prop{p}{contributors}$}
+  \State $\tx{transfer}{\prop{p}{addr}, \prop{c}{addr}, s}$
+\EndFor
+\EndProcedure
+\end{algorithmic}
 
 Code updates are issued using
 \[
@@ -71,23 +68,23 @@ $\mathtt{proj}$, the project data, $\mathtt{votes}$, the list of public keys
 which signed votes for the contract update transaction. The default code at this
 slot is:
 
-\begin{lstlisting}
-(fn [proj votes]
-  (subset? (lookup :owners proj) votes))
-\end{lstlisting}
-
+\begin{algorithmic}[1]
+\Procedure{validContractUpdate}{$p, v$}
+\State \textbf{return} $\{ \prop{o}{addr} \mid o \gets \prop{p}{owners} \} \subseteq v$
+\EndProcedure
+\end{algorithmic}
 which specifies that all the current owners must sign any contract update.
 
 In order to specify that contract updates must be accepted by a majority of all
 contributors, the code at this slot could be updated to:
 
-\begin{lstlisting}
-(fn [proj votes]
-  (let [cs (lookup :contributors proj) 
-        half+ (+ (div (count cs) 2) 1)
-        c-votes (count (intersection cs votes))]
-    (> c-votes half+)))
-\end{lstlisting}
+\begin{algorithmic}[1]
+\Procedure{validContractUpdate}{$p, v$}
+\State $h \gets \fn{count}{\prop{p}{contributors}} \sslash 2$
+\State $v' \gets \{ \prop{c}{addr} \mid c \gets \prop{p}{contributors} \} \cap v$
+\State \textbf{return} $\fn{count}{v'} > 1 + h$
+\EndProcedure
+\end{algorithmic}
 
 The exact specification of the contract language, and which built-in functions
 are available, will be specified in a subsequent paper.

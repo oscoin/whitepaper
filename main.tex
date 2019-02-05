@@ -12,13 +12,9 @@
 \usepackage{mathtools}
 \usepackage{standalone}
 \usepackage{caption}
-\usepackage[final]{listings}
-\usepackage{textcomp}
 
-\lstset{
-    language=Scheme,
-    basewidth=0.5em
-}
+\usepackage{stmaryrd}
+\usepackage[noend]{algpseudocode}
 
 \usepackage{tikz}
 \usetikzlibrary{decorations.markings}
@@ -52,6 +48,9 @@
 \newcommand{\tx}[2]{\mathsf{#1}\small{\lparen#2\rparen}}
 
 \newcommand{\field}[2]{#1_{\mathsf{#2}}}
+
+\newcommand{\fn}[2]{\mathsf{#1}(#2)}
+\newcommand{\prop}[2]{#1.{\mathrm{#2}}}
 
 \newcommand*\eg{e.g.\ }
 \newcommand*\ie{i.e.\ }
