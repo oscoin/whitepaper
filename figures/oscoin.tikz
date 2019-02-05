@@ -76,7 +76,7 @@
     %
     % Distribution
     %
-    \node[process, minimum width=9em] (distribution) [below=0.6cm of weights] {\textsf{Core Mechanism}};
+    \node[process, minimum width=9em] (distribution) [below=0.6cm of weights] {\textsf{Treasury}};
 
     % Coinbase
     \node[coinbase, right of=distribution, node distance=12em] {\textsf{Coinbase} ($B_r$)} edge [pointer] (distribution.east);
