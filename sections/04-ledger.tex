@@ -83,10 +83,10 @@ associated with the registration key.
 Projects registered on the ledger can be retrieved from the state $\state$ by
 using the project address, formally: $\state(P_a) \to P$.
 
-\subsubsection{Checkpointing} Any project in active development will see its
-source code change regularly. This means the project hash $P_h$ will quickly
-become out of sync with the project's latest state and will need updating. This
-is done via the
+\subsubsection{Checkpointing} \label{s:checkpointing} Any project in active
+development will see its source code change regularly. This means the project
+hash $P_h$ will quickly become out of sync with the project's latest state and
+will need updating. This is done via the
 \[
     \tx{checkpoint}{P_a, P_{h'}, P_{s'}, C^*, D^*}
 \]
