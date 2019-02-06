@@ -11,8 +11,7 @@
 % TODO: Diagram that shows Dependencies -> SrcRank -> Block reward -> Distribution
 
 \noindent In this paper, we introduce \oscoin{}, a protocol and currency
-designed to provide a solution to the open source sustainability problem (\S
-\ref{s:sustainability}).
+designed to provide a solution to the open source sustainability problem.
 
 The \oscoin{} network is a public network of computers operating a distributed
 consensus protocol around a transaction ledger.
@@ -27,12 +26,13 @@ $\mathcal{A}$, containing the balances of all currency holders; and
 finally a network graph $\netgraph$, of relevant relations between
 entities in the network, including in particular dependencies between
 registered projects.
+% TODO: Registry letter is wrong
 
 The purpose of this network is to secure a digital currency---\oscoin{}---and
-its monetary policy which rewards the most valued open source projects in the
-network, without the need for intermediaries or central control.
+rewards the most valued open source projects in the network, without the need
+for intermediaries or central control.
 
-\subsection{Overview}
+\subsection{Protocol Overview}
 
 \begin{itemize}
     \item Maintainers and contributors collaborate around software projects
@@ -42,9 +42,10 @@ network, without the need for intermediaries or central control.
         token reward is calculated for each, in proportion to their rank.
     \item The rewards are sent to the given projects.
     % TODO: We need to talk about smart-contracts somewhere else in the paper.
-    \item Projects are able to use the funds how they see fit. \emph{Smart
-        contracts} are used as a means for distribution of tokens from within a
-        project, to its constituent members or contributors.
+    \item Projects are able to use the funds how they see fit, through
+        \emph{Smart contracts} which are used to distribute currency to its
+        constituent members or contributors.
+    % TODO: Revise this point ^
 \end{itemize}
 
 \subsection{The Oscoin Blockchain}
@@ -68,7 +69,7 @@ directly relevant to \oscoin{}, we believe that one which allows open
 participation is best for the long term health of the network. Furthermore,
 it's important that reliable support for light clients be possible. The only
 family of blockchain protocols with these characteristics are the proof-of-work
-protocols. We thus settle on Nakamoto~\cite{bitcoin} consensus.
+protocols.
 
 The inputs $B_0, \ldots, B_n$ to the state machine are therefore blocks, with
 $B_0$ being the genesis block.
@@ -84,38 +85,31 @@ $B_0$ being the genesis block.
 \end{figure*}
 
 \subsection{The Oscoin Treasury}
+% TODO: ^ Revisit this name from a brand perspective
 
 Each block, the protocol is allowed to mint a certain amount $B_r$ of \oscoin{}
 (the ``block reward''), as part of what we call the \emph{coinbase}
-transaction. These coins are divided into two shares, the first serving as a
-reward to the block miner, while the second is used to supply the reward
-mechanism for open-source projects.
+transaction. These coins are allocated to two distinct groups: network operators (``miners''), and open source projects, through the reward mechanism described in
+this section.
 
 \subsubsection{Token distribution}
 
 The key question we must answer, is how the block reward is distributed to
-projects on the network.
+projects and contributors within the network.
 
-The goal is to choose a distribution mechanism that benefits the network as a
-whole, while needing the least amount of maintenance.
+The goal is to choose a distribution function that rewards projects relative to
+their importance within the network, while needing the least amount of
+maintenance.
+
+% TODO: ^ Re-word the above paragraphs
+% TODO: We don't talk about value capture at all
 
 For this, we turn to the network graph $\netgraph$, which includes in
-particular the graph of dependencies between projects.
+dependencies between projects as well as contributions.
 
 Each project registered in the network is required to specify which other
 projects it depends on. For example, a web framework might depend on an HTTP
 library, and that HTTP library might depend on an OpenSSL implementation.
-
-% TODO: The following 2 paragraphs feel a bit to much like details in this
-% section: registration is covered in Ledger section, and dishonest deps should
-% be dealt with at length somewhere else.
-Registering a project requires a small deposit. This is to prevent the ledger
-from being filled with abandonned projects, and because projects can influence
-reward distribution through the dependency graph. This also makes Sybil attacks
-and spam costly to attackers.
-
-Still, it's possible that project maintainers act dishonnestly, by lying about
-their dependencies. We propose a way to mitigate this in \S \ref{s:osrank}.
 
 % TODO: 'epoch' is undefined at this point.
 \subsubsection{Algorithm} Let $T$ be the amount of \oscoin{} to be distributed
@@ -125,25 +119,20 @@ a centrality measure that assigns a weight $\omega(P)$ to each project by
 following links in the network graph $\netgraph$.
 
 The amount of tokens received every epoch by $P$ is governed by the
-\emph{payment function} $\psi(T, \omega(P), \field{P}{stake})$, where
-$\field{P}{stake}$ is the amount of \oscoin{} that is staked behind a project by
-the community (see \S \ref{s:staking}). The payment function takes into account a
-minimum threshold, under which the project doesn't receive anything. This
-threshold prevents small attacks from succeeding, while also concentrating the
-rewards.
+\emph{payment function} $\psi(T, \omega(P))$. The payment
+function takes into account a minimum threshold, under which the project
+doesn't receive anything. This threshold prevents small attacks from
+succeeding, while also concentrating the rewards.
 
 With this model, it’s the responsibility of a project to choose its
 dependencies well and to maintain its stated dependencies up to date, since by
 depending on a project, it is casting a vote for that project to receive money.
 This is amplified for highly-weighted projects in the graph.
 
-% TODO: the first 2 sentences of this paragraph are a bit redundant.
-The model we described distributes tokens on a continuous basis to the projects
-most valued by the network. It does so by periodically minting new \oscoin{}
-that it distributes according to the \osrank{} metric. At scale, this has the
-potential to solve many of the issues with open source monetization and
-sustainability, as software projects receive income in the form of \oscoin{}
-by giving away their work for free.
+At scale, this mechanism has the potential to solve many of the issues with
+open source monetization and sustainability, as software projects receive
+income in the form of \oscoin{} by giving away their work for free.
 
 % TODO: Explain how this is non-transactional and you don't have to change the
 % way you work.
+% TODO: Explain why this is based on merit.
