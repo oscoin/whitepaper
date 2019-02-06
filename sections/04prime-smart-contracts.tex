@@ -30,7 +30,7 @@ of \oscoin{} to various accounts. The protocol checks the function doesn't
 distribute more than $r$.
 
 When a project is first registered its reward distribution function returns the
-empty distribution, that is, the \oscoin{} are burnt.
+empty distribution, that is, the \oscoin{} is burnt.
 
 Once the owners have decided on a policy, they may issue a transaction to update
 this function. For example, the project owners may decide that all contributors
@@ -40,7 +40,7 @@ into the project fund):
 \begin{algorithmic}[0]
     \Procedure{receiveReward}{$p, r$}
         \State $n \gets |\prop{p}{contributors}|$
-        \State $d \gets r \sslash n$
+        \State $s \gets r \sslash n$
         \State $m \gets r \mod n$
         \State $x \gets \{ (\prop{c}{addr}, s) \mid c \gets \prop{p}{contributors} \}$
         \State \textbf{return} $x \cup \{ (\prop{p}{fund}, m) \}$
@@ -51,7 +51,7 @@ into the project fund):
 
 Code updates are issued using
 \[
-    \tx{projectContract}{s, c, \nu, v}
+    \tx{projectcontract}{s, c, \nu, v}
 \]
 transactions, signed by a project owner, where $s$ is the \emph{slot} to be
 updated, $c$ is the code for the new function, $v$ is a set of \emph{votes}: a
