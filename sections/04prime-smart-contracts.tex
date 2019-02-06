@@ -2,28 +2,29 @@
 % - merge with ledger sections
 % - add bounty example
 
-\section{Project smart contracts}
+\section{Smart contracts}
 \label{s:smart-contracts}
 
 Most transactions relating to a project can be signed by any one of the
 project's owners. This includes transferring funds to and from the project's
 account. In order to ensure that funds distributed through \osrank{} (and
-possibly donations) are spent in a responsible manner, the protocol deposits
+in some cases donations) are spent in a responsible manner, the protocol deposits
 these into a separate account, the \emph{project fund}. The protocol requires
 that transfers from the project fund only be issued from within the project
 \emph{smart contract}, a set of functions written in a special purpose
 programming language which are triggered when certain events arise. When a
 contributor decides to contribute code to a project, she may inspect the
-contract currently in place (and under what conditions it may be updated, etc.),
+contract currently in place, and under what conditions it may be updated,
 so that she may be assured to be remunerated for her work.
 
-\subsection{Distributing osrank rewards}
+\subsection{Distributing treasury rewards}
 
+% TODO: "function"?
 The most important function for a project is the one used to distribute rewards
 to contributors. This function is invoked every epoch, if the project gets a
 payout according to its \osrank{}. The function is called with two arguments:
 $p$ is a dictionary containing the project data and $r \in \posnat$ represents
-the amount of \oscoin{} that were awarded to the project this epoch. The
+the amount of \oscoin{} that was awarded to the project this epoch. The
 function must return a \emph{distribution}, a set of tuples assigning a number
 of \oscoin{} to various accounts. The protocol checks the function doesn't
 distribute more than $r$.
@@ -35,14 +36,15 @@ Once the owners have decided on a policy, they may issue a transaction to update
 this function. For example, the project owners may decide that all contributors
 should get an equal share of the reward (with the remainder getting deposited
 into the project fund):
-\begin{algorithmic}[1]
-\Procedure{receiveReward}{$p, r$}
-\State $n \gets |\prop{p}{contributors}|$
-\State $d \gets r \sslash n$
-\State $m \gets r \mod n$
-\State $x \gets \{ (\prop{c}{addr}, s) \mid c \gets \prop{p}{contributors} \}$
-\State \textbf{return} $x \cup \{ (\prop{p}{fund}, m) \}$
-\EndProcedure
+\medskip
+\begin{algorithmic}[0]
+    \Procedure{receiveReward}{$p, r$}
+        \State $n \gets |\prop{p}{contributors}|$
+        \State $d \gets r \sslash n$
+        \State $m \gets r \mod n$
+        \State $x \gets \{ (\prop{c}{addr}, s) \mid c \gets \prop{p}{contributors} \}$
+        \State \textbf{return} $x \cup \{ (\prop{p}{fund}, m) \}$
+    \EndProcedure
 \end{algorithmic}
 
 \subsection{Contract function updates}
@@ -66,21 +68,22 @@ is a function which takes 2 arguments: $p$, the project data, and $v$, the list
 of public keys which signed votes for the contract update transaction. The
 function must return a boolean value, stating if the update is valid or not. The
 default code at this slot is:
-\begin{algorithmic}[1]
-\Procedure{validContractUpdate}{$p, v$}
-\State \textbf{return} $\{ \prop{o}{addr} \mid o \gets \prop{p}{owners} \} \subseteq v$
-\EndProcedure
+\begin{algorithmic}[0]
+    \Procedure{validContractUpdate}{$p, v$}
+        \State \textbf{return} $\{ \prop{o}{addr} \mid o \gets \prop{p}{owners} \} \subseteq v$
+    \EndProcedure
 \end{algorithmic}
 which specifies that all the current owners must sign any contract update.
 
 In order to specify that contract updates must be accepted by a majority of all
 contributors, the code at this slot could be updated to:
-\begin{algorithmic}[1]
-\Procedure{validContractUpdate}{$p, v$}
-\State $h \gets |\prop{p}{contributors}| \sslash 2$
-\State $v' \gets \{ \prop{c}{addr} \mid c \gets \prop{p}{contributors} \} \cap v$
-\State \textbf{return} $|v'| > 1 + h$
-\EndProcedure
+\medskip
+\begin{algorithmic}[0]
+    \Procedure{validContractUpdate}{$p, v$}
+        \State $h \gets |\prop{p}{contributors}| \sslash 2$
+        \State $v' \gets \{ \prop{c}{addr} \mid c \gets \prop{p}{contributors} \} \cap v$
+        \State \textbf{return} $|v'| > 1 + h$
+    \EndProcedure
 \end{algorithmic}
 
 \subsection{Distributing donations}
@@ -118,18 +121,18 @@ it. This function works in a similar way to \texttt{validContractUpdate}. For
 example, the function might specify that the project owners may spend a small
 amount of \oscoin{} per month without seeking community agreement, but that
 large sums need over half of contributors and donors to agree:
-\begin{algorithmic}[1]
-\Procedure{validFundSpend}{$p, n, v$}
-\If{$\fn{spentThisEpoch}{p} + n > 100$}
-    \State $h \gets |\prop{p}{contributors} \cup \prop{p}{donors}| \sslash 2$
-    \State $c' \gets \{ \prop{c}{addr} \mid c \gets \prop{p}{contributors} \}$
-    \State $d' \gets \{ \prop{d}{addr} \mid d \gets \prop{p}{donors} \}$
-    \State $v' \gets v \cap c' \cap d'$
-    \State \textbf{return} $|v'| > 1 + h$
-    \Else
-    \State \textbf{return} $\top$
-\EndIf
-\EndProcedure
+\begin{algorithmic}[0]
+    \Procedure{validFundSpend}{$p, n, v$}
+        \If{$\fn{spentThisEpoch}{p} + n > 100$}
+            \State $h \gets |\prop{p}{contributors} \cup \prop{p}{donors}| \sslash 2$
+            \State $c' \gets \{ \prop{c}{addr} \mid c \gets \prop{p}{contributors} \}$
+            \State $d' \gets \{ \prop{d}{addr} \mid d \gets \prop{p}{donors} \}$
+            \State $v' \gets v \cap c' \cap d'$
+            \State \textbf{return} $|v'| > 1 + h$
+            \Else
+            \State \textbf{return} $\top$
+        \EndIf
+    \EndProcedure
 \end{algorithmic}
 
 The exact specification of the contract language, and which built-in functions
