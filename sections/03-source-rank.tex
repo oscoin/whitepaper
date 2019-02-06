@@ -203,18 +203,17 @@ will not be prohibitively expensive for network operators to run.
 % TODO: Has "operators" been defined?
 
 \begin{itemize}
-\item \emph{Incremental Monte Carlo.} An incremental algorithm is used
-  so that \osrank{} values may be updated as the network graph
-  evolves. Instead of computing \osrank{} from scratch, we rely on the
-  fact that only a small percentage of the nodes and edges of the
-  network graph are added or removed from one calculation to the next
-  (confirmed empirically on the datasets of major code-hosting
-  platforms). Therefore most of the random walks that were performed
-  in the previous calculation remain valid in the updated graph. For
-  example if only a single dependency $x \to y$ has been added, then a
-  walk is invalid only if it passes through $x$, for it may have chosen
-  to follow this new dependency.
-  % TODO: I don't understand the last sentence
+\item \emph{Incremental Monte Carlo.} An incremental algorithm is used so that
+  \osrank{} values may be updated as the network graph evolves. Instead of
+  computing \osrank{} from scratch, we rely on the fact that only a small
+  percentage of the nodes and edges of the network graph are added or removed
+  from one calculation to the next (confirmed empirically on the datasets of
+  major code-hosting platforms). Therefore most of the random walks that were
+  performed in the previous calculation remain valid in the updated graph. For
+  example if only a single dependency $p_1 \xrightarrow[]{\dep} p_2$ has been
+  added since the last calculation, then a random walk that was generated on the
+  old graph is only invalid in the updated graph if it passes through $p_1$, for
+  it may have chosen to follow this new dependency to $p_2$.
 
   In practice the operators of the network cache the set of random
   walks from the previous calculation, and update this set by removing
