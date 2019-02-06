@@ -11,14 +11,14 @@
 \def\cocontrib{\mathsf{contrib}^\circ}
 
 Since one of the fundamental mechanisms of \oscoin{} is to distribute a portion
-of newly minted tokens to high-value projects on the network, the protocol needs
-to reach consensus on which projects are ``high value''. To choose which
-projects receive compensation, and in which proportions, the network uses
+of newly minted \oscoin{} to high-value projects on the network, the protocol
+needs to reach consensus on which projects are ``high value''. To choose which
+projects receive \oscoin{}, and in which proportions, the network uses
 \osrank{}, which is a modification of the well-know \pagerank{}
-algorithm~\cite{pagerank} applied to the graph of relationships between projects
-on the network, and in particular \emph{dependencies} between projects. The
-output of the algorithm is a score $\omega(P)$ associated to each project
-$P$.
+algorithm~\cite{pagerank} applied to the graph of relationships between
+projects and contributions on the network, and in particular
+\emph{dependencies} between projects. The output of the algorithm is a score
+$\omega(P)$ associated to each project $P$.
 
 \subsection{Rationale}
 
@@ -39,6 +39,8 @@ system as a whole. Crucially, during this activity, a trail of
 \emph{artefacts} (hypermedia links, contracts, transactions,
 dependencies etc.) is produced; concrete manifestations
 of the relationships between the various entities.
+
+% TODO: Re-order above two paragraphs?
 
 The basic insight of \pagerank{} and similar metrics, is that by
 stochastic simulation of meaningful activity traces of system agents,
@@ -75,13 +77,15 @@ ledger are:
   \draw[arr] (p) to[out=195,in=-15] node[below]  {\small $\contrib \ (\frac{1}{7})$} (u);
   \draw[arr] (u) to[out=-55,in=-125] node[below] {\small $\cocontrib \ (\frac{2}{5})$} (p);
 \end{tikzpicture}
-\captionof{figure}{\small Entity relations in open source software development. \label{fig:G}}
+\captionof{figure}{\small Entity relations in open source software development with example weights.\label{fig:G}}
 \end{center}
+
+% TODO: Can we avoid the term "user" here? Or mention that we aren't "ranking"
+% users, intentionally.
 
 We summarise these interactions with a weighted directed graph $G$
 (Figure~\ref{fig:G}), the weights corresponding to the relative importance of
-the edge, tweaked by our own judgement and informed by simulations we have
-run.
+the edge, which can be set as parameters to the algorithm.
 
 % TODO: include simulations description and results here.
 
@@ -96,6 +100,9 @@ opposite direction represents the statement \emph{the project is
   valuable to the user}; the rationale for this less obvious flow is
 that users are unlikely to invest time contributing to a project they
 don't find useful.
+
+% TODO: Make the above easier to grasp. Also maybe rephrase a little "is
+% valueable to the project"
 
 The \oscoin{} network proposes to record these artefacts as
 transactions in a blockchain, so that one may unambiguously rebuild
@@ -156,11 +163,15 @@ where $v(w,x)$ is the number of times path $w$ visits the vertex $x$.
 
 \subsection{False ecosystems}
 
-The main problem to avoid is compensating fake ecosystems, that is,
+The main problem to avoid is compensating illegitimate ecosystems, that is,
 project structures and relationships which have been setup in the
-network graph for the sole purpose of gaming the \osrank{} algorithm.
+network graph for the sole purpose of exploiting the \osrank{} algorithm.
+
+% TODO: Reference PageRank sybil attack papers
+% TODO: Give example of "illegitimate" sub-graphs
 
 For this we propose running \osrank{} in two distinct phases:
+% TODO: We propose a modification of the page rank algorithm, based on TrustRank
 \begin{itemize}
 \item In the first phase, a seed set $\seedset$ is used as the [TODO] for the
   beginning of all walks. Specifically, a random walk always starts at
@@ -172,17 +183,14 @@ For this we propose running \osrank{} in two distinct phases:
   phase. The output of this phase is a subgraph $\netgraph_t$ of the network
   graph.
   % TODO: Use of words: "entity" or "vertex"?
-\item In the second phase, the algorithm is ran on the subgraph
+\item In the second phase, the algorithm is run on the subgraph
   $\netgraph_t$ as usual, with no seed set. The output of the second
   phase is the \osrank{}.
 \end{itemize}
 
-% TODO: remove the term governance.
-We propose that the seed set be maintained by an on-chain governance system,
-aiming to choose high-value user-facing projects, e.g. Firefox, Debian, VLC,
-etc. Naturally these projects must be open source.  Care must be taken to
-ensure the seed set is large enough to touch most legitimate projects on the
-network.
+Care must be taken to ensure the seed set is large enough to touch most
+legitimate projects on the network.  There are many ways to maintain such a
+seed set. However, this will be discussed in future work.
 
 \subsection{Implementation}
 
@@ -226,3 +234,5 @@ will not be prohibitively expensive for network operators to run.
   example, if a dependency is added a day before the payout block,
   then it only has a weight proportional to $1/d$.
 \end{itemize}
+
+% TODO: Add closing statement/conclusion
