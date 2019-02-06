@@ -180,12 +180,10 @@ Each user is associated with an \oscoin{} balance. Projects are associated with
 two accounts, the first is the \emph{project account} and is controlled by the
 owners. The second is the \emph{project fund}, and is controlled by smart
 contracts (see \S \ref{s:smart-contracts}). The set of \emph{balance addresses}
-is the coproduct of user keys and two sorts of addresses for projects:
+is the coproduct of the set of user keys and the set of project addresses:
 \[
-\accAddrs = \users + \field{\projs}{acc} + \field{\projs}{fund},
+\accAddrs = \users + \projs.
 \]
-where $\field{\projs}{acc}$ and $\field{\projs}{fund}$ are isomorphic to
-$\projs$, the set of project IDs.
 
 Each address is associated to a balance:
 \[
@@ -197,9 +195,8 @@ Transfers to and from balances are performed by the
 \tx{transfer}{x,y,n} \mid x,y \in \accAddrs, n \in \posnat
 \]
 transaction. If $x \in \users$ then the transaction is valid if signed by
-$x$. If $x \in \field{\projs}{acc}$ then the transaction is valid if it is
-signed by a project owner. If $x \in \field{\projs}{fund}$ then the transaction
-is only valid if issues within a smart-contract associated to the project (see
-\S \ref{s:smart-contracts}). In any case, for the transaction to be valid
-$\bal(x) \geq n$ must hold, and after the transaction $x$'s balance is
-decremented by $n$ and $y$'s is incremented by $n$.
+$x$. If $x \in \projs$ then the transaction is valid if it is signed by a
+project owner. In any case, for the transaction to be valid $\bal(x) \geq n$
+must hold, and after the transaction $x$'s balance is decremented by $n$ and
+$y$'s is incremented by $n$.
+

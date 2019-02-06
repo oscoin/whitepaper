@@ -6,51 +6,62 @@ project's owners. This includes transferring funds to and from the project's
 account. In order to ensure that funds distributed through \osrank{} (and
 possibly donations) are spent in a responsible manner, the protocol deposits
 these into a separate account, the \emph{project fund}. The protocol requires
-that transfers from the project fund only be issued from within \emph{smart
-  contracts}, functions written in a special purpose programming language which
-triggers when certain events arise. When a contributor decides to contribute
-code to a project, she may inspect the contracts currently in place (and under
-what conditions they may be updated, etc.), so that she may be assured to be
-remunerated for her work.
+that transfers from the project fund only be issued from within the project
+\emph{smart contract}, a set of functions written in a special purpose
+programming language which are triggered when certain events arise. When a
+contributor decides to contribute code to a project, she may inspect the
+contract currently in place (and under what conditions it may be updated, etc.),
+so that she may be assured to be remunerated for her work.
 
-The most important contract for a project is the one used to distribute rewards
+\subsection{Distributing osrank rewards}
+
+The most important function for a project is the one used to distribute rewards
 to contributors. This function is invoked every epoch, if the project gets a
 payout according to its \osrank{}. The function is called with two arguments:
-$p$ is a dictionary containing the project data and $f \in \posnat$ represents
-the amount of \oscoin{} currently in the project fund.
+$p$ is a dictionary containing the project data and $r \in \posnat$ represents
+the amount of \oscoin{} that were awarded to the project this epoch. The
+function must return a \emph{distribution}, a set of tuples assigning a number
+of \oscoin{} to various accounts. The protocol checks the function doesn't
+distribute more than $r$.
 
-When a project is first registered its reward distribution function is set to a
-no-op. This means that no transactions will take place; funds will just
-accumulate in the project fund.
+When a project is first registered its reward distribution function returns the
+empty distribution, that is, the \oscoin{} are burnt.
 
 Once the owners have decided on a policy, they may issue a transaction to update
 this function. For example, the project owners may decide that all contributors
-should get an equal share of the reward:
-
+should get an equal share of the reward (with the remainder getting deposited
+into the project fund):
 \begin{algorithmic}[1]
-\Procedure{onReward}{$p, f$}
-\State $s \gets f \sslash \fn{count}{\prop{p}{contributors}}$
-\For{$c \gets \prop{p}{contributors}$}
-  \State $\tx{transfer}{\prop{p}{addr}, \prop{c}{addr}, s}$
-\EndFor
+\Procedure{receiveReward}{$p, r$}
+\State $n \gets |\prop{p}{contributors}|$
+\State $d \gets r \sslash n$
+\State $m \gets r \mod n$
+\State $x \gets \{ (\prop{c}{addr}, s) \mid c \gets \prop{p}{contributors} \}$
+\State \textbf{return} $x \cup \{ (\prop{p}{fund}, m) \}$
 \EndProcedure
 \end{algorithmic}
 
+\subsection{Contract function updates}
+
 Code updates are issued using
 \[
-    \tx{projectcontract}{s, c, v}
+    \tx{projectContract}{s, c, \nu, v}
 \]
 transactions, signed by a project owner, where $s$ is the \emph{slot} to be
-updated, $c$ is the code for the new function, and $v$ is a set of \emph{votes}:
-a collection of signatures the owner has collected for the update. The previous
-function is an example that would be used for the $\mathtt{onReward}$ slot.
+updated, $c$ is the code for the new function, $v$ is a set of \emph{votes}: a
+collection of signatures the owner has collected for the update, and $\nu$ is a
+\emph{nonce} to prevent replay attacks with votes. The previous function is an
+example that would be used for the $\mathtt{receiveReward}$ slot. The
+transaction is only valid if the function at the $\mathtt{validContractUpdate}$
+slot (described next) returns $\top$.
 
-Of course the owners cannot just update contracts whenever they want, to
-whatever they like. How contracts can be updated is controlled by another slot:
-$\mathtt{validContractUpdate}$. This is a function which takes 2 arguments: $p$,
-the project data, and $v$, the list of public keys which signed votes for the
-contract update transaction. The default code at this slot is:
-
+Of course the owners cannot just update functions whenever they want, to
+whatever they like. Under which circumstances a function can be updated is
+controlled by a function in another slot: $\mathtt{validContractUpdate}$. This
+is a function which takes 2 arguments: $p$, the project data, and $v$, the list
+of public keys which signed votes for the contract update transaction. The
+function must return a boolean value, stating if the update is valid or not. The
+default code at this slot is:
 \begin{algorithmic}[1]
 \Procedure{validContractUpdate}{$p, v$}
 \State \textbf{return} $\{ \prop{o}{addr} \mid o \gets \prop{p}{owners} \} \subseteq v$
@@ -60,12 +71,60 @@ which specifies that all the current owners must sign any contract update.
 
 In order to specify that contract updates must be accepted by a majority of all
 contributors, the code at this slot could be updated to:
-
 \begin{algorithmic}[1]
 \Procedure{validContractUpdate}{$p, v$}
-\State $h \gets \fn{count}{\prop{p}{contributors}} \sslash 2$
+\State $h \gets |\prop{p}{contributors}| \sslash 2$
 \State $v' \gets \{ \prop{c}{addr} \mid c \gets \prop{p}{contributors} \} \cap v$
-\State \textbf{return} $\fn{count}{v'} > 1 + h$
+\State \textbf{return} $|v'| > 1 + h$
+\EndProcedure
+\end{algorithmic}
+
+\subsection{Distributing donations}
+
+Another source of income for a project is donations. These are transactions:
+\[
+\tx{donate}{x, d} \mid x \in \accAddrs, n \in \posnat.
+\]
+The transaction is only valid if signed by $x$, and if $\bal(x) \geq n$. After
+the transaction, $x$'s balance is decremented by $d$.
+
+Upon such a transaction the function at the \texttt{receiveDonation} slot is
+invoked. This function works much like \texttt{receiveReward}: it expects $p$
+(the project state) and $d$ (the amount of \oscoin{} donated) and returns a
+distribution. The default will burn the donation.
+
+\subsection{Ad-hoc spending}
+
+The functions at the slots \texttt{receiveReward} and \texttt{receiveDonation}
+are useful for declaring a project's usual policy for distributing \oscoin{}
+(\eg{} paying for bug-fixes and small contributions, etc.). However it is likely
+that large donations will be redirected to the project fund rather than be
+immediately distributed, so that more planning can take place before the funds
+are spent.
+
+To spend \oscoin{} in the project fund a transaction:
+\[
+\tx{fundSpend}{n, \nu, v} \mid n \in \posnat
+\]
+must be sent and signed by a project owner. Again $v$ is a list of votes and
+$\nu$ is a nonce.
+
+The transaction is valid if the function at slot \texttt{validFundSpend} accepts
+it. This function works in a similar way to \texttt{validContractUpdate}. For
+example, the function might specify that the project owners may spend a small
+amount of \oscoin{} per month without seeking community agreement, but that
+large sums need over half of contributors and donors to agree:
+\begin{algorithmic}[1]
+\Procedure{validFundSpend}{$p, n, v$}
+\If{$\fn{spentThisEpoch}{p} + n > 100$}
+    \State $h \gets |\prop{p}{contributors} \cup \prop{p}{donors}| \sslash 2$
+    \State $c' \gets \{ \prop{c}{addr} \mid c \gets \prop{p}{contributors} \}$
+    \State $d' \gets \{ \prop{d}{addr} \mid d \gets \prop{p}{donors} \}$
+    \State $v' \gets v \cap c' \cap d'$
+    \State \textbf{return} $|v'| > 1 + h$
+    \Else
+    \State \textbf{return} $\top$
+\EndIf
 \EndProcedure
 \end{algorithmic}
 
