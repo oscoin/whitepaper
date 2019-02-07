@@ -87,7 +87,7 @@
     \end{scope}
 
     \matrix[table, below=0.6cm of osrank] (weights) {
-        |[title]| \small{project} & |[title]| \small{weight} \\
+        |[title]| \small{project} & |[title]| \small{$\omega(P)$} \\
         \hline
         |[texto]| $P^4$            & |[texto]| 0.5             \\
         |[texto]| $P^3$            & |[texto]| 0.3             \\
