@@ -30,7 +30,7 @@ signature of the account holder. Accounts have addresses which are used to send
 and receive \oscoin{}. This model follows the design of Ethereum \cite{ethereum}
 rather than Bitcoin's UTXO model \cite{bitcoin}.
 
-Accounts are created by sending \oscoin{} to them (Section \ref{s:sending}),
+Accounts are created by transfering \oscoin{} to them (Section \ref{s:transfering}),
 and are removed from the ledger when their balance reaches zero. The set of all
 accounts is known as $\mathcal{A}$.
 
@@ -169,8 +169,8 @@ As a project owner, adding a dependency signals a variety of things
 
 \def\posnat{\mathbb{N}_{\geq 1}}
 
-\subsection{Sending \oscoin{}}
-\label{s:sending}
+\subsection{Transfering \oscoin{}}
+\label{s:transfering}
 
 Each user is associated with an \oscoin{} balance. Projects are associated with
 two accounts, the first is the \emph{project account} and is controlled by the
@@ -180,19 +180,16 @@ is the coproduct of the set of user keys and the set of project addresses:
 \[
     \accAddrs = \users + \projs.
 \]
-
 Each address is associated to a balance:
 \[
     \bal(a) \in \posnat \mid a \in \accAddrs.
 \]
-
-Transfers to and from balances are performed by the
+Transfers to and from balances are performed with
 \[
     \tx{transfer}{x,y,n} \mid x,y \in \accAddrs, n \in \posnat
 \]
-transaction. If $x \in \users$ then the transaction is valid if signed by
-$x$. If $x \in \projs$ then the transaction is valid if it is signed by a
-project owner. In any case, for the transaction to be valid $\bal(x) \geq n$
-must hold, and after the transaction $x$'s balance is decremented by $n$ and
-$y$'s is incremented by $n$.
-
+If $x \in \users$ then the transaction is valid if signed by $x$. If $x \in
+\projs$ then the transaction is valid if it is signed by a project owner. In
+any case, for the transaction to be valid $\bal(x) \geq n$ must hold, and after
+the transaction $x$'s balance is decremented by $n$ and $y$'s is incremented by
+$n$.
