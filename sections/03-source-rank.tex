@@ -194,8 +194,8 @@ in $G$. The next choice is specific to the edge:
 At each step the walk might terminate with probability $1 - \epsilon_\proj$ at a
 project vertex, and $1 - \epsilon_\user$ at a user vertex, (here
 $\epsilon_\proj, \epsilon_\user \in (0,1)$ are the \emph{damping factors}). This
-produces a set $W$ of $nR$ random walks. The \osrank{} for a project $x$ is
-then:
+produces a set $W$ of $nR$ random walks, where $n$ is the total number of
+vertices. The \osrank{} for a project $x$ is then:
 \[
   \omega(x) = \frac{W_x \epsilon_\proj}{n R}
 \]
