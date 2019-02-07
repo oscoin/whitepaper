@@ -212,13 +212,13 @@ Similarly, the \osrank{} of a user $u$ is:
 
 The main problem to avoid is compensating illegitimate ecosystems, that is,
 project structures and relationships which have been setup in the
-network graph for the sole purpose of exploiting the \osrank{} algorithm.
+network graph for the sole purpose of exploiting \osrank{}.
+These attacks which are known as \emph{Sybil attacks} have been examined
+before \cite{pagerank-sybil} within the context of \pagerank{}.
 
-% TODO: Reference PageRank sybil attack papers
-% TODO: Give example of "illegitimate" sub-graphs
-
-For this we propose a modification of the \pagerank{} algorithm, based on the
-ideas behind TrustRank~\cite{trustrank}, which involves two distinct phases:
+To address this we propose a modification of the \pagerank{} algorithm, based
+on the ideas behind TrustRank~\cite{trustrank}, which involves two distinct
+phases:
 
 \begin{itemize}
 \item In the first phase, all the random walks generated start in a specific
@@ -226,10 +226,9 @@ ideas behind TrustRank~\cite{trustrank}, which involves two distinct phases:
   walk always starts at a vertex in $\seedset$. Otherwise the process remains
   the same. The scores obtained are biased towards interactions with the seed
   set, but they are not used directly by the compensation mechanism. Instead a
-  threashold $t$ is used to determine the legitimacy of entities: any entity
+  threshold $t$ is used to determine the legitimacy of entities: any entity
   falling below this threshold is not considered for the next phase. The output
   of this phase is a subgraph $\netgraph_t$ of the network graph.
-  % TODO: Use of words: "entity" or "vertex"?
 \item In the second phase, the algorithm is run on the subgraph
   $\netgraph_t$ as usual, with no seed set. The output of the second
   phase is the \osrank{}.
