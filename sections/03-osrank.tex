@@ -23,7 +23,7 @@ projects and contributions on the network, and in particular
 \emph{dependencies} between projects. The output of the algorithm is a score
 $\omega(P)$ associated to each project $P$.
 
-\subsection{Background}
+\subsection{Intuition}
 
 While the importance of an open-source software package is highly subjective to
 each individual, valuable information about its relative importance can be
@@ -35,7 +35,7 @@ that takes advantage of the present structure in hypertext (the web) in order
 to organize the world’s information, the linked graph of open-source software
 dependencies and contributions offers an important resource when it comes to information
 extraction, that can be thought of as an implicit form of trust
-present in the structure.
+and relative value present in the structure.
 
 \subsection{Rationale}
 
@@ -137,10 +137,9 @@ don't find useful.
 % TODO: Make the above easier to grasp. Also maybe rephrase a little "is
 % valueable to the project"
 
-Initially we were only going to use the graph of dependencies between projects,
-since this is the most straightforward indication that a projects derives value
-from another. Adding edges corresponding to contribution and ownership serves
-two purposes:
+While the graph of dependencies between projects is the most straightforward
+indication that a projects derives value from another, adding edges corresponding
+to contribution and ownership serves two purposes:
 \begin{itemize}
 \item The graph is directional: it flows from user-facing applications to core
   libraries. This biases the score greatly towards basic libraries and
@@ -150,9 +149,9 @@ two purposes:
   open source developers, yet it is never going to be a dependency of another
   piece of software. However, developers contributing to this text editor are
   likely to also contribute to packages the text editor depends on, and this
-  allows the algorithm to flow back up from utility packages to app
-  packages. For example, open source develop per Max Brunsfeld contributes
-  heavily to both the \texttt{atom} text editor (mostly javascript), and to
+  allows the algorithm to flow back up from utility packages to user-facing
+  packages. For example, an open source developper who contributes
+  heavily to both the \texttt{atom} text editor (mostly JavaScript), and to
   \texttt{tree-sitter}, an incremental parser written in Rust, that is a
   dependency of \texttt{atom}.
 \item The graph which results from adding contributors is a lot more
@@ -298,14 +297,10 @@ will not be prohibitively expensive for network operators to run.
   then it only has a weight proportional to $1/d$.
 \end{itemize}
 
-In this section we have looked at how we can use the graph of interactions
-between entities in the open source community to produce an objective measure
-of the value each entity brings to the ecosystem as a whole. Having this metric
-available on the ledger is fundamental to the \oscoin{} ``monetary policy'', as
-explained in \S \ref{s:treasury}. Furthermore, \osrank{} and $\netgraph$ as a
-whole will be available to smart contracts (\S\ref{s:smart-contracts}) so that
-projects can script custom behaviours using this data. For example, a project
-could accept code contributions automatically, without maintainer intervention,
-if it has been positively reviewed by two current contributors with a high
-enough \osrank{}. Or issues might only be allowed to be marked as ``critical''
-by authors of a reverse-dependency with high enough \osrank{}, etc.
+Having \osrank{} available on the ledger is fundamental to the \oscoin{}
+``monetary policy'', as explained in \S \ref{s:treasury}. Furthermore,
+\osrank{} and $\netgraph$ as a whole will be available to smart contracts
+(\S\ref{s:smart-contracts}) so that projects can script custom behaviours using
+this data. For example, a project could accept code contributions
+automatically, without maintainer intervention, if it has been positively
+reviewed by two current contributors with a high enough \osrank{}.
