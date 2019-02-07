@@ -74,7 +74,8 @@ the next link at random, and this is what produces the classic
 pages.
 
 \subsection{Notation}
-In this section we will use the following conventions. A \emph{graph} refers to
+
+In this section we will use the following conventions: A \emph{graph} refers to
 a finite directed graph. For such a graph $G$ the vertex set is denoted $V(G)$
 and the edge-set is denoted $E(G) \subseteq V^2$. An edge $e = (x,y)$ of $G$ is
 denoted $x \xrightarrow[]{e} y$. Given a subset $X$ of the vertices of $G$,
@@ -96,6 +97,16 @@ ledger are:
   \item Contributions of code from users to projects.
 \end{itemize}
 
+% TODO: Can we avoid the term "user" here? Or mention that we aren't "ranking"
+% users, intentionally.
+
+We summarise these interactions with a weighted directed graph $G$
+(Figure~\ref{fig:G}), the weights corresponding to the relative importance of
+the edge, which can be set as parameters to the algorithm.  The weights on all
+edges outgoing from a vertex sum to $1$.
+
+\bigskip
+
 \begin{center}
 \begin{tikzpicture}[vertex/.style={draw,circle}, arr/.style={draw,thick,->}]
   \node[vertex] (p) at (2,0)  {\small $\proj$};
@@ -109,17 +120,9 @@ ledger are:
 \end{tikzpicture}
 \captionof{figure}{\small Entity relations in open source software development with example weights.\label{fig:G}}
 \end{center}
-
-% TODO: Can we avoid the term "user" here? Or mention that we aren't "ranking"
-% users, intentionally.
-
-We summarise these interactions with a weighted directed graph $G$
-(Figure~\ref{fig:G}), the weights corresponding to the relative importance of
-the edge, which can be set as parameters to the algorithm.
+\medskip
 
 % TODO: include simulations description and results here.
-
-The weights on all edges outgoing from a vertex sum to $1$.
 
 Note that some of the edges are biderectional, but each direction gets
 its own weight. For example both $\contrib$ and $\cocontrib$ pertain to
