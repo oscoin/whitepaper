@@ -86,16 +86,17 @@
 
 \calclayout
 
+\makeatletter
+\let\@wraptoccontribs\wraptoccontribs
+\makeatother
+
 \begin{document}
 
 \title[open source coin]{open source coin \\ \vspace{0.5em}\Small{trust and sustainability in open source communities} \\ {\tiny Draft 1.0}}
-\author{\Small Alexis Sellier}
-\address{\normalfont \texttt{alexis@monadic.xyz}}
-\author{\Small Eleftherios Diakomichalis}
-\address{\normalfont \texttt{ele@monadic.xyz}}
-\author{\Small James Haydon}
-\address{\normalfont \texttt{james@monadic.xyz}}
-\date{2019}
+\author{\Small Alexis Sellier\textsuperscript{$\dagger$} \qquad Eleftherios Diakomichalis\textsuperscript{$\dagger$} \qquad James Haydon\textsuperscript{$\dagger$}}
+\date{February 2019}
+
+\thanks{\textsuperscript{$\dagger$}Monadic, \texttt{\{alexis,ele,james\}@monadic.xyz}}
 
 \begin{abstract}
 The success of the open source movement stems from its dynamic culture of
@@ -120,6 +121,10 @@ transparency in open source communities.
 \input{sections/04-ledger.tex}
 \input{sections/05-smart-contracts.tex}
 \input{sections/06-applications.tex}
+
+\section*{Acknowledgements}
+We thank Sam Hart for his clear thinking, feedback and contributions to some of
+the core ideas presented in this work.
 
 % TODO: fix formatting in refs, or use bibtex or something.
 \begin{thebibliography}{9}
