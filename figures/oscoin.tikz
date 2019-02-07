@@ -15,6 +15,19 @@
         texto/.style={font=\footnotesize\sffamily},
         title/.style={font=\footnotesize\sffamily}
     }
+    \tikzset{
+        ledger/.style={
+            matrix of nodes,
+            row sep=-\pgflinewidth,
+            column sep=-\pgflinewidth,
+            anchor=center,
+            nodes={rectangle, draw=black, text width=32ex, align=center},
+            text depth=0.2ex,
+            text height=2ex,
+            nodes in empty cells
+        },
+        tx/.style={font=\footnotesize\sffamily},
+    }
     \tikzset{edge from parent/.style={draw, latex-}}
 
     \tikzstyle{thick-arrow} = [thick, -latex]
@@ -40,16 +53,25 @@
     \node[user-s] (user-a) [left=of proj-a-2] {\small{$U^1$}};
 
     \begin{scope}[on background layer]
-        \node (proj-a-group-1) [proj-group,
+        \node (netgraph) [proj-group,
             label={Network Graph ($\netgraph$)},
             inner sep=10pt,
             fit=(proj-a-1) (proj-a-2) (proj-a-3) (proj-a-4) (user-a)] {};
     \end{scope}
 
     %
+    % Ledger
+    %
+    \matrix[ledger, label={Ledger ($\ledger$)}, right=of netgraph] (ledger) {
+        |[tx]| $\tx{checkpoint}{P_1, \ldots, \{\depend(P_3)\}}$                       \\
+        |[tx]| $\tx{checkpoint}{P_2, \ldots, \{\depend(P_4)\}}$                       \\
+        |[tx]| $\tx{checkpoint}{P_3, \ldots, \{\depend(P_4)\}}$                       \\
+    };
+
+    %
     % OSRANK
     %
-    \node[process] (osrank) [below=of proj-a-group-1] {\osrank{}};
+    \node[process] (osrank) [below=of netgraph] {\osrank{}};
 
     %
     % Seed set projects
@@ -76,7 +98,7 @@
     %
     % Distribution
     %
-    \node[process, minimum width=9em] (distribution) [below=0.6cm of weights] {\textsf{Treasury}};
+    \node[process, minimum width=9em] (distribution) [below=0.6cm of weights] {\textsf{Treasury ($\psi$)}};
 
     % Coinbase
     \node[coinbase, right of=distribution, node distance=12em] {\textsf{Coinbase} ($B_r$)} edge [pointer] (distribution.east);
@@ -93,9 +115,10 @@
     \node[miner]  (miner)     [left=of distribution]          {\small{\textsf{Miner}}};
 
     \begin{scope}[on background layer]
-        \draw[thick-arrow] (proj-a-group-1.south)        to    (osrank.north);
+        \draw[thick-arrow] (netgraph.south)              to    (osrank.north);
         \draw[thick-arrow] (osrank.south)                to    (weights.north);
         \draw[thick-arrow] (weights.south)               to    (distribution.north);
+        \draw[-latex,dashed] (ledger.west)               to    (netgraph.east);
 
         % Distribution arrows
         \draw[-latex] (distribution)              to    (proj-b-1);
