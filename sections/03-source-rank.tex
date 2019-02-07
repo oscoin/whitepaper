@@ -106,6 +106,35 @@ opposite direction represents the statement \emph{the project is
 that users are unlikely to invest time contributing to a project they
 don't find useful.
 
+Initially we were only going to use the graph of dependencies between projects,
+since this is the most straightforward indication that a projects derives value
+from another. Adding edges corresponding to contribution and ownership serves
+two purposes:
+\begin{itemize}
+\item The graph is directional: it flows from user-facing applications to core
+  libraries. This biases the score greatly towards basic libraries and
+  development tools. Taking contributions into account brings in flows in the
+  other direction, indicating which user facing applications developers
+  value. For example, a full-fledged open source text editor is of high value to
+  open source developers, yet it is never going to be a dependency of another
+  piece of software. However, developers contributing to this text editor are
+  likely to also contribute to packages the text editor depends on, and this
+  allows the algorithm to flow back up from utility packages to app
+  packages. For example, open source develop per Max Brunsfeld contributes
+  heavily to both the \texttt{atom} text editor (mostly javascript), and to
+  \texttt{tree-sitter}, an incremental parser written in Rust, that is a
+  dependency of \texttt{atom}.
+\item The graph which results from adding contributors is a lot more
+  \emph{connected}. The dependency graph alone is unlikely to exhibit much
+  connections between vastly different domains, \eg{} web-programming and
+  game-programming; web servers just aren't that interested in
+  collision-detection. This can cause a niche of projects to form, of high value
+  to the members of the open source community, but which doesn't have many
+  currently highly-scored projects depending on them. Humans on the other hand
+  often \emph{do} have vary varied interests, allowing these niches to connect
+  back up to the rest of the ecosystem.
+\end{itemize}
+
 % TODO: Make the above easier to grasp. Also maybe rephrase a little "is
 % valueable to the project"
 
@@ -178,15 +207,14 @@ network graph for the sole purpose of exploiting the \osrank{} algorithm.
 For this we propose running \osrank{} in two distinct phases:
 % TODO: We propose a modification of the page rank algorithm, based on TrustRank
 \begin{itemize}
-\item In the first phase, a seed set $\seedset$ is used as the [TODO] for the
-  beginning of all walks. Specifically, a random walk always starts at
-  a vertex in $\seedset$. Otherwise the process remains the same. The scores
-  obtained are biased towards interactions with the seed set, but they
-  are not used directly by the compensation mechanism. Instead a
-  threashold $t$ is used to determine the legitimacy of entities: any
-  entity falling below this threshold is not considered for the next
-  phase. The output of this phase is a subgraph $\netgraph_t$ of the network
-  graph.
+\item In the first phase, all the random walks generated start in a specific
+  seed set $\seedset$, a subset of all project vertices. Specifically, a random
+  walk always starts at a vertex in $\seedset$. Otherwise the process remains
+  the same. The scores obtained are biased towards interactions with the seed
+  set, but they are not used directly by the compensation mechanism. Instead a
+  threashold $t$ is used to determine the legitimacy of entities: any entity
+  falling below this threshold is not considered for the next phase. The output
+  of this phase is a subgraph $\netgraph_t$ of the network graph.
   % TODO: Use of words: "entity" or "vertex"?
 \item In the second phase, the algorithm is run on the subgraph
   $\netgraph_t$ as usual, with no seed set. The output of the second
