@@ -1,6 +1,12 @@
 \section{The Oscoin Ledger}
 \label{s:ledger}
 
+The \oscoin{} network is composed of a set of nodes, or \emph{replicas}, which
+execute a distributed protocol. Together, these nodes form a \emph{Replicated
+State Machine} with a set of states $\state_0, \ldots, \state_n$, a transition
+function $\Xi$, a set of input blocks $B_0, \ldots, B_n$ or ``chain'' where
+$B_0$ is the ``genesis block'', and a set of outputs.
+
 The \oscoin{} ledger, formally $\ledger$, is the ordered set of all
 transactions agreed upon by the network. The ledger can be updated by submitting
 a valid transaction to the network. Transactions operate on the current state
