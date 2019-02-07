@@ -217,8 +217,9 @@ network graph for the sole purpose of exploiting the \osrank{} algorithm.
 % TODO: Reference PageRank sybil attack papers
 % TODO: Give example of "illegitimate" sub-graphs
 
-For this we propose running \osrank{} in two distinct phases:
-% TODO: We propose a modification of the page rank algorithm, based on TrustRank
+For this we propose a modification of the \pagerank{} algorithm, based on the
+ideas behind TrustRank~\cite{trustrank}, which involves two distinct phases:
+
 \begin{itemize}
 \item In the first phase, all the random walks generated start in a specific
   seed set $\seedset$, a subset of all project vertices. Specifically, a random
