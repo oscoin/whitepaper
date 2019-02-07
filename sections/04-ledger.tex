@@ -1,26 +1,32 @@
 \section{The Oscoin Ledger}
 \label{s:ledger}
 
-% TODO: Introduce the state and transactions.
+The \oscoin{} ledger, formally $\ledger$, is the ordered set of all
+transactions agreed upon by the network. The ledger can be updated by submitting
+a valid transaction to the network. Transactions operate on the current state
+$\state$ of the ledger, which is a materialized view of all processed transactions.
+
+The transactions available on the ledger are described in this section, as well
+as how they affect the state $\state$.
 
 \subsection{Supply}
 
-The supply of \oscoin{} is subject to an inflation $\protocol_{\iota} \in
-\mathbb{N}_{>0}$, carried out by the protocol every epoch $e$, following a
-fixed supply curve.
-% TODO: Remove "inflation"
+The supply of \oscoin{} is subject to an increase $B_r > 0$ carried out by the
+protocol every epoch, following a fixed supply curve. This ensures a continuous
+flow of \oscoin{} into the treasury (Section \ref{s:treasury}), to reward work
+in the network.
 
 \subsection{Accounts}
 \label{s:accounts}
 
-% TODO: Reference Ethereum's account model
-
-Currency is held in \emph{accounts} which can be unlocked by the signature of
-the account holder. Accounts have addresses which are used to send and receive
-\oscoin{}. The set of all accounts is known as $\mathcal{A}$.
+Currency (\oscoin{}) is held in \emph{accounts} which can be unlocked by the
+signature of the account holder. Accounts have addresses which are used to send
+and receive \oscoin{}. This model follows the design of Ethereum \cite{ethereum}
+rather than Bitcoin's UTXO model \cite{bitcoin}.
 
 Accounts are created by sending \oscoin{} to them (Section \ref{s:sending}),
-and are removed from the ledger when their balance reaches zero.
+and are removed from the ledger when their balance reaches zero. The set of all
+accounts is known as $\mathcal{A}$.
 
 The account balance $A_b$ of an account $A$ is held in the state $\state$, and
 can be accessed with the account address $A_a$. Formally, $\state(A_a) \to A_b$.
@@ -115,24 +121,13 @@ A contribution must be signed by the signoff user. This signals the
 the contribution has been reviewed/verified by this maintainer. The
 checkpoint as a whole must also be signed by a key in the project key set.
 
-Because all changes to a project's source code are signalled by
-checkpoints, it is possible to reconstruct a full hash-linked list of
-contributions for the entire project. When cross-referenced with the
-project's repository, this gives a full historical breakdown of who
-authored which code, and which project maintainer signed it off.
-
-There are two main uses for this. First of all the individual
-contributions in a checkpoint are used as edges in the network graph
-$\netgraph$ used to compute \osrank{} (Section \ref{s:osrank}).
-Second, because contributions reference users, combined with the
-subjective trust system (\S~\ref{s:web-of-trust}), this gives a
-particular user a view into the trustworthiness of the project as a
-whole, based on the contributions it is built out of. A user may judge
-a project as trustworthy (for example when deciding to add it as a
-dependency), if all the users involved in all the contributions (or at
-least the signoffs) have a relatively high trust score, according to
-his trust-network.
-% TODO: Remove reference to web of trust 
+Because all changes to a project's source code are signalled by checkpoints, it
+is possible to reconstruct a full hash-linked list of contributions for the
+entire project. When cross-referenced with the project's repository, this gives
+a full historical breakdown of who authored which code, and which project
+maintainer signed it off.  This makes the project history auditable and
+tamper-proof, as well as providing valuable information to the \osrank{}
+algorithm. Note that only the contribution \emph{metadata} is stored on-chain.
 
 \label{s:dependencies}
 Conceptually, a project $P$ depends on a project $P'$ if it is an
@@ -166,11 +161,6 @@ As a project owner, adding a dependency signals a variety of things
   very high security requirements, that $P'$ fulfils these.
 \end{itemize}
 
-% TODO: talk about how the web-of-trust parallel system can assign
-% trust scores to individual dependency txs, which means that a user
-% can form a subjective score on not only a project, but it's whole
-% set of transitive dependencies too.
-
 \def\posnat{\mathbb{N}_{\geq 1}}
 
 \subsection{Sending \oscoin{}}
@@ -182,17 +172,17 @@ owners. The second is the \emph{project fund}, and is controlled by smart
 contracts (see \S \ref{s:smart-contracts}). The set of \emph{balance addresses}
 is the coproduct of the set of user keys and the set of project addresses:
 \[
-\accAddrs = \users + \projs.
+    \accAddrs = \users + \projs.
 \]
 
 Each address is associated to a balance:
 \[
-\bal(a) \in \posnat \mid a \in \accAddrs.
+    \bal(a) \in \posnat \mid a \in \accAddrs.
 \]
 
 Transfers to and from balances are performed by the
 \[
-\tx{transfer}{x,y,n} \mid x,y \in \accAddrs, n \in \posnat
+    \tx{transfer}{x,y,n} \mid x,y \in \accAddrs, n \in \posnat
 \]
 transaction. If $x \in \users$ then the transaction is valid if signed by
 $x$. If $x \in \projs$ then the transaction is valid if it is signed by a
