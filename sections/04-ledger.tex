@@ -1,6 +1,8 @@
 \section{The Oscoin Ledger}
 \label{s:ledger}
 
+\def\posnat{\mathbb{N}_{\geq 1}}
+
 The \oscoin{} network is composed of a set of nodes, or \emph{replicas}, which
 execute a distributed protocol. Together, these nodes form a \emph{Replicated
 State Machine} with a set of states $\state_0, \ldots, \state_n$, a transition
@@ -28,14 +30,34 @@ in the network.
 Currency (\oscoin{}) is held in \emph{accounts} which can be unlocked by the
 signature of the account holder. Accounts have addresses which are used to send
 and receive \oscoin{}. This model follows the design of Ethereum \cite{ethereum}
-rather than Bitcoin's UTXO model \cite{bitcoin}.
+rather than Bitcoin's \emph{utxo} model \cite{bitcoin}.
 
 Accounts are created by transfering \oscoin{} to them (Section \ref{s:transfering}),
 and are removed from the ledger when their balance reaches zero. The set of all
-accounts is known as $\mathcal{A}$.
+accounts is known as $\accAddrs$.
 
 The account balance $A_b$ of an account $A$ is held in the state $\state$, and
 can be accessed with the account address $A_a$. Formally, $\state(A_a) \to A_b$.
+
+Accounts also have an associated \emph{smart contract} (Section
+\ref{s:smart-contracts}), formally $\field{A}{contract}$ which is used to
+validate and process transfers of \oscoin{} to and from the account.
+
+\subsection{Transfering \oscoin{}}
+\label{s:transfering}
+
+Each account in $\accAddrs$ is associated with an \oscoin{} balance:
+\[
+    \bal(a) \in \posnat \mid a \in \accAddrs.
+\]
+Transfers to and from accounts are performed with
+\[
+    \tx{transfer}{x,y,n} \mid x,y \in \accAddrs, n \in \posnat
+\]
+where $x$ is the account from which to withdraw the funds, $y$ is the deposit
+address, and $n$ is the amount of \oscoin{} to transfer.  The transaction is
+valid so long as $\bal(x) \geq n$ holds, and the contracts attached to $x$ and
+$y$ authorize the transfer (Section \ref{s:smart-contracts}).
 
 \subsection{Projects}
 \label{s:projects}
@@ -48,15 +70,13 @@ where $P_{a}$ is the project's address and unique identifier, $P_h$ is
 the project's current hash and $P_s$ is the canonical project source
 URL.
 
-% TODO: Project address is not an integer
-The project address, an integer, is used to identify the project, as
-well as to send \oscoin{} to it. Each project has an account balance
-identified by project address. The project hash is a digest of the
-project's source code at the time it is entered in the
-ledger. Finally, the project URL is there for convenience, as a means
-to fetch the source code.  It must be noted that the source code
-retrieved from $P_s$ must always hash to $P_h$, otherwise the project
-is considered invalid.
+The project address, an alphanumerical string, is used to uniquely identify the
+project when transacting on the ledger. Each project has a special account
+associated with its address called the \emph{project fund}. The project hash is
+a digest of the project's source code at the time it is entered in the ledger.
+Finally, the project URL is there for convenience, as a means to fetch the
+source code.  It must be noted that the source code retrieved from $P_s$ must
+always hash to $P_h$, otherwise the project is considered invalid.
 
 \subsubsection{Registration and ownership} Projects need to be
 registered on the ledger before they can participate in the
@@ -167,29 +187,3 @@ As a project owner, adding a dependency signals a variety of things
   very high security requirements, that $P'$ fulfils these.
 \end{itemize}
 
-\def\posnat{\mathbb{N}_{\geq 1}}
-
-\subsection{Transfering \oscoin{}}
-\label{s:transfering}
-
-Each user is associated with an \oscoin{} balance. Projects are associated with
-two accounts, the first is the \emph{project account} and is controlled by the
-owners. The second is the \emph{project fund}, and is controlled by smart
-contracts (see \S \ref{s:smart-contracts}). The set of \emph{balance addresses}
-is the coproduct of the set of user keys and the set of project addresses:
-\[
-    \accAddrs = \users + \projs.
-\]
-Each address is associated to a balance:
-\[
-    \bal(a) \in \posnat \mid a \in \accAddrs.
-\]
-Transfers to and from balances are performed with
-\[
-    \tx{transfer}{x,y,n} \mid x,y \in \accAddrs, n \in \posnat
-\]
-If $x \in \users$ then the transaction is valid if signed by $x$. If $x \in
-\projs$ then the transaction is valid if it is signed by a project owner. In
-any case, for the transaction to be valid $\bal(x) \geq n$ must hold, and after
-the transaction $x$'s balance is decremented by $n$ and $y$'s is incremented by
-$n$.
