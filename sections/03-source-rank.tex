@@ -280,4 +280,14 @@ will not be prohibitively expensive for network operators to run.
   then it only has a weight proportional to $1/d$.
 \end{itemize}
 
-% TODO: Add closing statement/conclusion
+In this section we have looked at how we can use the graph of interactions
+between entities in the open source community to produce an objective measure of
+the value each entity brings to the ecosystem as a whole. Having this metric
+available on the ledger is fundamental to the \oscoin{} monetary policy, as
+explained in \S \ref{s:treasury}. Furthermore, \osrank{} and $\netgraph$ as a
+whole will be available to smart contracts so that projects can script custom
+behaviours using this data. For example, a project could accept code
+contributions automatically, without maintainer intervention, if it has been
+positively reviewed by two current contributers with a high enough \osrank{}. Or
+issues might only be allowed to be marked as ``critical'' by authors of a
+reverse-dependencies with high enough \osrank{}, etc.
