@@ -23,16 +23,19 @@ projects and contributions on the network, and in particular
 \emph{dependencies} between projects. The output of the algorithm is a score
 $\omega(P)$ associated to each project $P$.
 
-In this section we will use the following conventions. A \emph{graph} refers to
-a finite directed graph. For such a graph $G$ the vertex set is denoted $V(G)$
-and the edge-set is denoted $E(G) \subseteq V^2$. An edge $e = (x,y)$ of $G$ is
-denoted $x \xrightarrow[]{e} y$. Given a subset $X$ of the vertices of $G$,
-$G[X]$ denotes the \emph{induced subgraph} on $X$, that is, the graph with $X$
-as the set of vertices and as edges the set
-$\{ x \xrightarrow[]{e} y \mid e \in E(G), \{x,y\} \subseteq X\}$. A \emph{walk}
-of length $n$ in a graph $G$ is a morphism of graphs $L_n \to G$ where $L_n$ is
-the $n$-th linear-graph: $V(L_n) = \{i \in \mathbb{N} \mid i \leq n \}$,
-$E(L_n) = \{ (i,i+1) \in \mathbb{N}^2 \mid i < n \}$.
+\subsection{Background}
+
+While the importance of an open-source software package is highly subjective to
+each individual, valuable information about its relative importance can be
+extracted by studying the structure of open-source software through
+dependencies and contributions.
+
+Similarly to how Google pioneered a large-scale search engine around PageRank
+that takes advantage of the present structure in hypertext (the web) in order
+to organize the world’s information, the linked graph of open-source software
+dependencies and contributions offers an important resource when it comes to information
+extraction, that can be thought of as an implicit form of trust
+present in the structure.
 
 \subsection{Rationale}
 
@@ -69,6 +72,18 @@ computational resources are scarce, the crudest algorithm simply picks
 the next link at random, and this is what produces the classic
 \pagerank{} formula which has seen so much success at ranking web
 pages.
+
+\subsection{Notation}
+In this section we will use the following conventions. A \emph{graph} refers to
+a finite directed graph. For such a graph $G$ the vertex set is denoted $V(G)$
+and the edge-set is denoted $E(G) \subseteq V^2$. An edge $e = (x,y)$ of $G$ is
+denoted $x \xrightarrow[]{e} y$. Given a subset $X$ of the vertices of $G$,
+$G[X]$ denotes the \emph{induced subgraph} on $X$, that is, the graph with $X$
+as the set of vertices and as edges the set
+$\{ x \xrightarrow[]{e} y \mid e \in E(G), \{x,y\} \subseteq X\}$. A \emph{walk}
+of length $n$ in a graph $G$ is a morphism of graphs $L_n \to G$ where $L_n$ is
+the $n$-th linear-graph: $V(L_n) = \{i \in \mathbb{N} \mid i \leq n \}$,
+$E(L_n) = \{ (i,i+1) \in \mathbb{N}^2 \mid i < n \}$.
 
 \subsection{Ranking entities in \oscoin{}}
 \label{s:netgraph}
