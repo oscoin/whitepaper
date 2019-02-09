@@ -24,64 +24,80 @@ of regular transaction processing. Certain transactions, such as $\mathsf{transf
 make use of smart contracts to extend their behavior and allow projects to
 program interactions around their governance, ownership or finances.
 
-\subsection{Distributing treasury rewards}
+\subsection{Receiving \oscoin{}}
 
-The most important function in the project fund smart contract,
-\handler{receiveTransfer} is in charge of handling \oscoin{} received from the
-treasury system. This function is invoked every epoch for projects getting a
-reward. The function is called with two arguments: $p$ is a dictionary
-containing the project data and $r \in \posnat$ represents the amount of
-\oscoin{} that was awarded to the project this epoch. The function must return
-a \emph{distribution}, a set of tuples assigning a number of \oscoin{} to
-various accounts. The protocol checks the function doesn't distribute more than
-$r$.
+When a transfer of \oscoin{} is received by a project, the smart contract
+attached to that project's fund is invoked. The specific handler that is
+called in the smart contract depends on \emph{sender}: for \oscoin{} received
+from the treasury system, the \handler{receiveReward} handler is called, while
+for transfers received from any other source, the \handler{receiveTransfer}
+handler is called. This allows projects to handle funds received by the treasury
+differently than funds received as donations, for example.
 
-When a project is first registered, \handler{receiveTransfer} returns the empty
+\subsubsection{Rewards from the treasury}
+
+The \handler{receiveReward} handler is invoked every $\epoch$ blocks, for
+projects getting a reward. The function is called with three arguments: $p$ is
+a dictionary containing the project data, $r \in \posnat$ represents the amount
+of \oscoin{} that is awarded to the project this epoch and $k \in \mathbb{N}$ is the
+current epoch. The function must return a \emph{distribution}, a set of tuples
+assigning a number of \oscoin{} to various accounts. The protocol checks the
+function doesn't distribute more than $r$.
+
+When a project is first registered, \handler{receiveReward} returns the empty
 distribution, that is, the \oscoin{} is burnt:
 \begin{algorithmic}[0]
-    \Procedure{receiveTransfer}{$p, r$}
+    \Procedure{receiveReward}{$p, r, k$}
         \State \textbf{return} $\varnothing$
     \EndProcedure
 \end{algorithmic}
 
-% TODO: receiveTransfer should take "sender" to distinguish donations from
-% rewards.
 Once the owners have decided on a policy, they may issue a transaction to update
-this function. For example, the project owners may decide that all contributors
+this handler. For example, the project owners may decide that all contributors
 should get an equal share of the reward, with the remainder getting deposited
 into the project fund:
+
+\begin{algorithmic}[0]
+    \Procedure{receiveReward}{$p, r, k$}
+        \State $n \gets |\prop{p}{contributors}|$
+        \State $q \gets r \sslash n$
+        \State $m \gets r \mod n$
+        \State $x \gets \{ (\prop{c}{addr}, q) \mid c \gets \prop{p}{contributors} \}$
+        \State \textbf{return} $x \cup \{ (\prop{p}{fund}, m) \}$
+    \EndProcedure
+\end{algorithmic}
+
+\subsubsection{Transfers and donations}
+
+When a transfer of \oscoin{} is received from a source other than the treasury,
+the \handler{receiveTransfer} handler is invoked. This function takes the same
+three arguments as \handler{receiveReward}, plus a fourth argument $s$ which
+represents the sender or ``source'' account of the transfer. The function is
+expected to return a distribution, just like \handler{receiveReward}. Initially,
+this handler is set to simply transfer the funds to the project fund:
 \medskip
 \begin{algorithmic}[0]
-    \Procedure{receiveTransfer}{$p, r$}
-        \State $n \gets |\prop{p}{contributors}|$
-        \State $s \gets r \sslash n$
-        \State $m \gets r \mod n$
-        \State $x \gets \{ (\prop{c}{addr}, s) \mid c \gets \prop{p}{contributors} \}$
-        \State \textbf{return} $x \cup \{ (\prop{p}{fund}, m) \}$
+    \Procedure{receiveTransfer}{$p, r, k, s$}
+        \State \textbf{return} $\{ (\prop{p}{fund}, r) \}$
     \EndProcedure
 \end{algorithmic}
 
 \subsection{Contract function updates}
 
-Contract updates are issued using
+Contract updates are issued using the
 \[
     \tx{updatecontract}{P_a, h, c, \nu, v}
 \]
-transactions, signed by a project owner, where $h$ is the \emph{handler} to be
-updated, $c$ is the code for the new function, $v$ is a set of \emph{votes}: a
+transaction, signed by a project owner, where $h$ is the \emph{handler} to be
+updated, $c$ is the code for the new handler, $v$ is a set of \emph{votes}: a
 collection of signatures the owner has collected for the update, and $\nu$ is a
-\emph{nonce} to prevent replay attacks with votes. The previous function is an
-example that would be used for the \handler{receiveTransfer} handler. The
-transaction is only valid if the \handler{validContractUpdate} handler
-described next returns $\top$.
-
-Of course the owners cannot just update contracts whenever they want, to
-whatever they like. Under which circumstances a contract can be updated is
-controlled by another handler: \handler{validContractUpdate}. This is a
-function which takes two arguments: $p$, the project data, and $v$, the list of
-public keys which signed votes for the contract update transaction. The
-function must return a boolean value, stating if the update is valid or not.
-The default code of this handler is:
+\emph{nonce} to prevent replay attacks with votes. The conditions under which
+the transaction is considered valid are specified in the
+\handler{validContractUpdate} handler. This is a function which takes two
+arguments: $p$, the project data, and $v$, the list of public keys which signed
+votes for the contract update transaction. The function must return a boolean
+value, stating if the update is valid ($\top$) or not ($\bot$).  The default
+code of this handler is:
 \begin{algorithmic}[0]
     \Procedure{validContractUpdate}{$p, v$}
         \State \textbf{return} $\{ \prop{o}{addr} \mid o \gets \prop{p}{owners} \} \subseteq v$
@@ -100,6 +116,10 @@ In order to specify that contract updates must be accepted by a majority of all
     \EndProcedure
 \end{algorithmic}
 
+If the current \handler{validContractUpdate} handler returns ($\top$), the
+contract update transaction is considered valid, and the handler specified in
+the transaction is updated.
+
 % TODO: Section on donations still needed?
 
 \subsection{Ad-hoc spending}
@@ -115,8 +135,6 @@ additional set of parameters:
 \[
     \tx{transfer}{P_a, n, \nu, v} \mid n \in \posnat
 \]
-where $v$ is a list of votes and $\nu$ is a nonce.
-
 The transaction is valid if the handler \handler{sendTransfer} accepts
 it. This function works in a similar way to \handler{validContractUpdate}. For
 example, the function might specify that the project owners may spend a small
