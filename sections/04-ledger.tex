@@ -96,15 +96,14 @@ don't clutter the ledger.  Once executed, the project is instantiated to $P =
 The project $P$'s current key set $P_K$ is $\{k_1\}$. This can be extended
 with:
 \[
-    \tx{addkey}{k}
+    \tx{addkey}{P_a, k}
 \]
 where $k$ is a valid key not present in $P_K$. Keys can also be removed, with:
 \[
-    \tx{removekey}{k}
+    \tx{removekey}{P_a, k}
 \]
-where $k$ is a key present in the $P_K$.
-When a project is no longer in use, it is possible to unregister it from the
-ledger with
+where $k$ is a key present in $P_K$.  When a project is no longer in use, it
+can be unregistered from the ledger with
 \[
     \tx{unregister}{P_a},
 \]
@@ -112,8 +111,8 @@ which must be signed by an owner ($k_1$ in the above example).
 Execution of this transaction returns the registration deposit to the account
 associated with the registration key.
 
-Projects registered on the ledger can be retrieved from the state $\state$ by
-using the project address, formally: $\state(P_a) \to P$.
+Projects registered on the ledger can be retrieved from the registry $\registry$ by
+using the project address, formally: $\registry(P_a) \to P$.
 
 \subsubsection{Checkpointing} \label{s:checkpointing} Any project in active
 development will see its source code change regularly. This means the project
