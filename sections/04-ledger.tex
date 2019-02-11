@@ -34,7 +34,7 @@ rather than Bitcoin's \emph{utxo} model \cite{bitcoin}.
 
 Accounts are created by transfering \oscoin{} to them (Section \ref{s:transfering}),
 and are removed from the ledger when their balance reaches zero. The set of all
-accounts is known as $\accAddrs$.
+accounts is known as $\accounts$.
 
 The account balance $A_b$ of an account $A$ is held in the state $\state$, and
 can be accessed with the account address $A_a$. Formally, $\state(A_a) \to A_b$.
@@ -46,13 +46,13 @@ validate and process transfers of \oscoin{} to and from the account.
 \subsection{Transfering \oscoin{}}
 \label{s:transfering}
 
-Each account in $\accAddrs$ is associated with an \oscoin{} balance:
+Each account in $\accounts$ is associated with an \oscoin{} balance:
 \[
-    \bal(a) \in \posnat \mid a \in \accAddrs.
+    \bal(a) \in \posnat \mid a \in \accounts.
 \]
 Transfers to and from accounts are performed with
 \[
-    \tx{transfer}{x,y,n} \mid x,y \in \accAddrs, n \in \posnat
+    \tx{transfer}{x,y,n} \mid x,y \in \accounts, n \in \posnat
 \]
 where $x$ is the account from which to withdraw the funds, $y$ is the deposit
 address, and $n$ is the amount of \oscoin{} to transfer.  The transaction is

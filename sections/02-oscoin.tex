@@ -1,32 +1,19 @@
 \section{The Oscoin Network}
 \label{s:oscoin}
 
-% Objectives
-% ==========
-% * Describe how oscoin works
-% * Explain how money flows to the most valuable projects
-% * Explain how this solves the sustainability problem
-% * Explain how we tie money with OSS / how we link money with the dependency graph
-
-% TODO: Diagram that shows Dependencies -> SrcRank -> Block reward -> Distribution
-
 \noindent In this paper, we introduce \oscoin{}, a protocol and currency
 designed to provide a solution to the open source sustainability problem.
 
 The \oscoin{} network is a public network of computers operating a distributed
 consensus protocol around a transaction ledger.
 
-% TODO: Move formalities and mathematical notation to after the 'overview';
-% i.e. make this lighter.
-
 This ledger is materialized into a shared state $\state$ which
-contains the canonical registry $\mathcal{R}$ of all open source
+contains the canonical registry $\registry$ of all open source
 projects participating in the \oscoin{} protocol; a set of accounts
-$\mathcal{A}$, containing the balances of all currency holders; and
+$\accounts$, containing the balances of all currency holders; and
 finally a network graph $\netgraph$, of relevant relations between
 entities in the network, including in particular dependencies between
 registered projects.
-% TODO: Registry letter is wrong
 
 The purpose of this network is to secure a digital currency---\oscoin{}---and
 reward the most valued open source projects in the network, without the need
