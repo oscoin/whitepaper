@@ -89,11 +89,8 @@ ledger are:
 \begin{itemize}
   \item Ownership of a project by a key,
   \item Dependencies between projects,
-  \item Contributions of code from users to projects.
+  \item Signed code contributions to projects.
 \end{itemize}
-
-% TODO: Can we avoid the term "user" here? Or mention that we aren't "ranking"
-% users, intentionally.
 
 We summarise these interactions with a weighted directed graph $G$
 (Figure~\ref{fig:G}), the weights corresponding to the relative importance of
@@ -219,6 +216,7 @@ Similarly, the \osrank{} of a user $u$ is:
 \[
   \omega(u) = \frac{W_u \epsilon_\user}{n R}.
 \]
+% TODO: "user" should rather be "contribution set"
 
 \subsection{Sybil networks}
 
@@ -283,19 +281,19 @@ will not be prohibitively expensive for network operators to run.
   % TODO: Add details on RNG
 
 \item \emph{Long epoch.} In this scenario payouts according to
-  \osrank{} are only made infrequently, say with a duration of $d$
-  between \emph{payout} blocks (e.g.\ once every month). In this case
+  \osrank{} are only made infrequently, by choosing a large value for the
+  reward epoch $\epoch$, \eg once a month.  In this case
   abusers might modify network structures of several projects in
-  anticipation of the payout block. To mitigate this, some edges are
+  anticipation of the payout block. To mitigate this, edges are
   weighted by the amount of time they have existed in the last epoch. For
-  example, if a dependency is added a day before the payout block,
-  then it only has a weight proportional to $1/d$.
+  example, if a dependency is added 1 block before the payout block,
+  then it only has a weight proportional to $1/\epoch$.
 \end{itemize}
+
+\subsection{Conclusion}
 
 Having \osrank{} available on the ledger is fundamental to the \oscoin{}
 ``monetary policy'', as explained in \S \ref{s:treasury}. Furthermore,
 \osrank{} and $\netgraph$ as a whole will be available to smart contracts
 (\S\ref{s:smart-contracts}) so that projects can script custom behaviours using
-this data. For example, a project could accept code contributions
-automatically, without maintainer intervention, if it has been positively
-reviewed by two current contributors with a high enough \osrank{}.
+this data.
