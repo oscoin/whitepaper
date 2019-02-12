@@ -18,7 +18,7 @@ remunerated for her work.
 A smart contract is a set of functions, or \emph{handlers}, invoked as part
 of regular transaction processing. Certain transactions, such as $\mathsf{transfer}$
 make use of smart contracts to extend their behavior and allow projects to
-program interactions around their governance, ownership or finances.
+program interactions around their governance, maintenance or finances.
 
 \subsection{Receiving \oscoin{}}
 
@@ -49,7 +49,7 @@ distribution, that is, the entirety of the reward $r$ is burnt:
     \EndProcedure
 \end{algorithmic}
 
-\noindent Once the project owners have decided on a policy, they may issue a
+\noindent Once the project maintainers have decided on a policy, they may issue a
 transaction to update this handler. For example, they may decide that all
 contributors should get an equal share of the reward, with the remainder
 getting deposited into the project fund:
@@ -91,9 +91,9 @@ Updates to the project smart contracts are issued using the
 \[
     \tx{updatecontract}{P_a, h, c, \nu, v}
 \]
-transaction, which must be signed by a project owner, where $h$ is the
+transaction, which must be signed by a project maintainer, where $h$ is the
 \emph{handler} to be updated, $c$ is the code for the new handler, $v$ is a set
-of \emph{votes}: a collection of signatures the owner has collected for the
+of \emph{votes}: a collection of signatures the maintainer has collected for the
 update, and $\nu$ is a \emph{nonce} to prevent replay attacks with votes.
 
 Since updating a contract may affect existing contributors, by for example
@@ -110,10 +110,10 @@ function must return a boolean value, stating whether the update is valid ($\top
 or not ($\bot$). The default code for this handler is:
 \begin{algorithmic}[0]
     \Procedure{updateContract}{$p, h, v$}
-        \State \textbf{return} $\{ \prop{o}{addr} \mid o \gets \prop{p}{owners} \} \subseteq v$
+        \State \textbf{return} $\{ \prop{o}{addr} \mid o \gets \prop{p}{maintainers} \} \subseteq v$
     \EndProcedure
 \end{algorithmic}
-which specifies that all the current owners must sign any contract update.
+which specifies that all the current maintainers must sign any contract update.
 
 In order to specify that contract updates must be accepted by a majority of all
 \emph{contributors}, this handler could be updated to:
@@ -148,7 +148,7 @@ parameters are a set of votes.
 
 The transaction's validity is determined by the \handler{sendTransfer} handler,
 which works in a similar way to \handler{updateContract}. For
-example, the function might specify that the project owners may spend a small
+example, the function might specify that the project maintainers may spend a small
 amount $x$ of \oscoin{} per month without seeking community agreement, but that
 large sums need over half of the contributors and donors to agree:
 \medskip
