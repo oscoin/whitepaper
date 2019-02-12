@@ -1,19 +1,19 @@
 \section{The Oscoin Network}
 \label{s:oscoin}
 
-\noindent In this paper, we introduce \oscoin{}, a protocol and currency
+\noindent In this paper, we introduce \oscoin{}, a cryptocurrency protocol
 designed to provide a solution to the open source sustainability problem.
 
-The \oscoin{} network is a public network of computers operating a distributed
-consensus protocol around a transaction ledger.
+\oscoin{} is a public network of distributed computers participating in a
+protocol for coming to consensus on a shared transaction ledger.
 
-This ledger is materialized into a shared state $\state$ which
+This ledger is materialized into a global state $\state$ which
 contains the canonical registry $\registry$ of all open source
 projects participating in the \oscoin{} protocol; a set of accounts
 $\accounts$, containing the balances of all currency holders; and
-finally a network graph $\netgraph$, of relevant relations between
-entities in the network, including in particular dependencies between
-registered projects.
+a network graph $\netgraph$, of the relevant relations between
+entities in the network, including dependencies between
+registered projects and project contributions.
 
 The purpose of this network is to secure a digital currency---\oscoin{}---and
 reward the most valued open source projects in the network, without the need
@@ -21,9 +21,9 @@ for intermediaries or central control.
 
 \subsection{The Oscoin Blockchain}
 
-To design a safe, open (``permissionless'') currency shared amongst all network
-participants, we propose to build \oscoin{} as a blockchain protocol, as
-described by Nakamoto in \cite{bitcoin} and Wood in \cite{ethereum}.
+To design a safe, open (``permissionless'') currency, shared amongst all network
+participants, we propose creating an \oscoin{} blockchain protocol, following
+work described by Nakamoto in \cite{bitcoin} and Wood in \cite{ethereum}.
 
 Though the specific choice of the underlying consensus mechanism is not
 directly relevant to \oscoin{}, we believe that one which allows open
@@ -31,6 +31,8 @@ participation is best for the long term health of the network. Furthermore,
 it's important that reliable support for light clients be possible. The only
 family of blockchain protocols with these characteristics are the proof-of-work
 protocols.
+
+% TODO: you might get some pushback saying the consensus mechanism is 'not relevant'
 
 \begin{figure*}[!ht]
     \par\medskip\noindent\minipage{\linewidth}
@@ -44,7 +46,7 @@ protocols.
 \label{s:treasury}
 
 The treasury subsystem (Figure \ref{f:treasury}) is designed to continuously
-rank projects on the network based on relative importance, and reward them with
+rank projects on the network based on relative importance and reward them with
 \oscoin{}.
 
 \subsubsection{Overview}
@@ -55,10 +57,10 @@ rank projects on the network based on relative importance, and reward them with
     \item Maintainers merge contributions and synchronize their project state
         with the ledger, which includes per-project dependency information and
         contribution metadata (\S\ref{s:checkpointing}).
-    \item Every $\epoch$ blocks, projects have their \osrank{} score calculated
+    \item Every $\epoch$ blocks, the \osrank{} of each project is calculated
         (\S\ref{s:osrank}).
     \item A reward in \oscoin{} is derived from each project's \osrank{},
-        and distributed to \emph{projects and contributors} through smart
+        and distributed to \emph{projects and contributors} via smart
         contracts (\S\ref{s:smart-contracts}).
 \end{itemize}
 
@@ -87,21 +89,28 @@ which rewards higher ranking projects with more \oscoin{}. We describe this
 \[
     \psi(t, \omega(P)) \to t_P
 \]
-To prevent trivial Sybil attacks from succeeding, the payment function takes
-into account a minimum threshold for $\omega(P)$ under which a project doesn't
-receive anything. Rewards can be further equalized by tweaking $\psi$ to
-compress or expand the range of rewards.
+To prevent trivial Sybil attacks, the payment function takes
+into account a minimum threshold for $\omega(P)$ under which a project does not
+receive funds. Rewards can be further equalized by adjusting $\psi$ to
+compress or expand the reward range.
 
-With this model, it’s the responsibility of maintainers to choose project
-dependencies well and to maintain their stated dependencies up to date, since
-by depending on a project, they are casting a vote for that dependency to
-receive money.  This is amplified for highly-weighted projects in the graph.
+% TODO: equalized perhaps not the right word choice. What does 'equal' mean in this
+% context?
+
+In this model, it is the responsibility of maintainers to choose project
+dependencies accurately and to keep their stated dependencies up to date, since
+dependence on a project is a signal of trust and a vote cast to receive funds.
+For projects highly-weighted within the graph, the importance of this signal is amplified.
 
 At scale, this mechanism has the potential to solve many of the issues with
-open source monetization and sustainability, as software projects receive
+open source monetization and sustainability. Projects can receive
 income in the form of \oscoin{}, while licensing their work as free and
-open source software (FOSS). This continuous algorithmic funding model moves
+open source software (FOSS). Such continuous algorithmic funding moves
 away from current ``transactional'' models---which require open source projects
 to change the way they work, re-license, setup a business---to a new model,
 which aligns with the motivations that lead to the success of the open source
 movement (\S \ref{s:incentives}).
+
+% TODO: the appositive in the middle of this sentence makes it difficult to read and
+% causes the reader to context switch. I'd recommend talking about the current transactional
+% model and then continuous funding, not breaking up the latter.
