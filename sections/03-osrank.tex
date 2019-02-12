@@ -41,7 +41,7 @@ often unclear how much value particular subsystems are
 contributing. Furthermore, subsystems have inherently differing capacities to
 transform value into revenue: subsystems at the boundaries with other domains
 are at an advantage, even though they may (transitively) derive much of their
-value from other subsystems. This disbalance in value flows in and out of
+value from other subsystems. This unbalance in value flows in and out of
 subsystems is detrimental to the system as a whole.
 
 Thankfully, human activity does not happen in a void\footnote{Space
@@ -59,7 +59,7 @@ stochastic simulation of meaningful activity traces of system agents,
 producing trails of artefacts consistent with observations, one can
 learn about the value flows between subsystems, and hence approximate
 the underlying value distribution. In the case of \pagerank{} one
-simulates a human searching for high-relevance data over the internet,
+simulates a human searching for high-relevance data over the Internet,
 following a chain of links. A sophisticated algorithm would use as
 many heuristics as possible for choosing the next link to follow (as a
 real human would), \eg{} evaluating the relevance of the link-text. If
@@ -87,11 +87,11 @@ $E(L_n) = \{ (i,i+1) \in \mathbb{N}^2 \mid i < n \}$.
 The artefacts related to OSS development which are captured on the \oscoin{}
 ledger are:
 \begin{itemize}
-  \item Maintnance of a project,
+  \item Maintenance of a project,
   \item Dependencies between projects,
   \item Signed code contributions to projects.
 \end{itemize}
-We summarise these interactions with a weighted directed graph $G$
+We summarize these interactions with a weighted directed graph $G$
 (Figure~\ref{fig:G}), the weights corresponding to the relative importance of
 the edge, which can be set as parameters to the algorithm.  The weights on all
 edges outgoing from a vertex sum to $1$.
@@ -283,5 +283,5 @@ will not be prohibitively expensive for network operators to run.
 Having \osrank{} available on the ledger is fundamental to the \oscoin{}
 ``monetary policy'', as explained in \S \ref{s:treasury}. Furthermore,
 \osrank{} and $\netgraph$ as a whole will be available to smart contracts
-(\S\ref{s:smart-contracts}) so that projects can script custom behaviours using
+(\S\ref{s:smart-contracts}) so that projects can script custom behaviors using
 this data.

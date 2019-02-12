@@ -32,7 +32,7 @@ signature of the account holder. Accounts have addresses which are used to send
 and receive \oscoin{}. This model follows the design of Ethereum \cite{ethereum}
 rather than Bitcoin's \emph{utxo} model \cite{bitcoin}.
 
-Accounts are created by transfering \oscoin{} to them (Section \ref{s:transfering}),
+Accounts are created by transferring \oscoin{} to them (Section \ref{s:transfering}),
 and are removed from the ledger when their balance reaches zero. The set of all
 accounts is known as $\accounts$.
 
@@ -43,7 +43,7 @@ Accounts also have an associated \emph{smart contract} (Section
 \ref{s:smart-contracts}), formally $\field{A}{contract}$ which is used to
 validate and process transfers of \oscoin{} to and from the account.
 
-\subsection{Transfering \oscoin{}}
+\subsection{Transferring \oscoin{}}
 \label{s:transfering}
 
 Each account in $\accounts$ is associated with an \oscoin{} balance:
@@ -91,12 +91,12 @@ at a later time. The transaction is valid as long as the address $P_a$ isn't
 already in use, and $P_s$ is a valid URL.
 
 On successful execution, the transaction locks a small amount of \oscoin{} from
-the account associated with $k_1$. This helps ensures that abandonned projects
+the account associated with $k_1$. This helps ensures that abandoned projects
 don't clutter the ledger.  Once executed, the project is instantiated to $P =
 \tuple{P_a, P_h, P_s}$ with $P_h = \varnothing$.
 
 The project $P$'s current \emph{key set} $P_K$ is $\{k_1\}$. We call this set of
-keys the \emph{maintainership} of the project. These are the keys which effectively
+keys the \emph{maintainers} of the project. These are the keys which effectively
 ``own'' the project and have administrative rights over it. $P_K$ can be extended
 with:
 \[
@@ -145,11 +145,11 @@ where:
 \item $\field{C}{sig}$ is the author's signature of $\field{C}{commit}$.
 \item $\field{C}{signoff}$ is the \emph{signoff key}, which must be $\in P_K$.
 \end{itemize}
-A contribution must be signed by the signoff key. This signals the
+A contribution must be signed by the signoff key. This signals
 the contribution has been reviewed/verified by this maintainer. The
 checkpoint as a whole must also be signed by a key in the project key set.
 
-Because all changes to a project's source code are signalled by checkpoints, it
+Because all changes to a project's source code are signaled by checkpoints, it
 is possible to reconstruct a full hash-linked list of contributions for the
 entire project. When cross-referenced with the project's repository, this gives
 a full historical breakdown of who authored which code, and which project
@@ -186,7 +186,7 @@ depending of the nature of the project:
 \item They have verified that $P$ indeed depends on this specific
   version of $P'$.
 \item That $P'$ is suitable as a dependency for $P$, \eg{} if $P$ has
-  very high security requirements, that $P'$ fulfils these.
+  very high security requirements, that $P'$ fulfills these.
 \end{itemize}
 
 \subsection{Smart contracts}

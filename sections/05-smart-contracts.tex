@@ -82,8 +82,8 @@ this handler is set to simply transfer the funds to the project fund:
 \end{algorithmic}
 Just like with the \handler{receiveReward} examples, it's possible to include
 arbitrary logic in this handler. For example, since donations to the project
-would invoke this handler, a project might want to distribute a percentrage
-of each donation to is contributors, as well as its consituent members.
+would invoke this handler, a project might want to distribute a percentage
+of each donation to is contributors, as well as its constituent members.
 
 \subsection{Contract handler updates}
 
@@ -99,7 +99,7 @@ update, and $\nu$ is a \emph{nonce} to prevent replay attacks with votes.
 Since updating a contract may affect existing contributors, by for example
 changing the share of rewards they receive for their work; the rules according
 to which contract handlers can be updated are stored in the project contract
-aswell, in the form of the \handler{updateContract} handler.  The
+as well, in the form of the \handler{updateContract} handler.  The
 conditions under which an $\mathsf{updatecontract}$ transaction is considered
 valid are specified in this handler.
 
@@ -175,7 +175,7 @@ to:
         distribution explicit and automatic.
     \item Allow potential contributors to easily assess a project before contributing.
     \item Allow projects and their flow of \oscoin{} to be transfered over to a
-        new maintainership with low risk.
+        new maintainer with low risk.
     \item Offer a certain stability to existing members and collaborators, by
         making changes to contracts difficult without community buy-in.
 \end{enumerate}
