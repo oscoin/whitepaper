@@ -3,10 +3,10 @@
 
 \def\Graph{\mathsf{Graph}}
 \def\proj{\mathsf{proj}}
-\def\user{\mathsf{user}}
-\def\dep{\mathsf{dep}}
-\def\own{\mathsf{own}}
-\def\coown{\mathsf{own}^\circ}
+\def\contributor{\mathsf{account}}
+\def\dep{\mathsf{depend}}
+\def\own{\mathsf{maintain}}
+\def\coown{\mathsf{maintain}^\circ}
 \def\contrib{\mathsf{contrib}}
 \def\cocontrib{\mathsf{contrib}^\circ}
 
@@ -102,7 +102,7 @@ edges outgoing from a vertex sum to $1$.
 \begin{center}
 \begin{tikzpicture}[vertex/.style={draw,circle}, arr/.style={draw,thick,->}]
   \node[vertex] (p) at (2,0)  {\small $\proj$};
-  \node[vertex] (u) at (-2,0) {\small $\user$};
+  \node[vertex] (u) at (-2,0) {\small $\contributor$};
 
   \draw[arr,looseness=9] (p) to[out=95,in=25] node[above] {\small $\dep \ (\frac{4}{7})$} (p);
   \draw[arr] (p) to[out=165,in=15] node[above]   {\small $\own \ (\frac{2}{7})$} (u);
@@ -118,12 +118,12 @@ edges outgoing from a vertex sum to $1$.
 
 Note that some of the edges are biderectional, but each direction gets
 its own weight. For example both $\contrib$ and $\cocontrib$ pertain to
-the same artefact: a contribution of code from a user to a
-project. The edge $\contrib$ represents the statement \emph{the user
-  is valuable to the project}. The edge $\cocontrib$ going in the
+the same artefact: a contribution of code from an account to a
+project. The edge $\contrib$ represents the statement \emph{the contributor
+or maintainer is valuable to the project}. The edge $\cocontrib$ going in the
 opposite direction represents the statement \emph{the project is
-  valuable to the user}; the rationale for this less obvious flow is
-that users are unlikely to invest time contributing to a project they
+valuable to the maintainer or contributor}; the rationale for this less obvious flow is
+that developers are unlikely to invest time contributing to or maintaining a project they
 don't find useful.
 
 % TODO: Make the above easier to grasp. Also maybe rephrase a little "is
@@ -131,30 +131,30 @@ don't find useful.
 
 While the graph of dependencies between projects is the most straightforward
 indication that a projects derives value from another, adding edges corresponding
-to contribution and ownership serves two purposes:
+to contribution and maintainership serves two purposes:
 \begin{itemize}
 \item The graph is directional: it flows from user-facing applications to core
   libraries. This biases the score greatly towards basic libraries and
   development tools. Taking contributions into account brings in flows in the
   other direction, indicating which user facing applications developers
-  value. For example, a full-fledged open source text editor is of high value to
-  open source developers, yet it is never going to be a dependency of another
-  piece of software. However, developers contributing to this text editor are
-  likely to also contribute to packages the text editor depends on, and this
-  allows the algorithm to flow back up from utility packages to user-facing
-  packages. For example, an open source developper who contributes
-  heavily to both the \texttt{atom} text editor (mostly JavaScript), and to
-  \texttt{tree-sitter}, an incremental parser written in Rust, that is a
-  dependency of \texttt{atom}.
-\item The graph which results from adding contributors is a lot more
-  \emph{connected}. The dependency graph alone is unlikely to exhibit much
-  connections between vastly different domains, \eg{} web-programming and
-  game-programming; web servers just aren't that interested in
-  collision-detection. This can cause a niche of projects to form, of high value
-  to the members of the open source community, but which doesn't have many
-  currently highly-scored projects depending on them. Humans on the other hand
-  often \emph{do} have vary varied interests, allowing these niches to connect
-  back up to the rest of the ecosystem.
+  value. For example, a full-fledged open source text editor is of high value
+  to open source developers, yet it is never going to be a dependency of
+  another piece of software. However, developers contributing to this text
+  editor are likely to also contribute to packages the text editor depends
+  on, and this allows the algorithm to flow back up from utility packages to
+  user-facing packages. For example, an open source developper who
+  contributes heavily to both the \texttt{atom} text editor (mostly
+  JavaScript), and to \texttt{tree-sitter}, an incremental parser written in
+  Rust, that is a dependency of \texttt{atom}.
+\item The graph which results from adding contributor and maintainer accounts
+  is a lot more \emph{connected}. The dependency graph alone is unlikely to
+  exhibit much connections between vastly different domains, \eg{}
+  web-programming and game-programming; web servers just aren't that
+  interested in collision-detection. This can cause a niche of projects to
+  form, of high value to the members of the open source community, but which
+  doesn't have many currently highly-scored projects depending on them.
+  Humans on the other hand often \emph{do} have vary varied interests,
+  allowing these niches to connect back up to the rest of the ecosystem.
 \end{itemize}
 
 The \oscoin{} network proposes to record these artefacts as
@@ -167,13 +167,12 @@ This in turn allows global value scores to be assigned to entities
 according to a specific stochastic process simulating \emph{random
   walks}, that is, activity traces in $\netgraph$ with sampling
 probabilities taken from $G$. For example: a contributor decides to
-work on a high value project (probably at the border), contributes a
-changeset, in so doing adds a dependency to another project, which imports a
-bug from upstream. The contributor therefore switches to fixing said
-bug in the dependency, etc. Much like a simulation of a human
-searching for information by clicking through links, this simulated
-contributor activity informs us on the value flows between subsystems
-in OSS development.
+work on a high value project, contributes a changeset, in so doing adds a
+dependency to another project, which imports a bug from upstream. The
+contributor therefore switches to fixing said bug in the dependency, etc. Much
+like a simulation of a human searching for information by clicking through
+links, this simulated contributor activity informs us on the value flows
+between subsystems in OSS development.
 % TODO: I think the above example mixes too many value flows.
 
 This score, which we call \osrank{}, is used to weight the
@@ -191,18 +190,18 @@ in $G$. The next choice is specific to the edge:
 \begin{itemize}
 \item In the cases of $\dep$ and $\own$, all vertices are equiprobable.
 \item In the cases of edges $x \xrightarrow[]{\coown} p$ and
-  $x \xrightarrow[]{\cocontrib} p$ outgoing from a user $x$, a project $p$ is
+  $x \xrightarrow[]{\cocontrib} p$ outgoing from a contributor $x$, a project $p$ is
   chosen with probability $\frac{p_x}{N_x}$, where $p_x$ is the number of
   contributions $x$ has contributed to $p$, and $N_x$ is the total number of
   contributions by $x$.
-\item In the case of edges $p \xrightarrow[]{\contrib} x$, the users $x$ are
+\item In the case of edges $p \xrightarrow[]{\contrib} x$, the contributors $x$ are
   chosen with probability $\frac{p_x}{N}$, where $N$ is the total number of
-  contributions $p$ has received from all users.
+  contributions $p$ has received from all contributors.
 \end{itemize}
 
 At each step the walk might terminate with probability $1 - \epsilon_\proj$ at a
-project vertex, and $1 - \epsilon_\user$ at a user vertex, (here
-$\epsilon_\proj, \epsilon_\user \in (0,1)$ are the \emph{damping factors}). This
+project vertex, and $1 - \epsilon_\contributor$ at a contributor vertex, (here
+$\epsilon_\proj, \epsilon_\contributor \in (0,1)$ are the \emph{damping factors}). This
 produces a set $W$ of $nR$ random walks, where $n$ is the total number of
 vertices. The \osrank{} for a project $x$ is then:
 \[
@@ -210,13 +209,12 @@ vertices. The \osrank{} for a project $x$ is then:
 \]
 where $W_x$ is the number of times all the walks in $W$ visit $x$, that is:
 \[
-W_x = \sum_{w \in W} |w[\{x\}]|.
+  W_x = \sum_{w \in W} |w[\{x\}]|.
 \]
-Similarly, the \osrank{} of a user $u$ is:
+Similarly, the \osrank{} of an account $a$ is:
 \[
-  \omega(u) = \frac{W_u \epsilon_\user}{n R}.
+  \omega(a) = \frac{W_a \epsilon_\contributor}{n R}.
 \]
-% TODO: "user" should rather be "contribution set"
 
 \subsection{Sybil networks}
 

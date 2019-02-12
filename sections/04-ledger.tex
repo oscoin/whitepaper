@@ -80,7 +80,7 @@ Finally, the project URL is there for convenience, as a means to fetch the
 source code.  It must be noted that the source code retrieved from $P_s$ must
 always hash to $P_h$, otherwise the project is considered invalid.
 
-\subsubsection{Registration and ownership} Projects need to be
+\subsubsection{Registration and maintenance} Projects need to be
 registered on the ledger before they can participate in the
 network. This can be done with the
 \[
@@ -95,7 +95,9 @@ the account associated with $k_1$. This helps ensures that abandonned projects
 don't clutter the ledger.  Once executed, the project is instantiated to $P =
 \tuple{P_a, P_h, P_s}$ with $P_h = \varnothing$.
 
-The project $P$'s current key set $P_K$ is $\{k_1\}$. This can be extended
+The project $P$'s current \emph{key set} $P_K$ is $\{k_1\}$. We call this set of
+keys the \emph{maintainership} of the project. These are the keys which effectively
+``own'' the project and have administrative rights over it. $P_K$ can be extended
 with:
 \[
     \tx{addkey}{P_a, k}
@@ -104,14 +106,14 @@ where $k$ is a valid key not present in $P_K$. Keys can also be removed, with:
 \[
     \tx{removekey}{P_a, k}
 \]
-where $k$ is a key present in $P_K$.  When a project is no longer in use, it
-can be unregistered from the ledger with
+where $k$ is a key present in $P_K$. When a project is no longer active, it can be
+unregistered from the ledger with
 \[
-    \tx{unregister}{P_a},
+    \tx{unregister}{P_a}.
 \]
-which must be signed by an owner ($k_1$ in the above example).
 Execution of this transaction returns the registration deposit to the account
-associated with the registration key.
+associated with the registration key ($k_1$ in the example above).  The above
+transactions must all be signed by a key present in $P_K$.
 
 Projects registered on the ledger can be retrieved from the registry $\registry$ by
 using the project address, formally: $\registry(P_a) \to P$.
@@ -143,7 +145,7 @@ where:
 \item $\field{C}{sig}$ is the author's signature of $\field{C}{commit}$.
 \item $\field{C}{signoff}$ is the \emph{signoff key}, which must be $\in P_K$.
 \end{itemize}
-A contribution must be signed by the signoff user. This signals the
+A contribution must be signed by the signoff key. This signals the
 the contribution has been reviewed/verified by this maintainer. The
 checkpoint as a whole must also be signed by a key in the project key set.
 
@@ -178,12 +180,12 @@ dependency that the project doesn't already have and $\undepend$
 only being valid for current dependencies. The checkpoint is invalid
 if the update list contains duplicates.
 
-As a project owner, adding a dependency signals a variety of things
-(partly dependent of the nature of the project):
+As a project maintainer, adding a dependency signals a variety of things
+depending of the nature of the project:
 \begin{itemize}
-\item they have verified that $P$ indeed depends on this specific
-  version of $P'$,
-\item that $P'$ is suitable as a dependency for $P$, \eg{} if $P$ has
+\item They have verified that $P$ indeed depends on this specific
+  version of $P'$.
+\item That $P'$ is suitable as a dependency for $P$, \eg{} if $P$ has
   very high security requirements, that $P'$ fulfils these.
 \end{itemize}
 
