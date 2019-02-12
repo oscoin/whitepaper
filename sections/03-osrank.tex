@@ -91,24 +91,21 @@ ledger are:
   \item Dependencies between projects,
   \item Signed code contributions to projects.
 \end{itemize}
-
 We summarise these interactions with a weighted directed graph $G$
 (Figure~\ref{fig:G}), the weights corresponding to the relative importance of
 the edge, which can be set as parameters to the algorithm.  The weights on all
 edges outgoing from a vertex sum to $1$.
 
-\bigskip
-
 \begin{center}
-\begin{tikzpicture}[vertex/.style={draw,circle}, arr/.style={draw,thick,->}]
-  \node[vertex] (p) at (2,0)  {\small $\proj$};
-  \node[vertex] (u) at (-2,0) {\small $\contributor$};
+\begin{tikzpicture}[vertex/.style={draw,circle,minimum width=8ex}, arr/.style={draw,thick,->}]
+  \node[vertex] (p) at (2,0)  {\Small $\proj$};
+  \node[vertex] (u) at (-2,0) {\Small $\contributor$};
 
-  \draw[arr,looseness=9] (p) to[out=95,in=25] node[above] {\small $\dep \ (\frac{4}{7})$} (p);
-  \draw[arr] (p) to[out=165,in=15] node[above]   {\small $\own \ (\frac{2}{7})$} (u);
-  \draw[arr] (u) to[out=55,in=125] node[above]   {\small $\coown \ (\frac{3}{5})$} (p);
-  \draw[arr] (p) to[out=195,in=-15] node[below]  {\small $\contrib \ (\frac{1}{7})$} (u);
-  \draw[arr] (u) to[out=-55,in=-125] node[below] {\small $\cocontrib \ (\frac{2}{5})$} (p);
+  \draw[arr,looseness=7] (p) to[out=75,in=20] node[above] {\Small $\dep \ (\frac{4}{7})$} (p);
+  \draw[arr] (p) to[out=165,in=15] node[above]   {\Small $\own \ (\frac{2}{7})$} (u);
+  \draw[arr] (u) to[out=55,in=125] node[above]   {\Small $\coown \ (\frac{3}{5})$} (p);
+  \draw[arr] (p) to[out=195,in=-15] node[below]  {\Small $\contrib \ (\frac{1}{7})$} (u);
+  \draw[arr] (u) to[out=-55,in=-125] node[below] {\Small $\cocontrib \ (\frac{2}{5})$} (p);
 \end{tikzpicture}
 \captionof{figure}{\small Entity relations in open source software development with example weights.\label{fig:G}}
 \end{center}
@@ -116,7 +113,7 @@ edges outgoing from a vertex sum to $1$.
 
 % TODO: include simulations description and results here.
 
-Note that some of the edges are biderectional, but each direction gets
+\noindent Note that some of the edges are biderectional, but each direction gets
 its own weight. For example both $\contrib$ and $\cocontrib$ pertain to
 the same artefact: a contribution of code from an account to a
 project. The edge $\contrib$ represents the statement \emph{the contributor
@@ -156,7 +153,6 @@ to contribution and maintainership serves two purposes:
   Humans on the other hand often \emph{do} have vary varied interests,
   allowing these niches to connect back up to the rest of the ecosystem.
 \end{itemize}
-
 The \oscoin{} network proposes to record these artefacts as
 transactions in a blockchain, so that one may unambiguously rebuild
 and reach consensus on a finite directed graph $\netgraph$ over $G$
@@ -199,7 +195,7 @@ in $G$. The next choice is specific to the edge:
   contributions $p$ has received from all contributors.
 \end{itemize}
 
-At each step the walk might terminate with probability $1 - \epsilon_\proj$ at a
+\noindent At each step the walk might terminate with probability $1 - \epsilon_\proj$ at a
 project vertex, and $1 - \epsilon_\contributor$ at a contributor vertex, (here
 $\epsilon_\proj, \epsilon_\contributor \in (0,1)$ are the \emph{damping factors}). This
 produces a set $W$ of $nR$ random walks, where $n$ is the total number of
@@ -241,7 +237,6 @@ phases:
   $\netgraph_t$ as usual, with no seed set. The output of the second
   phase is the \osrank{}.
 \end{itemize}
-
 Care must be taken to ensure the seed set is large enough to touch most
 legitimate projects on the network.  There are many ways to maintain such a
 seed set. However, this will be discussed in future work.
