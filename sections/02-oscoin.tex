@@ -9,7 +9,7 @@ consensus protocol around a transaction ledger.
 
 This ledger is materialized into a shared state $\state$ which
 contains the canonical registry $\registry$ of all open source
-projects participating in the \oscoin{} protocol; a set of accounts
+projects participating in the protocol; a set of accounts
 $\accounts$, containing the balances of all currency holders; and
 finally a network graph $\netgraph$, of relevant relations between
 entities in the network, including in particular dependencies between
@@ -21,16 +21,16 @@ for intermediaries or central control.
 
 \subsection{The Oscoin Blockchain}
 
-To design a safe, open (``permissionless'') currency shared amongst all network
+To design a safe, open, ``permissionless'' currency shared amongst all network
 participants, we propose to build \oscoin{} as a blockchain protocol, as
-described by Nakamoto in \cite{bitcoin} and Wood in \cite{ethereum}.
+described by Nakamoto \cite{bitcoin} and Wood \cite{ethereum}.
 
 Though the specific choice of the underlying consensus mechanism is not
 directly relevant to \oscoin{}, we believe that one which allows open
 participation is best for the long term health of the network. Furthermore,
 it's important that reliable support for light clients be possible. The only
 family of blockchain protocols with these characteristics are the proof-of-work
-protocols.
+protocols.  % TODO: Citation
 
 \begin{figure*}[!ht]
     \par\medskip\noindent\minipage{\linewidth}
@@ -55,11 +55,12 @@ rank projects on the network based on relative importance, and reward them with
     \item Maintainers merge contributions and synchronize their project state
         with the ledger, which includes per-project dependency information and
         contribution metadata (\S\ref{s:checkpointing}).
-    \item Every $\epoch$ blocks, projects have their \osrank{} score calculated
-        (\S\ref{s:osrank}).
+    \item Every $\epoch$ blocks, projects have their \osrank{} calculated
+        (\S\ref{s:osrank}), based on the above metadata.
     \item A reward in \oscoin{} is derived from each project's \osrank{},
-        and distributed to \emph{projects and contributors} through smart
-        contracts (\S\ref{s:smart-contracts}).
+        and distributed to the project's smart contract (\S\ref{s:smart-contracts}).
+    \item Depending on the project's smart contract, a share of the reward flows
+        to contributors and maintainers of the project.
 \end{itemize}
 
 \medskip
@@ -69,33 +70,27 @@ rank projects on the network based on relative importance, and reward them with
 transaction. These coins are allocated to two distinct groups: network
 operators (``miners''), formally $\miners$, and open source projects ($\projs$)
 through the treasury system.
+% TODO: Are they allocated to contributors?
 
-The key question we must answer, is what share of $B_r$ is distributed to
-individual projects and contributors in the network.  The goal is to choose
-a distribution mechanism that rewards projects in proportion to their relative
-importance within the network.
-
+The key question we must address, is what share of $B_r$ is distributed to
+individual projects and contributors in the network.
 For this, we leverage the \oscoin{} network graph $\netgraph$ (Section
-\ref{s:netgraph}), which maps flows of value between projects and contributors,
-and assigns a weight to each.
+\ref{s:netgraph}), which maps value flows between projects and contributors,
+and assigns a weight to each. This weight $\omega(x)$ we call \osrank{}, represents
+the relative importance of entities within the network.
 
-\subsubsection{Algorithm} Let $t$ be the total amount of \oscoin{} distributed
+\subsubsection{Algorithm} Let $t \equiv B_r$ be the total amount of \oscoin{} distributed
 to $n$ projects every epoch $\epoch$. The amount $t_P$ distributed to a given
-project $P$ over $\epoch$ is a function of its \osrank{} weight $\omega(P)$,
-which rewards higher ranking projects with more \oscoin{}. We describe this
-\emph{payment function} as
+project $P$ over $\epoch$ is a function $\psi$ of its \osrank{} $\omega(P)$,
+which awards higher ranking projects with more \oscoin{}. We describe this
+\emph{reward function} as
 \[
     \psi(t, \omega(P)) \to t_P
 \]
-To prevent trivial Sybil attacks from succeeding, the payment function takes
+To prevent trivial Sybil attacks from succeeding, the reward function takes
 into account a minimum threshold for $\omega(P)$ under which a project doesn't
 receive anything. Rewards can be further equalized by tweaking $\psi$ to
 compress or expand the range of rewards.
-
-With this model, it’s the responsibility of maintainers to choose project
-dependencies well and to maintain their stated dependencies up to date, since
-by depending on a project, they are casting a vote for that dependency to
-receive money.  This is amplified for highly-weighted projects in the graph.
 
 At scale, this mechanism has the potential to solve many of the issues with
 open source monetization and sustainability, as software projects receive
