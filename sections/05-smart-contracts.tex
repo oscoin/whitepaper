@@ -108,7 +108,6 @@ the project data, $h$, the name of the handler being updated, and $v$, the list
 of public keys which signed votes for the contract update transaction. The
 function must return a boolean value, stating whether the update is valid ($\top$)
 or not ($\bot$). The default code for this handler is:
-\columnbreak
 \begin{algorithmic}[0]
     \Procedure{updateContract}{$p, h, v$}
         \State \textbf{return} $\{ \prop{o}{addr} \mid o \gets \prop{p}{owners} \} \subseteq v$
