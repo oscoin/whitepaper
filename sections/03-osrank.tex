@@ -11,7 +11,7 @@
 \def\cocontrib{\mathsf{contrib}^\circ}
 
 Since one of the fundamental mechanisms of \oscoin{} is to distribute a portion
-of newly minted \oscoin{} to high-value projects on the network, the protocol
+of newly minted \oscoin{} ($B_r$) to high-value projects on the network, the protocol
 needs to reach consensus on which projects are ``high value''. To choose which
 projects receive \oscoin{}, and in which proportions, the network uses
 \osrank{}, which is a modification of the well-know \pagerank{}
@@ -28,11 +28,11 @@ extracted by studying the structure of open source software through
 dependencies and contributions.
 
 Similarly to how Google pioneered a large-scale search engine around PageRank
-that takes advantage of the present structure in hypertext (the Web) in order
-to organize the world’s information, the linked graph of open source software
+that took advantage of the structure in hypertext (the Web) in order
+to organize the world’s information, the graph of open source software
 dependencies and contributions offers an important resource when it comes to information
 extraction, that can be thought of as an implicit form of trust
-and relative value present in the structure.
+and relative value present in the ecosystem.
 
 \subsection{Rationale}
 
@@ -87,7 +87,7 @@ $E(L_n) = \{ (i,i+1) \in \mathbb{N}^2 \mid i < n \}$.
 The artefacts related to OSS development which are captured on the \oscoin{}
 ledger are:
 \begin{itemize}
-  \item Ownership of a project by a key,
+  \item Maintnance of a project,
   \item Dependencies between projects,
   \item Signed code contributions to projects.
 \end{itemize}
@@ -113,22 +113,22 @@ edges outgoing from a vertex sum to $1$.
 
 % TODO: include simulations description and results here.
 
-\noindent Note that some of the edges are biderectional, but each direction gets
+\noindent Note that some of the edges are bidirectional, but each direction gets
 its own weight. For example both $\contrib$ and $\cocontrib$ pertain to
 the same artefact: a contribution of code from an account to a
 project. The edge $\contrib$ represents the statement \emph{the contributor
-or maintainer is valuable to the project}. The edge $\cocontrib$ going in the
+is valuable to the project}. The edge $\cocontrib$ going in the
 opposite direction represents the statement \emph{the project is
-valuable to the maintainer or contributor}; the rationale for this less obvious flow is
-that developers are unlikely to invest time contributing to or maintaining a project they
-don't find useful.
+valuable to the contributor}; the rationale for this less obvious flow is
+that developers are unlikely to invest time contributing to a project they
+don't find valuable.
 
 % TODO: Make the above easier to grasp. Also maybe rephrase a little "is
 % valueable to the project"
 
 While the graph of dependencies between projects is the most straightforward
-indication that a projects derives value from another, adding edges corresponding
-to contribution and maintainership serves two purposes:
+indication that a project derives value from another, adding edges corresponding
+to contribution and maintenance serves two purposes:
 \begin{itemize}
 \item The graph is directional: it flows from user-facing applications to core
   libraries. This biases the score greatly towards basic libraries and
@@ -139,10 +139,7 @@ to contribution and maintainership serves two purposes:
   another piece of software. However, developers contributing to this text
   editor are likely to also contribute to packages the text editor depends
   on, and this allows the algorithm to flow back up from utility packages to
-  user-facing packages. For example, an open source developper who
-  contributes heavily to both the \texttt{atom} text editor (mostly
-  JavaScript), and to \texttt{tree-sitter}, an incremental parser written in
-  Rust, that is a dependency of \texttt{atom}.
+  user-facing packages.
 \item The graph which results from adding contributor and maintainer accounts
   is a lot more \emph{connected}. The dependency graph alone is unlikely to
   exhibit much connections between vastly different domains, \eg{}
@@ -153,11 +150,10 @@ to contribution and maintainership serves two purposes:
   Humans on the other hand often \emph{do} have vary varied interests,
   allowing these niches to connect back up to the rest of the ecosystem.
 \end{itemize}
-The \oscoin{} network proposes to record these artefacts as
-transactions in a blockchain, so that one may unambiguously rebuild
-and reach consensus on a finite directed graph $\netgraph$ over $G$
-(\ie{} in the slice category $\Graph/G$). We'll refer to $\netgraph$
-as the \emph{network graph}.
+We propose to record these artefacts as transactions in a blockchain, so that
+one may unambiguously rebuild and reach consensus on a finite directed graph
+$\netgraph$ over $G$ (\ie{} in the slice category $\Graph/G$). We'll refer to
+$\netgraph$ as the \emph{network graph}.
 
 This in turn allows global value scores to be assigned to entities
 according to a specific stochastic process simulating \emph{random
@@ -196,7 +192,7 @@ in $G$. The next choice is specific to the edge:
 \end{itemize}
 
 \noindent At each step the walk might terminate with probability $1 - \epsilon_\proj$ at a
-project vertex, and $1 - \epsilon_\contributor$ at a contributor vertex, (here
+project vertex, and $1 - \epsilon_\contributor$ at an account vertex, (here
 $\epsilon_\proj, \epsilon_\contributor \in (0,1)$ are the \emph{damping factors}). This
 produces a set $W$ of $nR$ random walks, where $n$ is the total number of
 vertices. The \osrank{} for a project $x$ is then:
@@ -218,7 +214,7 @@ The main problem to avoid is compensating illegitimate ecosystems, that is,
 project structures and relationships which have been setup in the
 network graph for the sole purpose of exploiting \osrank{}.
 These attacks which are known as \emph{Sybil attacks} have been examined
-before \cite{pagerank-sybil} within the context of \pagerank{}.
+before within the context of \pagerank{} \cite{pagerank-sybil}.
 
 To address this we propose a modification of the \pagerank{} algorithm, based
 on the ideas behind TrustRank~\cite{trustrank}, which involves two distinct
@@ -226,7 +222,7 @@ phases:
 
 \begin{itemize}
 \item In the first phase, all the random walks generated start in a specific
-  seed set $\seedset$, a subset of all project vertices. Specifically, a random
+  seed set $\seedset$, a subset of all project and account vertices. Specifically, a random
   walk always starts at a vertex in $\seedset$. Otherwise the process remains
   the same. The scores obtained are biased towards interactions with the seed
   set, but they are not used directly by the compensation mechanism. Instead a
@@ -257,8 +253,7 @@ will not be prohibitively expensive for network operators to run.
   performed in the previous calculation remain valid in the updated graph. For
   example if only a single dependency $p_1 \xrightarrow[]{\dep} p_2$ has been
   added since the last calculation, then a random walk that was generated on the
-  old graph is only invalid in the updated graph if it passes through $p_1$, for
-  it may have chosen to follow this new dependency to $p_2$.
+  old graph is only invalidated in the updated graph if it passes through $p_1$.
 
   In practice the operators of the network cache the set of random
   walks from the previous calculation, and update this set by removing
@@ -275,7 +270,7 @@ will not be prohibitively expensive for network operators to run.
 
 \item \emph{Long epoch.} In this scenario payouts according to
   \osrank{} are only made infrequently, by choosing a large value for the
-  reward epoch $\epoch$, \eg once a month.  In this case
+  reward epoch $\epoch$, \eg{} monthly.  In this case
   abusers might modify network structures of several projects in
   anticipation of the payout block. To mitigate this, edges are
   weighted by the amount of time they have existed in the last epoch. For
