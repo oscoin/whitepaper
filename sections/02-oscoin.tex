@@ -28,9 +28,16 @@ described by Nakamoto \cite{bitcoin} and Wood \cite{ethereum}.
 Though the specific choice of the underlying consensus mechanism is not
 directly relevant to \oscoin{}, we believe that one which allows open
 participation is best for the long term health of the network. Furthermore,
-it's important that reliable support for light clients be possible. The only
-family of blockchain protocols with these characteristics are the proof-of-work
-protocols.  % TODO: Citation
+it's important that reliable support for light clients be possible, since
+running a full node is prohibitively expensive in most environments that could
+be benefit from \oscoin{}. The only family of blockchain protocols with these
+characteristics are the proof-of-work protocol.\footnote{Proof-of-work blocks
+can be verified cheaply and securely on most mobile devices available
+today, as demonstrated by Bitcoin. In contrast, proof-of-stake protocols,
+a common alternative, rely on stakeholder signatures, which require access to
+account balances to be validated, and thus block data must be downloaded and
+verified, or account balances must be queried repeatedly from third-parties,
+neither of which is feasible in constrained environments.}
 
 \begin{figure*}[!ht]
     \par\medskip\noindent\minipage{\linewidth}
