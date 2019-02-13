@@ -122,46 +122,48 @@ edges outgoing from a vertex sum to $1$.
 
 % TODO: include simulations description and results here.
 
-Note that some of the edges are biderectional, but each direction gets
-its own weight. For example both $\contrib$ and $\cocontrib$ pertain to
+Note that some of the edges are biderectional, but each direction is
+weighted uniquely. For example both $\contrib$ and $\cocontrib$ pertain to
 the same artefact: a contribution of code from a user to a
 project. The edge $\contrib$ represents the statement \emph{the user
   is valuable to the project}. The edge $\cocontrib$ going in the
 opposite direction represents the statement \emph{the project is
   valuable to the user}; the rationale for this less obvious flow is
-that users are unlikely to invest time contributing to a project they
-don't find useful.
+that users are unlikely to invest time contributing to projects they
+do not find useful.
 
 % TODO: Make the above easier to grasp. Also maybe rephrase a little "is
 % valueable to the project"
+
+% TODO: Make sure 'bidirectional' is the correct terminology. Or are these two
+% unidirectional edges?
 
 While the graph of dependencies between projects is the most straightforward
 indication that a projects derives value from another, adding edges corresponding
 to contribution and ownership serves two purposes:
 \begin{itemize}
-\item The graph is directional: it flows from user-facing applications to core
+\item The graph is directed: it flows from user-facing applications to core
   libraries. This biases the score greatly towards basic libraries and
-  development tools. Taking contributions into account brings in flows in the
-  other direction, indicating which user facing applications developers
-  value. For example, a full-fledged open source text editor is of high value to
-  open source developers, yet it is never going to be a dependency of another
+  development tools. Incorporating developer contributions brings flows in the
+  opposite direction that indicatie valued user-facing applications. For example,
+  a fully-featured open source text editor is of high value to
+  open source developers, yet it may never become an explicit dependency of another
   piece of software. However, developers contributing to this text editor are
-  likely to also contribute to packages the text editor depends on, and this
+  also likely to contribute to packages upon which the text editor depends, and this
   allows the algorithm to flow back up from utility packages to user-facing
-  packages. For example, an open source developper who contributes
+  packages. For example, an open source developper may contribute
   heavily to both the \texttt{atom} text editor (mostly JavaScript), and to
-  \texttt{tree-sitter}, an incremental parser written in Rust, that is a
-  dependency of \texttt{atom}.
-\item The graph which results from adding contributors is a lot more
-  \emph{connected}. The dependency graph alone is unlikely to exhibit much
-  connections between vastly different domains, \eg{} web-programming and
-  game-programming; web servers just aren't that interested in
-  collision-detection. This can cause a niche of projects to form, of high value
-  to the members of the open source community, but which doesn't have many
-  currently highly-scored projects depending on them. Humans on the other hand
-  often \emph{do} have vary varied interests, allowing these niches to connect
-  back up to the rest of the ecosystem.
+  one of its dependencies, \texttt{tree-sitter}, an incremental parser written
+  in Rust.
+\item While the dependency graph alone is unlikely to adequately bridge
+  differing domains, developers often contribute to their neighboring ecosystem and
+  to their tooling such that these niches can interconnect. Thus a graph incorporating
+  dependencies as well as contributions may be sufficiently connected to
+  reveal the latent value of open source projects.
 \end{itemize}
+
+% TODO: The '(mostly JavaScript)' bit is confusing. Is the developer's contribution
+% mostly in JS, or the Atom text editor itself?
 
 The \oscoin{} network proposes to record these artefacts as
 transactions in a blockchain, so that one may unambiguously rebuild
