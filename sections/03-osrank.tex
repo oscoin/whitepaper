@@ -12,27 +12,27 @@
 
 Since one of the fundamental mechanisms of \oscoin{} is to distribute a portion
 of newly minted \oscoin{} to high-value projects on the network, the protocol
-needs to reach consensus on which projects are ``high value''. To choose which
+must reach consensus on which projects are ``high value''. To choose which
 projects receive \oscoin{}, and in which proportions, the network uses
-\osrank{}, which is a modification of the well-know \pagerank{}
-algorithm~\cite{pagerank} applied to the graph of relationships between
-projects and contributions on the network, and in particular
-\emph{dependencies} between projects. The output of the algorithm is a score
+\osrank{}, which is a variant of the well-know \pagerank{}
+algorithm~\cite{pagerank}, applied to the graph of relationships between
+projects and contributions on the network, particularly project
+\emph{dependencies}. The output of the \osrank{} algorithm is a score
 $\omega(P)$ associated to each project $P$.
 
 \subsection{Intuition}
 
-While the importance of an open-source software package is highly subjective to
-each individual, valuable information about its relative importance can be
-extracted by studying the structure of open-source software through
+While the importance of an open source software package is highly subjective,
+valuable information about a project's relative importance can be
+surfaced by studying the structure of open source software through
 dependencies and contributions.
 
-Similarly to how Google pioneered a large-scale search engine around PageRank
-that takes advantage of the present structure in hypertext (the Web) in order
-to organize the world’s information, the linked graph of open-source software
-dependencies and contributions offers an important resource when it comes to information
-extraction, that can be thought of as an implicit form of trust
-and relative value present in the structure.
+The PageRank algorithm allowed Google to scale Internet search by
+reading what the hypertextual structure of the Web indicated about the
+relative importance of its contents. Similarly, the linked graph of open
+source software dependencies and contributions is a resource
+indicating implicit trust within open source communities and the relative
+value within that structure.
 
 \subsection{Rationale}
 
@@ -41,7 +41,7 @@ often unclear how much value particular subsystems are
 contributing. Furthermore, subsystems have inherently differing capacities to
 transform value into revenue: subsystems at the boundaries with other domains
 are at an advantage, even though they may (transitively) derive much of their
-value from other subsystems. This disbalance in value flows in and out of
+value from other subsystems. This imbalance of value flows into and out of
 subsystems is detrimental to the system as a whole.
 
 Thankfully, human activity does not happen in a void\footnote{Space
@@ -54,6 +54,13 @@ system as a whole. Crucially, during this activity, a trail of
 dependencies etc.) is produced; concrete manifestations
 of the relationships between the various entities.
 
+% TODO: 'human activity does not happen in a void' is a little casual sounding for
+% this paper. also I'm not sure there's really enough context to know what 'human activity'
+% means when you reach this point in the paper.
+
+% TODO: do we have a standard name for a project OR a contributor (node maybe)
+% entity is a little vague and I think we should try to keep terminology consistant
+
 The basic insight of \pagerank{} and similar metrics, is that by
 stochastic simulation of meaningful activity traces of system agents,
 producing trails of artefacts consistent with observations, one can
@@ -65,8 +72,7 @@ many heuristics as possible for choosing the next link to follow (as a
 real human would), \eg{} evaluating the relevance of the link-text. If
 computational resources are scarce, the crudest algorithm simply picks
 the next link at random, and this is what produces the classic
-\pagerank{} formula which has seen so much success at ranking web
-pages.
+\pagerank{} formula which has proven so successful on the Web.
 
 \subsection{Notation}
 
