@@ -166,35 +166,44 @@ to contribution and ownership serves two purposes:
 % mostly in JS, or the Atom text editor itself?
 
 The \oscoin{} network proposes to record these artefacts as
-transactions in a blockchain, so that one may unambiguously rebuild
-and reach consensus on a finite directed graph $\netgraph$ over $G$
-(\ie{} in the slice category $\Graph/G$). We'll refer to $\netgraph$
+transactions in a blockchain, so that one may verifiably construct---and
+reach consensus on---a unique finite directed graph $\netgraph$ over $G$
+(\ie{} in the slice category $\Graph/G$). We will refer to $\netgraph$
 as the \emph{network graph}.
 
-This in turn allows global value scores to be assigned to entities
-according to a specific stochastic process simulating \emph{random
-  walks}, that is, activity traces in $\netgraph$ with sampling
+With a properly constructed \emph{network graph} global value scores may be
+assigned to entities according to a specific stochastic process, that is
+\emph{random walks} simulating traces of activity in $\netgraph$ with sample
 probabilities taken from $G$. For example: a contributor decides to
 work on a high value project (probably at the border), contributes a
-changeset, in so doing adds a dependency to another project, which imports a
-bug from upstream. The contributor therefore switches to fixing said
+changeset, and in so doing adds a dependency to another project, which imports a
+bug from an upstream package. The contributor therefore switches to fixing said
 bug in the dependency, etc. Much like a simulation of a human
-searching for information by clicking through links, this simulated
-contributor activity informs us on the value flows between subsystems
-in OSS development.
+searching for information by clicking through links, this simulated activity
+informs us on the value flows between subsystems within the wider OSS
+ecosystem.
+
 % TODO: I think the above example mixes too many value flows.
 
-This score, which we call \osrank{}, is used to weight the
-distribution of newly minted tokens to high value entities, thus
-compensating entities which bring value to the ecosystem.
+% TODO: 'at the border' should be more clearly articulated. what kind of
+% border and why is this important?
+
+% TODO: I'm actually not sure this story of the simulated random walk is clarifying
+% there are more concise ways to describe monte carlo systems directly, as methods
+% that sample from the probability distribution of possible graph traversals, each
+% trajectory representing a chain of causal dependency, either on software or human
+% activity.
+
+This score, which we call \osrank{}, is used to distribute a portion of the
+newly minted tokens to projects as a function of their value to the \oscoin{} network.
 
 \subsection{Definition}
 
 To implement \osrank{}, we use the following Monte Carlo-based algorithm: for
 each vertex on the network, $R$ random walks are performed which start at that
-vertex. To decide which next vertex to visit during a random walk, first a type
-of outgoing edge is decided by sampling outgoing edges according to the weights
-in $G$. The next choice is specific to the edge:
+vertex. To select the subsequent vertex, first an edge type is decided
+by sampling edges according to the weights in $G$. The next step is specific to
+the edge type:
 
 \begin{itemize}
 \item In the cases of $\dep$ and $\own$, all vertices are equiprobable.
@@ -228,79 +237,86 @@ Similarly, the \osrank{} of a user $u$ is:
 
 \subsection{Sybil networks}
 
-The main problem to avoid is compensating illegitimate ecosystems, that is,
-project structures and relationships which have been setup in the
-network graph for the sole purpose of exploiting \osrank{}.
-These attacks which are known as \emph{Sybil attacks} have been examined
-before \cite{pagerank-sybil} within the context of \pagerank{}.
+In order to maintain the integrity of the \oscoin{} graph,
+illegitimate ecosystems must not be allowed to perpetuate, that is,
+fraudulent project and contribution structures which have been instantiated
+for the purpose of exploiting \osrank{}.
+Such \emph{Sybil attacks} on \pagerank{} have been examined
+in detail in previous work \cite{pagerank-sybil}.
 
-To address this we propose a modification of the \pagerank{} algorithm, based
+To address this we propose a modification of the \pagerank{} algorithm based
 on the ideas behind TrustRank~\cite{trustrank}, which involves two distinct
 phases:
 
 \begin{itemize}
-\item In the first phase, all the random walks generated start in a specific
-  seed set $\seedset$, a subset of all project vertices. Specifically, a random
-  walk always starts at a vertex in $\seedset$. Otherwise the process remains
-  the same. The scores obtained are biased towards interactions with the seed
-  set, but they are not used directly by the compensation mechanism. Instead a
-  threshold $t$ is used to determine the legitimacy of entities: any entity
+\item In the first phase, all random walks begin at a vertex included in
+  the initialization seed set $\seedset$, a subset of all project vertices.
+  Otherwise the process remains the same. The resulting scores are biased towards
+  interactions with the seed set, but are not used directly by the compensation
+  mechanism. Instead a threshold $t$ is used to determine the legitimacy of entities: any entity
   falling below this threshold is not considered for the next phase. The output
   of this phase is a subgraph $\netgraph_t$ of the network graph.
 \item In the second phase, the algorithm is run on the subgraph
-  $\netgraph_t$ as usual, with no seed set. The output of the second
+  $\netgraph_t$ in the same fashion, except without a seed set. The resulting output of the second
   phase is the \osrank{}.
 \end{itemize}
 
-Care must be taken to ensure the seed set is large enough to touch most
-legitimate projects on the network.  There are many ways to maintain such a
-seed set. However, this will be discussed in future work.
+Care must be taken to ensure the seed set is large and well distributed enough such that
+trajectories beginning from those verticies will reach all legitimate projects within the
+network. There are many ways to maintain such a seed set. However, this will be elaborated
+in future work.
 
 \subsection{Implementation}
 
-There are several options for making sure the computation of \osrank{}
-will not be prohibitively expensive for network operators to run.
+There exist several options for ensuring the \osrank{} computation
+does not become prohibitively expensive for network operators to compute.
+
 % TODO: Has "operators" been defined?
 
 \begin{itemize}
 \item \emph{Incremental Monte Carlo.} An incremental algorithm is used so that
   \osrank{} values may be updated as the network graph evolves. Instead of
   computing \osrank{} from scratch, we rely on the fact that only a small
-  percentage of the nodes and edges of the network graph are added or removed
+  percentage of nodes or edges are modified
   from one calculation to the next (confirmed empirically on the datasets of
-  major code-hosting platforms). Therefore most of the random walks that were
+  major code-hosting platforms). Therefore, most of the random walks
   performed in the previous calculation remain valid in the updated graph. For
   example if only a single dependency $p_1 \xrightarrow[]{\dep} p_2$ has been
   added since the last calculation, then a random walk that was generated on the
   old graph is only invalid in the updated graph if it passes through $p_1$, for
   it may have chosen to follow this new dependency to $p_2$.
 
+  % TODO: If we're going to say something is confirmed empirically we should have a citation
+
   In practice the operators of the network cache the set of random
-  walks from the previous calculation, and update this set by removing
-  invalid walks and replacing them with new ones. Details on such an
-  incremental algorithm used in the case of \pagerank{} can be found
+  walks from the previous calculation, updating the set by removing
+  invalid walks and replacing them with new ones. Details of such an
+  incremental \pagerank{} algorithm can be found
   in \cite{incr pagerank}.
 
   Since all the computations must be deterministic, the walks are not
   truly random. Rather, they must use a built-in pseudo-random number
-  generator to generate the random walks. The seed for generating
+  generator to seed the random walks. The seed for generating
   random walks is fixed in the genesis block.
 
   % TODO: Add details on RNG
 
-\item \emph{Long epoch.} In this scenario payouts according to
-  \osrank{} are only made infrequently, by choosing a large value for the
-  reward epoch $\epoch$, \eg once a month.  In this case
+  % TODO: Entropy should be injected at each calculation from the underlying
+  % consensus mechanism in order to ensure well sampled trajectories.
+
+\item \emph{Long epoch.} In this scenario
+  \osrank{}-based payouts are only made infrequently by choosing a large
+  reward epoch $\epoch$ value, \eg once a month. In this case
   abusers might modify network structures of several projects in
   anticipation of the payout block. To mitigate this, edges are
-  weighted by the amount of time they have existed in the last epoch. For
+  weighted by their lifetime since the last epoch. For
   example, if a dependency is added 1 block before the payout block,
   then it only has a weight proportional to $1/\epoch$.
 \end{itemize}
 
 \subsection{Conclusion}
 
-Having \osrank{} available on the ledger is fundamental to the \oscoin{}
+Storing \osrank{} available on the ledger is fundamental to the \oscoin{}
 ``monetary policy'', as explained in \S \ref{s:treasury}. Furthermore,
 \osrank{} and $\netgraph$ as a whole will be available to smart contracts
 (\S\ref{s:smart-contracts}) so that projects can script custom behaviours using
