@@ -98,7 +98,7 @@
     %
     % Distribution
     %
-    \node[process, minimum width=9em] (distribution) [below=0.6cm of weights] {\textsf{Treasury ($\psi$)}};
+    \node[process, minimum width=10em] (distribution) [below=0.6cm of weights] {\textsf{Reward function ($\psi$)}};
 
     % Coinbase
     \node[coinbase, right of=distribution, node distance=12em] {\textsf{Coinbase} ($B_r$)} edge [pointer] (distribution.east);
