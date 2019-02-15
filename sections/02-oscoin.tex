@@ -6,15 +6,15 @@ designed to provide a solution to the open source sustainability problem.
 
 \Oscoin{} is a public network of computers participating in a consensus
 protocol around a shared transaction ledger.
-This ledger is materialized into a shared, global state $\state$ which
+This ledger is materialized into a global state $\state$ which
 contains the canonical registry $\registry$ of all open source
 projects participating in the protocol; a set of accounts
 $\accounts$, containing the balances of all currency holders; and
 a network graph $\netgraph$, of the relevant relations between
-entities in the network, including dependencies between registered projects.
+entities in the network, including software dependencies between registered projects.
 
 The purpose of this network is to secure a digital currency---\oscoin{}---and
-reward the most valued open source projects in the network, without the need
+reward the most valued projects in the network, without the need
 for intermediaries or central control.
 
 \subsection{The Oscoin Blockchain}
@@ -49,7 +49,7 @@ neither of which is feasible in constrained environments.}
 \label{s:treasury}
 
 The treasury system (Figure \ref{f:treasury}) is designed to continuously
-rank projects on the network based on relative importance and reward them with
+rank projects on the network based on relative importance, and reward them with
 \oscoin{}.
 
 \subsubsection{Overview}
@@ -84,7 +84,7 @@ For this, we leverage the \oscoin{} network graph $\netgraph$ (Section
 and assigns a weight to each. This weight $\omega(x)$ we call \osrank{}, represents
 the relative importance of entities within the network.
 
-\subsubsection{Algorithm} Let $t \equiv B_r$ be the total amount of \oscoin{} distributed
+\subsubsection{Algorithm} Let $t$ be the total amount of \oscoin{} distributed
 to $n$ projects every epoch $\epoch$. The amount $t_P$ distributed to a given
 project $P$ over $\epoch$ is a function $\psi$ of its \osrank{} $\omega(P)$,
 which awards higher ranking projects with more \oscoin{}. We describe this
@@ -102,7 +102,7 @@ open source monetization and sustainability. Projects can receive
 income in the form of \oscoin{}, while licensing their work as free and
 open source software (FOSS). This continuous algorithmic funding moves
 away from current ``transactional'' models---which require open source projects
-to change the way they work, re-license, setup a business---to a new model,
+to change the way they work, re-license or setup a business---to a new model,
 which aligns with the motivations that lead to the success of the open source
-movement (\S \ref{s:incentives}).
+movement.\footnote{See \emph{The Cathedral and the Bazaar}, by Eric S. Raymond}
 

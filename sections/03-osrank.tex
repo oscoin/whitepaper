@@ -11,7 +11,7 @@
 \def\cocontrib{\mathsf{contrib}^\circ}
 
 Since one of the fundamental mechanisms of \oscoin{} is to distribute a portion
-of newly minted \oscoin{} ($B_r$) to high-value projects on the network, the protocol
+of the block reward ($B_r$) to high-value projects on the network, the protocol
 must reach consensus on which projects are ``high value''. To choose which
 projects receive \oscoin{}, and in which proportions, the network uses
 \osrank{}, which is a variant of the well-know \pagerank{}
@@ -28,10 +28,10 @@ studying the structure of open source software through dependencies and
 contributions.
 
 Similarly to how Google pioneered a large-scale search engine around PageRank
-that took advantage of the hypertextual structure of the Web in order to
-organize the world’s information, the graph of open source software
-dependencies and contributions offers an important resource that can be thought
-of as an implicit form of trust and relative value in the ecosystem.
+that took advantage of the hypertextual structure of the Web, the graph of open
+source software dependencies and contributions offers an important resource
+that can be thought of as an implicit form of trust and relative value in the
+ecosystem.
 
 \subsection{Rationale}
 
@@ -130,7 +130,7 @@ to contribution and maintenance serves two purposes:
 \begin{itemize}
 \item The graph is directed: it flows from user-facing applications to core
   libraries. This biases the score greatly towards basic libraries and
-  development tools. Incorporating developer contributions brings flows in the
+  development tools. Incorporating contributions brings flows in the
   opposite direction that indicate valued user-facing applications. For example,
   a fully-featured open source text editor is of high value to
   open source developers, yet it may never become an explicit dependency of another
@@ -170,13 +170,13 @@ network.
 \subsection{Definition}
 
 To implement \osrank{}, we use the following Monte Carlo-based algorithm: for
-each vertex on the network, $R$ random walks are performed which start at that
+each vertex on the network, $R$ random walks are performed starting at that
 vertex. To select the next vertex, first an edge type is decided
 by sampling edges according to the weights in $G$. The next step is specific to
-the edge:
+the type of edge:
 
 \begin{itemize}
-\item In the cases of $\dep$ and $\own$, all vertices are equiprobable.
+\item In the cases of $\dep$ and $\own$ edges, all vertices are equiprobable.
 \item In the cases of edges $x \xrightarrow[]{\coown} p$ and
   $x \xrightarrow[]{\cocontrib} p$ outgoing from a contributor $x$, a project $p$ is
   chosen with probability $\frac{p_x}{N_x}$, where $p_x$ is the number of
@@ -206,11 +206,12 @@ Similarly, the \osrank{} of an account $a$ is:
 
 \subsection{Sybil networks}
 
-In order to maintain the integrity of the \oscoin{} graph, illegitimate
+In order to maintain the integrity of the \oscoin{} network graph, illegitimate
 ecosystems must not be allowed to perpetuate, that is, fraudulent project and
 contribution structures which have been instantiated for the purpose of
-exploiting \osrank{}.  Such \emph{Sybil attacks} on \pagerank{} have been
-examined in detail in previous work \cite{pagerank-sybil}.
+exploiting \osrank{} must be penalized by the algorithm.  Such \emph{Sybil attacks}
+on \pagerank{} have been examined in detail in previous work
+\cite{pagerank-sybil}.
 
 To address this we propose a modification of the \pagerank{} algorithm based
 on the ideas behind TrustRank~\cite{trustrank}, which involves two distinct
@@ -219,12 +220,12 @@ phases:
 \begin{itemize}
 \item In the first phase, all random walks begin at a vertex in the
   initialization seed set $\seedset$, a subset of all project and account
-  vertices. Otherwise the process remains the same. The scores obtained are
-  biased towards interactions with the seed set, but they are not used
-  directly by the compensation mechanism. Instead a threshold $t$ is used to
-  determine the legitimacy of entities: any entity falling below this
-  threshold is not considered for the next phase. The output of this phase is
-  a subgraph $\netgraph_t$ of the network graph.
+  vertices selected for this purpose.
+  The scores obtained are biased towards interactions with the seed set, but
+  they are not used directly by the compensation mechanism. Instead a threshold
+  $t$ is used to determine the legitimacy of entities: any entity falling below
+  this threshold is not considered for the next phase. The output of this phase
+  is a subgraph $\netgraph_t$ of the network graph.
 \item In the second phase, the algorithm is run on the subgraph $\netgraph_t$
   in the same fashion, except without a seed set. The resulting output of the
   second phase is the \osrank{}.
@@ -256,11 +257,12 @@ does not become prohibitively expensive for network operators to compute.
   incremental \pagerank{} algorithm can be found
   in \cite{incr pagerank}.
 
-  Since all the computations must be deterministic, the walks are not
-  truly random. Rather, they must use a built-in pseudo-random number
-  generator to seed the random walks.
-
-  % TODO: Add details on RNG
+  Since all the computations must be deterministic, the walks are not truly
+  random. Rather, they must use a built-in pseudo-random number
+  generator\footnote{Designing a suitable random number generator in the
+  permissionless setting is an area of active research. Solutions exist
+  which have been described in recent literature, and are beyond the
+  scope of this paper.} to seed the random walks.
 
 \item \emph{Long epoch.} In this scenario payouts according to
   \osrank{} are only made infrequently, by choosing a large value for the
