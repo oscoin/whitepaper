@@ -12,7 +12,7 @@ $B_0$ is the ``genesis block'', and a set of outputs.
 The \oscoin{} ledger, formally $\ledger$, is the ordered set of all
 transactions agreed upon by the network. The ledger can be updated by submitting
 a valid transaction to the network. Transactions operate on the current state
-$\state$ of the ledger, which is a materialized view of all processed transactions.
+$\state$ of the ledger, which is a materialization of all processed transactions.
 
 The transactions available on the ledger are described in this section, as well
 as how they affect the state $\state$.
@@ -54,9 +54,9 @@ Transfers to and from accounts are performed with
 \[
     \tx{transfer}{x,y,n} \mid x,y \in \accounts, n \in \posnat
 \]
-where $x$ is the account from which to withdraw the funds, $y$ is the deposit
+where $x$ is the account from which funds are withdrawn, $y$ is the deposit
 address, and $n$ is the amount of \oscoin{} to transfer.  The transaction is
-valid so long as $\bal(x) \geq n$ holds, and the contracts attached to $x$ and
+valid so long as $\bal(x) \geq n$ holds, and the contracts associated to $x$ and
 $y$ authorize the transfer (Section \ref{s:smart-contracts}).
 
 \subsection{Projects}
@@ -77,22 +77,22 @@ project when transacting on the ledger. Each project has a special account
 associated with its address called the \emph{project fund}. The project hash is
 a digest of the project's source code at the time it is entered in the ledger.
 Finally, the project URL is there for convenience, as a means to fetch the
-source code.  It must be noted that the source code retrieved from $P_s$ must
+source code. It should be noted that the source code retrieved from $P_s$ must
 always hash to $P_h$, otherwise the project is considered invalid.
 
-\subsubsection{Registration and maintenance} Projects need to be
+\subsubsection{Registration and maintenance} Projects must be
 registered on the ledger before they can participate in the
 network. This can be done with the
 \[
     \tx{register}{P_a, P_s}
 \]
 transaction, signed by a key $k_1$ which must be used when updating the project
-at a later time. The transaction is valid as long as the address $P_a$ isn't
+at a later time. A transaction is valid so long as the address $P_a$ isn't
 already in use, and $P_s$ is a valid URL.
 
 On successful execution, the transaction locks a small amount of \oscoin{} from
-the account associated with $k_1$. This helps ensures that abandoned projects
-don't clutter the ledger.  Once executed, the project is instantiated to $P =
+the account associated with $k_1$. This helps to ensure abandoned projects
+do not clutter the ledger.  Once executed, the project is instantiated to $P =
 \tuple{P_a, P_h, P_s}$ with $P_h = \varnothing$.
 
 The project $P$'s current \emph{key set} $P_K$ is $\{k_1\}$. We call this set of
@@ -121,13 +121,16 @@ using the project address, formally: $\registry(P_a) \to P$.
 \subsubsection{Checkpointing} \label{s:checkpointing} Any project in active
 development will see its source code change regularly. This means the project
 hash $P_h$ will quickly become out of sync with the project's latest state and
-will need updating. This is done via the
+will need to be updated. This is done via the
 \[
     \tx{checkpoint}{P_a, P_{h'}, P_{s'}, C^*, D^*}
 \]
 transaction, where $P_{h'}$ is the new project hash, $P_{s'}$ is the URL to
 retrieve the source code from, $C^*$ is a hash-linked-list of
 \emph{contributions}, and $D^*$ is a list of \emph{dependency updates}.
+
+% TODO: What is the incentive for maintainers to keep the checkpoint up to date,
+% particularly if it costs money to make a transaction?
 
 Contributions are tuples:
 \[
@@ -138,7 +141,7 @@ where:
 \item $\field{C}{prev}$ is the hash of the previous contribution, or
   $\varnothing$ if this is the first contribution to the whole
   project. Note that $C^*$'s first item must be linked to the last
-  contribution in the project's \emph{previous} checkpoint, such that no
+  contribution in the project's \emph{previous} checkpoint such that no
   gaps between contributions exist.
 \item $\field{C}{commit}$ is the hash of the corresponding commit,
 \item $\field{C}{author}$ is the author of the contribution,
@@ -146,28 +149,27 @@ where:
 \item $\field{C}{signoff}$ is the \emph{signoff key}, which must be $\in P_K$.
 \end{itemize}
 A contribution must be signed by the signoff key. This signals
-the contribution has been reviewed/verified by this maintainer. The
-checkpoint as a whole must also be signed by a key in the project key set.
+the contribution has been reviewed and verified by the maintainer. The
+checkpoint itself must also be signed by a key in $P_K$.
 
-Because all changes to a project's source code are signaled by checkpoints, it
+Because all changes to a project's source code are described in checkpoints, it
 is possible to reconstruct a full hash-linked list of contributions for the
-entire project. When cross-referenced with the project's repository, this gives
-a full historical breakdown of who authored which code, and which project
-maintainer signed it off.  This makes the project history auditable and
-tamper-proof, as well as providing valuable information to the \osrank{}
-algorithm. Note that only the contribution \emph{metadata} is stored on-chain.
+entire project. When cross-referenced with the project's repository, this
+constitutes a complete historical record of who authored what code, and which
+maintainer signed off on the contribution. This ensures the project history is
+auditable and tamper-proof, while providing fundamental information to
+\osrank{}. Note that only contribution \emph{metadata} is stored
+on-chain.
 
 \label{s:dependencies}
-Conceptually, a project $P$ depends on a project $P'$ if it is an
-``input'' to $P$ in some way: $P$ references $P'$ or parts of
-$P'$ in its source code, or $P'$ is a build/test dependency.
-For example if a project used the purely functional package
-manager \emph{Nix} \cite{nix}, then the dependencies declared on
-\oscoin{} should probably map one to one with the Nix
-dependencies. Dependencies are an important input to the \osrank{}
-metric.
+Conceptually, a project $P$ depends on another project $P'$ if it is an
+``input'' to $P$ in some way: $P$ references $P'$ or parts of $P'$ in its
+source code, or $P'$ is a build/test dependency.  For example, if a project
+used the purely functional package manager \emph{Nix} \cite{nix}, then the
+dependencies declared on \oscoin{} should map one-to-one with the Nix
+dependencies.
 
-The dependencies updates list $D^*$ is a list of \emph{dependency
+The dependency update list $D^*$ is a list of \emph{dependency
   updates}, which are one of
 \[
     \depend(P'_a, n) \quad \text{or} \quad \undepend(P'_a, n)
@@ -176,7 +178,7 @@ which refers to the $n$th checkpoint of a project $P'$ ($0$-indexed
 from the first checkpoint). The $\depend$ update adds a new dependency
 while the $\undepend$ update removes a dependency. The updates are
 processed in order with $\depend$ only being valid if it adds a
-dependency that the project doesn't already have and $\undepend$
+dependency that the project does not already have and $\undepend$
 only being valid for current dependencies. The checkpoint is invalid
 if the update list contains duplicates.
 
@@ -193,5 +195,5 @@ depending of the nature of the project:
 
 Finally, the ledger enables certain transactions to be mediated by smart contracts.
 We dedicate the following section to this topic, showing how projects can automate
-fund distribution as well as specify access policies.
+fund distribution as well as specify access control policies.
 

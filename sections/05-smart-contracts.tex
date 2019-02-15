@@ -4,31 +4,31 @@
 \newcommand{\handler}[1]{\textsc{\small#1}}
 
 In order to ensure that funds distributed to projects by the \oscoin{}
-treasury, as well as funds received as donations are spent responsibly and
-transparently, the protocol sends them to a special type of account, the
-\emph{project fund}, which is an account controlled by an updatable \emph{smart
+treasury and those received as donations are spent responsibly and
+transparently, the \oscoin{} protocol sends them to a special type of account type, the
+\emph{project fund}, which is administered by an updatable \emph{smart
 contract}.
 In addition, the protocol requires that transfers from the project fund only be
 issued from within the fund's smart contract. When a contributor decides to
-contribute code to a project, she may inspect the contract currently in place,
-and under what conditions it may be updated, so that she may be assured to be
-remunerated for her work.
+contribute code to a project, they may inspect the contract currently in place,
+and under what conditions it may be updated, to assure they will be
+remunerated for their work.
 
 \subsection{Definition}
 A smart contract is a set of functions, or \emph{handlers}, invoked as part
 of regular transaction processing. Certain transactions, such as $\mathsf{transfer}$
 make use of smart contracts to extend their behavior and allow projects to
-program interactions around their governance, maintenance or finances.
+program and automate aspects of their finances, ownership model, or governance.
 
 \subsection{Receiving \oscoin{}}
 
-When a transfer of \oscoin{} is received by a project, the smart contract
-attached to that project's fund is invoked. The specific handler that is
-called in the smart contract depends on the \emph{sender}: for \oscoin{} received
-from the treasury system, the \handler{receiveReward} handler is called, while
-for transfers received from any other source, the \handler{receiveTransfer}
-handler is called. This allows projects to handle funds received by the treasury
-differently than funds received as donations, for example.
+When a project receives \oscoin{}, the smart contract associated with that
+project's fund is invoked. The specific handler called in the smart contract
+depends on the \emph{sender}: for \oscoin{} received from the treasury system,
+the \handler{receiveReward} handler is called, while for transfers received
+from any other source, the \handler{receiveTransfer} handler is called. This
+for instance, allows projects to handle funds received by the treasury differently
+than funds received as donations.
 
 \subsubsection{Rewards from the treasury}
 
@@ -42,7 +42,7 @@ as long as it doesn't distribute more than $r$ \oscoin{} in total. Any \oscoin{}
 that isn't distributed is effectively \emph{burnt}.
 
 When a project is first registered, \handler{receiveReward} returns the empty
-distribution, that is, the entirety of the reward $r$ is burnt:
+distribution, that is, the entirety of the reward $r$ is burned:
 \begin{algorithmic}[0]
     \Procedure{receiveReward}{$p, r, k$}
         \State \textbf{return} $\varnothing$
@@ -51,8 +51,8 @@ distribution, that is, the entirety of the reward $r$ is burnt:
 
 \noindent Once the project maintainers have decided on a policy, they may issue a
 transaction to update this handler. For example, they may decide that all
-contributors should get an equal share of the reward, with the remainder
-getting deposited into the project fund:
+contributors should get an equal share of future rewards, with the remainder
+deposited into the project fund:
 
 \begin{algorithmic}[0]
     \Procedure{receiveReward}{$p, r, k$}
@@ -80,10 +80,10 @@ this handler is set to simply transfer the funds to the project fund:
         \State \textbf{return} $\{ (\prop{p}{fund}, r) \}$
     \EndProcedure
 \end{algorithmic}
-Just like with the \handler{receiveReward} examples, it's possible to include
+Like the \handler{receiveReward} example, it is possible to include
 arbitrary logic in this handler. For example, since donations to the project
 would invoke this handler, a project might want to distribute a percentage
-of each donation to is contributors, as well as its constituent members.
+of each donation to its contributors, and the rest to its maintainers.
 
 \subsection{Contract handler updates}
 
@@ -94,14 +94,14 @@ Updates to the project smart contracts are issued using the
 transaction, which must be signed by a project maintainer, where $h$ is the
 \emph{handler} to be updated, $c$ is the code for the new handler, $v$ is a set
 of \emph{votes}: a collection of signatures the maintainer has collected for the
-update, and $\nu$ is a \emph{nonce} to prevent replay attacks with votes.
+update, and $\nu$ is a \emph{nonce} to prevent voting replay attacks.
 
-Since updating a contract may affect existing contributors, by for example
+Since updating a contract may affect existing contributors by, for example,
 changing the share of rewards they receive for their work; the rules according
-to which contract handlers can be updated are stored in the project contract
-as well, in the form of the \handler{updateContract} handler.  The
-conditions under which an $\mathsf{updatecontract}$ transaction is considered
-valid are specified in this handler.
+to which handlers may be updated are also stored in the project contract, as the
+\handler{updateContract} handler. The conditions under which an
+$\mathsf{updatecontract}$ transaction is considered valid are specified in this
+handler.
 
 \handler{updateContract} is a function which takes three arguments: $p$,
 the project data, $h$, the name of the handler being updated, and $v$, the list
@@ -130,13 +130,14 @@ $c$.
 
 \subsection{Ad-hoc spending}
 
-While most distribution of \oscoin{} can be automated by the \handler{receiveReward}
-and \handler{receiveTransfer} handlers, it's sometimes necessary to manually
-transfer \oscoin{} from the project fund to another account. For example, in
-the situation where a large donation is received by a project, the project
-maintainers might want to do some planning before the funds are spent.
+While most distribution of \oscoin{} can be automated by the
+\handler{receiveReward} and \handler{receiveTransfer} handlers, it will also be
+necessary to occasionally transfer \oscoin{} manually from the project fund to
+another account. For example, in a scenario where a project receives a large
+donation, the maintainers may want to hold some funds in reserve for future
+organizational expenditures.
 
-Hence, it's possible to spend project funds with the $\mathsf{transfer}$
+Hence, it is possible to spend project funds with the $\mathsf{transfer}$
 transaction and an additional set of parameters:
 \[
     \tx{transfer}{P_a, a, n, \nu, v} \mid n \in \posnat,
@@ -148,8 +149,8 @@ parameters are a set of votes.
 The transaction's validity is determined by the \handler{sendTransfer} handler,
 which works in a similar way to \handler{updateContract}. For
 example, the function might specify that the project maintainers may spend a small
-amount $x$ of \oscoin{} per month without seeking community agreement, but that
-large sums need over half of the contributors and donors to agree:
+amount $x$ of \oscoin{} per month without seeking community agreement, however
+large sums may need over half of the contributors and donors to sign off:
 \medskip
 \begin{algorithmic}[0]
     \Procedure{sendTransfer}{$p, n, a, v$}

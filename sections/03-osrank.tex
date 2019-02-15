@@ -12,27 +12,26 @@
 
 Since one of the fundamental mechanisms of \oscoin{} is to distribute a portion
 of newly minted \oscoin{} ($B_r$) to high-value projects on the network, the protocol
-needs to reach consensus on which projects are ``high value''. To choose which
+must reach consensus on which projects are ``high value''. To choose which
 projects receive \oscoin{}, and in which proportions, the network uses
-\osrank{}, which is a modification of the well-know \pagerank{}
-algorithm~\cite{pagerank} applied to the graph of relationships between
-projects and contributions on the network, and in particular
-\emph{dependencies} between projects. The output of the algorithm is a score
+\osrank{}, which is a variant of the well-know \pagerank{}
+algorithm~\cite{pagerank}, applied to the graph of relationships between
+projects and contributions on the network, particularly
+\emph{dependencies} between projects. The output of the \osrank{} algorithm is a score
 $\omega(P)$ associated to each project $P$.
 
 \subsection{Intuition}
 
-While the importance of an open source software package is highly subjective to
-each individual, valuable information about its relative importance can be
-extracted by studying the structure of open source software through
-dependencies and contributions.
+While the importance of an open source software package is highly subjective,
+valuable information about a project's relative importance can be surfaced by
+studying the structure of open source software through dependencies and
+contributions.
 
 Similarly to how Google pioneered a large-scale search engine around PageRank
-that took advantage of the structure in hypertext (the Web) in order
-to organize the world’s information, the graph of open source software
-dependencies and contributions offers an important resource when it comes to information
-extraction, that can be thought of as an implicit form of trust
-and relative value present in the ecosystem.
+that took advantage of the hypertextual structure of the Web in order to
+organize the world’s information, the graph of open source software
+dependencies and contributions offers an important resource that can be thought
+of as an implicit form of trust and relative value in the ecosystem.
 
 \subsection{Rationale}
 
@@ -41,7 +40,7 @@ often unclear how much value particular subsystems are
 contributing. Furthermore, subsystems have inherently differing capacities to
 transform value into revenue: subsystems at the boundaries with other domains
 are at an advantage, even though they may (transitively) derive much of their
-value from other subsystems. This unbalance in value flows in and out of
+value from other subsystems. This imbalance in value flows in and out of
 subsystems is detrimental to the system as a whole.
 
 Thankfully, human activity does not happen in a void\footnote{Space
@@ -65,8 +64,7 @@ many heuristics as possible for choosing the next link to follow (as a
 real human would), \eg{} evaluating the relevance of the link-text. If
 computational resources are scarce, the crudest algorithm simply picks
 the next link at random, and this is what produces the classic
-\pagerank{} formula which has seen so much success at ranking web
-pages.
+\pagerank{} formula which has proven so successful on the Web.
 
 \subsection{Notation}
 
@@ -113,15 +111,15 @@ edges outgoing from a vertex sum to $1$.
 
 % TODO: include simulations description and results here.
 
-\noindent Note that some of the edges are bidirectional, but each direction gets
-its own weight. For example both $\contrib$ and $\cocontrib$ pertain to
+\noindent Note that some of the edges are bidirectional, but each direction is
+weighted uniquely. For example both $\contrib$ and $\cocontrib$ pertain to
 the same artefact: a contribution of code from an account to a
 project. The edge $\contrib$ represents the statement \emph{the contributor
 is valuable to the project}. The edge $\cocontrib$ going in the
 opposite direction represents the statement \emph{the project is
 valuable to the contributor}; the rationale for this less obvious flow is
-that developers are unlikely to invest time contributing to a project they
-don't find valuable.
+that developers are unlikely to invest time contributing to projects they
+do not find useful.
 
 % TODO: Make the above easier to grasp. Also maybe rephrase a little "is
 % valueable to the project"
@@ -130,54 +128,52 @@ While the graph of dependencies between projects is the most straightforward
 indication that a project derives value from another, adding edges corresponding
 to contribution and maintenance serves two purposes:
 \begin{itemize}
-\item The graph is directional: it flows from user-facing applications to core
+\item The graph is directed: it flows from user-facing applications to core
   libraries. This biases the score greatly towards basic libraries and
-  development tools. Taking contributions into account brings in flows in the
-  other direction, indicating which user facing applications developers
-  value. For example, a full-fledged open source text editor is of high value
-  to open source developers, yet it is never going to be a dependency of
-  another piece of software. However, developers contributing to this text
-  editor are likely to also contribute to packages the text editor depends
-  on, and this allows the algorithm to flow back up from utility packages to
-  user-facing packages.
-\item The graph which results from adding contributor and maintainer accounts
-  is a lot more \emph{connected}. The dependency graph alone is unlikely to
-  exhibit much connections between vastly different domains, \eg{}
-  web-programming and game-programming; web servers just aren't that
-  interested in collision-detection. This can cause a niche of projects to
-  form, of high value to the members of the open source community, but which
-  doesn't have many currently highly-scored projects depending on them.
-  Humans on the other hand often \emph{do} have vary varied interests,
-  allowing these niches to connect back up to the rest of the ecosystem.
+  development tools. Incorporating developer contributions brings flows in the
+  opposite direction that indicate valued user-facing applications. For example,
+  a fully-featured open source text editor is of high value to
+  open source developers, yet it may never become an explicit dependency of another
+  piece of software. However, developers contributing to this text editor are
+  also likely to contribute to packages upon which the text editor depends, and this
+  allows the algorithm to flow back up from libraries to user-facing
+  packages. For example, an open source developer may contribute
+  heavily to both the \texttt{atom} text editor (mostly JavaScript), and to
+  one of its dependencies, \texttt{tree-sitter}, an incremental parser written
+  in Rust.
+\item While the dependency graph alone is unlikely to adequately bridge
+  differing domains, developers often contribute to neighboring ecosystem and
+  to tooling such that these niches can interconnect. Thus a graph incorporating
+  dependencies as well as contributions may be sufficiently connected to
+  reveal the latent value of open source projects.
 \end{itemize}
 We propose to record these artefacts as transactions in a blockchain, so that
-one may unambiguously rebuild and reach consensus on a finite directed graph
-$\netgraph$ over $G$ (\ie{} in the slice category $\Graph/G$). We'll refer to
+one may verifiably construct---and reach consensus on---a finite directed graph
+$\netgraph$ over $G$ (\ie{} in the slice category $\Graph/G$). We will refer to
 $\netgraph$ as the \emph{network graph}.
 
 This in turn allows global value scores to be assigned to entities
 according to a specific stochastic process simulating \emph{random
   walks}, that is, activity traces in $\netgraph$ with sampling
 probabilities taken from $G$. For example: a contributor decides to
-work on a high value project, contributes a changeset, in so doing adds a
-dependency to another project, which imports a bug from upstream. The
+work on a high value project, contributes a changeset, and in so doing adds a
+dependency to another project, which imports a bug from an upstream package. The
 contributor therefore switches to fixing said bug in the dependency, etc. Much
 like a simulation of a human searching for information by clicking through
-links, this simulated contributor activity informs us on the value flows
-between subsystems in OSS development.
-% TODO: I think the above example mixes too many value flows.
+links, this simulated activity informs us on the value flows
+between subsystems within the wider OSS ecosystem.
 
-This score, which we call \osrank{}, is used to weight the
-distribution of newly minted tokens to high value entities, thus
-compensating entities which bring value to the ecosystem.
+This score, which we call \osrank{}, is used to distribute a portion of the
+newly minted tokens to projects as a function of their value to the \oscoin{}
+network.
 
 \subsection{Definition}
 
 To implement \osrank{}, we use the following Monte Carlo-based algorithm: for
 each vertex on the network, $R$ random walks are performed which start at that
-vertex. To decide which next vertex to visit during a random walk, first a type
-of outgoing edge is decided by sampling outgoing edges according to the weights
-in $G$. The next choice is specific to the edge:
+vertex. To select the next vertex, first an edge type is decided
+by sampling edges according to the weights in $G$. The next step is specific to
+the edge:
 
 \begin{itemize}
 \item In the cases of $\dep$ and $\own$, all vertices are equiprobable.
@@ -210,61 +206,59 @@ Similarly, the \osrank{} of an account $a$ is:
 
 \subsection{Sybil networks}
 
-The main problem to avoid is compensating illegitimate ecosystems, that is,
-project structures and relationships which have been setup in the
-network graph for the sole purpose of exploiting \osrank{}.
-These attacks which are known as \emph{Sybil attacks} have been examined
-before within the context of \pagerank{} \cite{pagerank-sybil}.
+In order to maintain the integrity of the \oscoin{} graph, illegitimate
+ecosystems must not be allowed to perpetuate, that is, fraudulent project and
+contribution structures which have been instantiated for the purpose of
+exploiting \osrank{}.  Such \emph{Sybil attacks} on \pagerank{} have been
+examined in detail in previous work \cite{pagerank-sybil}.
 
-To address this we propose a modification of the \pagerank{} algorithm, based
+To address this we propose a modification of the \pagerank{} algorithm based
 on the ideas behind TrustRank~\cite{trustrank}, which involves two distinct
 phases:
 
 \begin{itemize}
-\item In the first phase, all the random walks generated start in a specific
-  seed set $\seedset$, a subset of all project and account vertices. Specifically, a random
-  walk always starts at a vertex in $\seedset$. Otherwise the process remains
-  the same. The scores obtained are biased towards interactions with the seed
-  set, but they are not used directly by the compensation mechanism. Instead a
-  threshold $t$ is used to determine the legitimacy of entities: any entity
-  falling below this threshold is not considered for the next phase. The output
-  of this phase is a subgraph $\netgraph_t$ of the network graph.
-\item In the second phase, the algorithm is run on the subgraph
-  $\netgraph_t$ as usual, with no seed set. The output of the second
-  phase is the \osrank{}.
+\item In the first phase, all random walks begin at a vertex in the
+  initialization seed set $\seedset$, a subset of all project and account
+  vertices. Otherwise the process remains the same. The scores obtained are
+  biased towards interactions with the seed set, but they are not used
+  directly by the compensation mechanism. Instead a threshold $t$ is used to
+  determine the legitimacy of entities: any entity falling below this
+  threshold is not considered for the next phase. The output of this phase is
+  a subgraph $\netgraph_t$ of the network graph.
+\item In the second phase, the algorithm is run on the subgraph $\netgraph_t$
+  in the same fashion, except without a seed set. The resulting output of the
+  second phase is the \osrank{}.
 \end{itemize}
-Care must be taken to ensure the seed set is large enough to touch most
-legitimate projects on the network.  There are many ways to maintain such a
-seed set. However, this will be discussed in future work.
+Care must be taken to ensure the seed set is large and well distributed enough
+such that walks beginning from those vertices will reach all legitimate
+projects within the network. There are many ways to maintain such a seed set.
+However, this will be elaborated in future work.
 
 \subsection{Implementation}
 
-There are several options for making sure the computation of \osrank{}
-will not be prohibitively expensive for network operators to run.
-% TODO: Has "operators" been defined?
+There exist several options for ensuring the \osrank{} computation
+does not become prohibitively expensive for network operators to compute.
 
 \begin{itemize}
 \item \emph{Incremental Monte Carlo.} An incremental algorithm is used so that
   \osrank{} values may be updated as the network graph evolves. Instead of
   computing \osrank{} from scratch, we rely on the fact that only a small
-  percentage of the vertices and edges of the network graph are added or removed
-  from one calculation to the next (confirmed empirically on the datasets of
-  major code-hosting platforms). Therefore most of the random walks that were
+  percentage of vertices or edges are added or removed
+  from one calculation to the next. Therefore, most of the random walks
   performed in the previous calculation remain valid in the updated graph. For
   example if only a single dependency $p_1 \xrightarrow[]{\dep} p_2$ has been
   added since the last calculation, then a random walk that was generated on the
   old graph is only invalidated in the updated graph if it passes through $p_1$.
 
   In practice the operators of the network cache the set of random
-  walks from the previous calculation, and update this set by removing
-  invalid walks and replacing them with new ones. Details on such an
-  incremental algorithm used in the case of \pagerank{} can be found
+  walks from the previous calculation, updating the set by removing
+  invalid walks and replacing them with new ones. Details of such an
+  incremental \pagerank{} algorithm can be found
   in \cite{incr pagerank}.
 
   Since all the computations must be deterministic, the walks are not
   truly random. Rather, they must use a built-in pseudo-random number
-  generator to generate the random walks. The seed for generating
-  random walks is fixed in the genesis block.
+  generator to seed the random walks.
 
   % TODO: Add details on RNG
 
@@ -273,14 +267,14 @@ will not be prohibitively expensive for network operators to run.
   reward epoch $\epoch$, \eg{} monthly.  In this case
   abusers might modify network structures of several projects in
   anticipation of the payout block. To mitigate this, edges are
-  weighted by the amount of time they have existed in the last epoch. For
+  weighted by their lifetime in the last epoch. For
   example, if a dependency is added $n$ blocks before the reward block,
   then it only has a weight proportional to $n/\epoch$.
 \end{itemize}
 
 \bigskip
 
-\noindent Having \osrank{} available on the ledger is fundamental to the \oscoin{}
+\noindent Storing \osrank{} on the ledger is fundamental to the \oscoin{}
 ``monetary policy'', as explained in \S \ref{s:treasury}. Furthermore,
 \osrank{} and $\netgraph$ as a whole will be available to smart contracts
 (\S\ref{s:smart-contracts}) so that projects can script custom behaviors using

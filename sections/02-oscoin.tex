@@ -1,19 +1,17 @@
 \section{The Oscoin Network}
 \label{s:oscoin}
 
-\noindent In this paper, we introduce \oscoin{}, a protocol and currency
+\noindent In this paper, we introduce \oscoin{}, a cryptocurrency protocol
 designed to provide a solution to the open source sustainability problem.
 
-The \oscoin{} network is a public network of computers operating a distributed
-consensus protocol around a transaction ledger.
-
-This ledger is materialized into a shared state $\state$ which
+\Oscoin{} is a public network of computers participating in a consensus
+protocol around a shared transaction ledger.
+This ledger is materialized into a shared, global state $\state$ which
 contains the canonical registry $\registry$ of all open source
 projects participating in the protocol; a set of accounts
 $\accounts$, containing the balances of all currency holders; and
-finally a network graph $\netgraph$, of relevant relations between
-entities in the network, including in particular dependencies between
-registered projects.
+a network graph $\netgraph$, of the relevant relations between
+entities in the network, including dependencies between registered projects.
 
 The purpose of this network is to secure a digital currency---\oscoin{}---and
 reward the most valued open source projects in the network, without the need
@@ -22,16 +20,16 @@ for intermediaries or central control.
 \subsection{The Oscoin Blockchain}
 
 To design a safe, open, ``permissionless'' currency shared amongst all network
-participants, we propose to build \oscoin{} as a blockchain protocol, as
+participants, we propose \oscoin{} as a blockchain protocol, as
 described by Nakamoto \cite{bitcoin} and Wood \cite{ethereum}.
 
 Though the specific choice of the underlying consensus mechanism is not
-directly relevant to \oscoin{}, we believe that one which allows open
+critical to \oscoin{}, we believe that one which allows open
 participation is best for the long term health of the network. Furthermore,
 it's important that reliable support for light clients be possible, since
 running a full node is prohibitively expensive in most environments that could
-benefit from \oscoin{}. The only family of blockchain protocols with these
-characteristics are the proof-of-work protocol.\footnote{Proof-of-work blocks
+benefit from \oscoin{}. As of today, the only family of blockchain protocols with these
+characteristics are the proof-of-work protocols.\footnote{Proof-of-work blocks
 can be verified cheaply and securely on most mobile devices available
 today, as demonstrated by Bitcoin. In contrast, proof-of-stake protocols,
 a common alternative, rely on stakeholder signatures, which require access to
@@ -51,7 +49,7 @@ neither of which is feasible in constrained environments.}
 \label{s:treasury}
 
 The treasury system (Figure \ref{f:treasury}) is designed to continuously
-rank projects on the network based on relative importance, and reward them with
+rank projects on the network based on relative importance and reward them with
 \oscoin{}.
 
 \subsubsection{Overview}
@@ -62,10 +60,10 @@ rank projects on the network based on relative importance, and reward them with
     \item Maintainers merge contributions and synchronize their project state
         with the ledger, which includes per-project dependency information and
         contribution metadata (\S\ref{s:checkpointing}).
-    \item Every $\epoch$ blocks, projects have their \osrank{} calculated
+    \item Every $\epoch$ blocks, the \osrank{} of each project is calculated
         (\S\ref{s:osrank}), based on the above metadata.
     \item A reward in \oscoin{} is derived from each project's \osrank{},
-        and distributed to the project's smart contract (\S\ref{s:smart-contracts}).
+        and distributed via the project's smart contract (\S\ref{s:smart-contracts}).
     \item Depending on the project's smart contract, a share of the reward flows
         to contributors and maintainers of the project.
 \end{itemize}
@@ -94,16 +92,17 @@ which awards higher ranking projects with more \oscoin{}. We describe this
 \[
     \psi(t, \omega(P)) \to t_P
 \]
-To prevent trivial Sybil attacks from succeeding, the reward function takes
-into account a minimum threshold for $\omega(P)$ under which a project doesn't
-receive anything. Rewards can be further equalized by tweaking $\psi$ to
-compress or expand the range of rewards.
+To prevent trivial Sybil attacks, the payment function takes
+into account a minimum threshold for $\omega(P)$ under which a project does not
+receive funds. Rewards can be further equalized by adjusting $\psi$ to
+compress or expand the reward range.
 
 At scale, this mechanism has the potential to solve many of the issues with
-open source monetization and sustainability, as software projects receive
+open source monetization and sustainability. Projects can receive
 income in the form of \oscoin{}, while licensing their work as free and
-open source software (FOSS). This continuous algorithmic funding model moves
+open source software (FOSS). This continuous algorithmic funding moves
 away from current ``transactional'' models---which require open source projects
 to change the way they work, re-license, setup a business---to a new model,
 which aligns with the motivations that lead to the success of the open source
 movement (\S \ref{s:incentives}).
+
