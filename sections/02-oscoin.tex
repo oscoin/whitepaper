@@ -50,13 +50,15 @@ neither of which is feasible in constrained environments.}
 
 The treasury system (Figure \ref{f:treasury}) is designed to continuously
 rank projects on the network based on relative importance, and reward them with
-\oscoin{}.
+\oscoin{}. This mechanism is key to the network and fulfills the
+role of stimulating the economy and providing sustainable incentives for
+maintainers.
 
 \subsubsection{Overview}
 
 \begin{itemize}
-    \item Maintainers and contributors collaborate around software projects
-        registered on the network.
+    \item Maintainers and contributors collaborate on software projects
+        registered in the network.
     \item Maintainers merge contributions and synchronize their project state
         with the ledger, which includes per-project dependency information and
         contribution metadata (\S\ref{s:checkpointing}).
@@ -66,6 +68,8 @@ rank projects on the network based on relative importance, and reward them with
         and distributed via the project's smart contract (\S\ref{s:smart-contracts}).
     \item Depending on the project's smart contract, a share of the reward flows
         to contributors and maintainers of the project.
+    \item These rewards in \oscoin{} follow a fixed vesting schedule, after which
+        they can be transfered out of the project.
 \end{itemize}
 
 \medskip
@@ -97,12 +101,21 @@ into account a minimum threshold for $\omega(P)$ under which a project does not
 receive funds. Rewards can be further equalized by adjusting $\psi$ to
 compress or expand the reward range.
 
-At scale, this mechanism has the potential to solve many of the issues with
+\subsubsection{Vesting} To align incentives in the network, \oscoin{} received
+as a reward follows a fixed \emph{vesting schedule}. Practically, this means
+that full ownership of the asset is not immediate, but acquired over time. The
+intent of such a system is to discourage opportunistic behavior, and give asset
+holders an interest in the network's longer-term future. Once the reward is
+fully vested, it may be transfered out of the account with no restrictions.
+
+\bigskip
+
+\noindent At scale, this mechanism has the potential to solve many of the issues with
 open source monetization and sustainability. Projects can receive
 income in the form of \oscoin{}, while licensing their work as free and
-open source software (FOSS). This continuous algorithmic funding moves
+open source software. This continuous algorithmic funding moves
 away from current ``transactional'' models---which require open source projects
 to change the way they work, re-license or setup a business---to a new model,
-which aligns with the motivations that lead to the success of the open source
+which aligns with the motivations that lead to the success of the free software
 movement.\footnote{See \emph{The Cathedral and the Bazaar}, by Eric S. Raymond}
 
