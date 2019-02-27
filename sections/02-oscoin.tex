@@ -24,30 +24,35 @@ participants, we propose \oscoin{} as a \emph{blockchain} protocol, as
 described by Nakamoto \cite{bitcoin} and Wood \cite{ethereum}.
 
 Blockchain protocols solve the problem of trust at scale by allowing monetary
-transactions to be processed with no middleman, with the benefit of being
-censorship-resistant -- an essential characteristic for open networks. Our
+transactions to be processed without middleman, while remaining
+censorship-resistant---an essential characteristic of open networks. Our
 proposed solution introduces a new financial asset, \oscoin{}, designed to be
-governed by a community, rather than a central entity. We believe this
-is crucial to the success of \oscoin{}, and that blockchain technology offers
-the most promising solution towards this outcome.
+governed by network participants, rather than a central entity. We believe community
+ownership is crucial to establishing egalitarian economy, and that the
+blockchain's singleton data structure is the most promising solution to this end.
 
 Though the specific choice of the underlying consensus mechanism is not
 critical to \oscoin{}, we believe that one which allows open
 participation is best for the long term health of the network. Furthermore,
-it's important that reliable support for light clients be possible, since
-running a full node is prohibitively expensive in most environments that could
-benefit from \oscoin{}. As of today, the only family of blockchain protocols with these
-characteristics are the \emph{proof-of-work} protocols.\footnote{Proof-of-work blocks
+it is important that reliable support for light clients be possible, as
+running a full node is prohibitively expensive for many that could
+benefit from participation in the \oscoin{} network. As of today, the only family of
+blockchain protocols with these characteristics are \emph{proof-of-work}
+protocols.\footnote{Proof-of-work blocks
 can be verified cheaply and securely on most mobile devices available
 today, as demonstrated by Bitcoin. In contrast, proof-of-stake protocols,
 a common alternative, rely on stakeholder signatures, which require access to
-account balances to be validated, and thus block data must be downloaded and
-verified, or account balances must be queried repeatedly from third-parties,
+account balances for validation. Thus block data must be downloaded and
+verified or account balances must be queried repeatedly from third-parties,
 neither of which is feasible in constrained environments.} However, we are
-fully aware of the effects on the environment of proof-of-work at
-scale and propose to transition to a more energy-efficient protocol in the future.
-One likely candidate is the \emph{Proof-of-Storage} family of protocols outlined
-in Filecoin~\cite{filecoin}.
+fully aware of the environmental impact of proof-of-work at
+scale and propose transitioning to a more energy-efficient protocol as research in
+this area develops. One promising candidate is the \emph{Proof-of-Space-Time} family of
+protocols outlined in Filecoin~\cite{filecoin}.
+
+% TODO: consider adding Chia as alternative PoST
+% 1st paper: https://eprint.iacr.org/2017/893
+% 2nd paper: https://eprint.iacr.org/2018/183
 
 \begin{figure*}[!ht]
     \par\medskip\noindent\minipage{\linewidth}
@@ -62,23 +67,23 @@ in Filecoin~\cite{filecoin}.
 
 The treasury system (Figure \ref{f:treasury}) is designed to continuously
 rank projects on the network based on relative importance, and reward them with
-\oscoin{}. This mechanism is key to the network and fulfills the
-role of stimulating the economy and providing sustainable incentives for
+\oscoin{}. This mechanism is an essential component of the network and fulfills the
+role of stimulating the economy by providing sustainable incentives for
 maintainers.
 
 \subsubsection{Overview}
 
 \begin{itemize}
     \item Maintainers and contributors collaborate on software projects
-        registered in the network.
+        registered within the network.
     \item Maintainers merge contributions and synchronize their project state
         with the ledger, which includes per-project dependency information and
         contribution metadata (\S\ref{s:checkpointing}).
-    \item Every $\epoch$ blocks, the \osrank{} of each project is calculated
-        (\S\ref{s:osrank}), based on the above metadata.
-    \item A reward in \oscoin{} is derived from each project's \osrank{},
-        and distributed via the project's smart contract (\S\ref{s:smart-contracts}).
-    \item Depending on the project's smart contract, a share of the reward flows
+    \item Every $\epoch$ blocks the \osrank{} of each project is calculated
+        (\S\ref{s:osrank}) based on the metadata above.
+    \item A reward in \oscoin{} is derived from each project's \osrank{}
+        and distributed via the project's associated smart contract (\S\ref{s:smart-contracts}).
+    \item Based on the project's smart contract specification, a share of the reward flows
         to contributors and maintainers of the project.
     \item These rewards in \oscoin{} follow a fixed vesting schedule, after which
         they can be transfered out of the project.
@@ -96,8 +101,8 @@ through the treasury system.
 The key question we must address, is what share of $B_r$ is distributed to
 individual projects and contributors in the network.
 For this, we leverage the \oscoin{} network graph $\netgraph$ (Section
-\ref{s:netgraph}), which maps value flows between projects and contributors,
-and assigns a weight to each. This weight $\omega(x)$ we call \osrank{}, represents
+\ref{s:netgraph}), which maps value flows between projects and contributors
+and assigns a weight to each. This weight $\omega(x)$ we call \osrank{}, which represents
 the relative importance of entities within the network.
 
 \subsubsection{Algorithm} Let $t$ be the total amount of \oscoin{} distributed
@@ -113,21 +118,20 @@ into account a minimum threshold for $\omega(P)$ under which a project does not
 receive funds. Rewards can be further equalized by adjusting $\psi$ to
 compress or expand the reward range.
 
-\subsubsection{Vesting} To align incentives in the network, \oscoin{} received
+\subsubsection{Vesting} To align incentives within the network, \oscoin{} received
 as a reward follows a fixed \emph{vesting schedule}. Practically, this means
 that full ownership of the rewarded balance is not immediate, but acquired over time. The
-intent of such a system is to discourage opportunistic behavior, and give \oscoin{}
-holders an interest in the network's longer-term future. Once the reward is
+intention of such a system is to discourage opportunistic behavior and give \oscoin{}
+holders an interest in the network's long-term future. Once the reward is
 fully vested, it may be transfered out of the account with no restrictions.
 
 \section*{}
 
 \noindent At scale, the \oscoin{} treasury has the potential to solve many of
 the issues with open source monetization and sustainability. Projects can
-receive income in the form of \oscoin{}, while licensing their work as free
+receive income in the form of \oscoin{} while licensing their work as free
 software. This continuous algorithmic funding moves
 away from current ``transactional'' models---which require open source projects
-to change the way they work, re-license or setup a business---to a new model,
-which aligns with the motivations that lead to the success of the free software
+to change the way they work, re-license, or setup a business---to a new model,
+in alignment with the motivations that lead to the success of the free software
 movement.\footnote{See \emph{The Cathedral and the Bazaar}, by Eric S. Raymond}
-
