@@ -129,9 +129,6 @@ transaction, where $P_{h'}$ is the new project hash, $P_{s'}$ is the URL to
 retrieve the source code from, $C^*$ is a hash-linked-list of
 \emph{contributions}, and $D^*$ is a list of \emph{dependency updates}.
 
-% TODO: What is the incentive for maintainers to keep the checkpoint up to date,
-% particularly if it costs money to make a transaction?
-
 Contributions are tuples:
 \[
    \tuple{\field{C}{prev}, \field{C}{commit}, \field{C}{author}, \field{C}{signoff}}
@@ -190,6 +187,12 @@ depending of the nature of the project:
 \item That $P'$ is suitable as a dependency for $P$, \eg{} if $P$ has
   very high security requirements, that $P'$ fulfills these.
 \end{itemize}
+
+\noindent The incentive for maintainers to checkpoint their projects is that
+contributions to the project carry additional weight, potentially increasing a
+project's \osrank{}. Similarly, adding dependencies may increase
+connectivity in the network graph, which can also indirectly improve a project's
+\osrank{}, by walking through contributor vertices shared between projects.
 
 \subsection{Smart contracts}
 
