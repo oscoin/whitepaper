@@ -1,0 +1,35 @@
+\section{Future Work}
+\label{s:future-work}
+
+In our attempt to formulate a clear and concise vision for the \oscoin{}
+network, we deliberately left certain questions unanswered, which we will
+briefly restate and attempt to address here. The idea of \oscoin{} presented in
+this work should be seen as a ``seed'' which will grow with the community and
+shape itself to be the infrastructure that the free software community needs.
+
+\subsection{Reliability of information on the ledger}
+As posed in Section \ref{s:osrank}, the question of information
+reliability is crucial.  We are actively researching oracle-based solutions to
+this problem which could provide economic incentives for users in the network
+to flag suspicious projects, as well as further disincentive projects to cheat,
+by allowing the protocol to slash their unvested (\S\ref{s:vesting}) reward
+balance when dishonest behavior is detected.
+
+\subsection{Evolving and growing the seed set}
+In Section \ref{s:osrank} we propose a two-phase \osrank{} algorithm for
+ranking projects, where the first phase uses a seed set $\seedset$ of vertices,
+aimed at addressing the issue around Sybil attacks.  However, the question of
+\emph{how} this set is chosen and updated remains. A solution we are exploring
+is for these decisions to be made on-chain by an elected committee voted by
+the community.
+
+\subsection{Towards a more environmentally-friendly protocol}
+As discussed in Section \ref{s:oscoin}, we are committed to exploring
+alternatives to proof-of-work for securing the chain.
+
+\subsection{Evolving \osrank{}}
+A large part of the work on \osrank{} is experimentation and tuning of the
+various parameters to the algorithm, \eg edge weights, damping factor, thresholds
+etc. We are working on building a better intuition of how exactly these parameters
+affect reward distribution, and through what mechanism and in what circumstance
+can the community coordinate in tuning them.
