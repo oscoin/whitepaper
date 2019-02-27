@@ -235,6 +235,29 @@ such that walks beginning from those vertices will reach all legitimate
 projects within the network. There are many ways to maintain such a seed set.
 However, this will be elaborated in future work.
 
+\subsection{Reliability of information and \osrank{}}
+
+An important factor to consider when implementing \osrank{} is the reliablility
+of information on the ledger, namely dependency information from which the
+network graph $\netgraph$ is materialized.
+
+It should be self-evident that \osrank{} cannot be a good proxy for value in
+the network if the information on the ledger is not accurate. The algorithm can
+tolerate a certain error margin, but we have to rely on a greater part of the
+stated ``facts'' about dependencies and contributions on the ledger to be
+correct and up to date. Without further work, there are certain intrinsic
+social incentives for projects and maintainers to keep dependency information
+up to date -- namely, dependency information is public and visible to everyone,
+and projects have a reputation to withhold towards their dependents. All
+projects carry the risk of being forked, given the financial incentives, and
+therefore a certain amount of trust from the surrounding ecosystem is important --
+trust that is earned by being a good citizen and providing accurate information
+on the ledger, which allows upstream dependencies their fair share of the reward.
+
+However, in the long term, these incentives might not be enough to stop dishonest
+parties from taking advantage of the system. We briefly discuss potential
+solutions to this in \S\ref{s:future-work}.
+
 \subsection{Implementation}
 
 There exist several options for ensuring the \osrank{} computation
