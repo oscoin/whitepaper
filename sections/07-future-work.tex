@@ -3,10 +3,7 @@
 
 In our attempt to formulate a clear and concise vision for the \oscoin{}
 protocol, we deliberately left certain questions unanswered. We will
-briefly state these here and attempt to address them in the context of future work.
-The idea of \oscoin{} we have presented should be seen as a starting point which
-we hope will grow and shape itself over time with the needs of the community, however
-there are a few things in the works:
+briefly state these here and attempt to address them in the context of future work:
 
 \begin{itemize}
 \item As posed in Section \ref{s:osrank}, the question of information
@@ -19,16 +16,12 @@ balance when dishonest behavior is detected.
 \item In Section \ref{s:osrank} we propose a two-phase \osrank{} algorithm for
 ranking projects, where the first phase uses a seed set $\seedset$ of vertices,
 aimed at addressing the issue around Sybil attacks.  However, the question of
-\emph{how} this set is chosen and updated remains. A solution we are exploring
-is for these decisions to be made on-chain by an elected committee voted by
-the community.
+\emph{how} this set is chosen and updated remains is an open research question.
 
 \item As discussed in Section \ref{s:oscoin}, we are committed to exploring
 alternatives to proof-of-work for securing the chain.
 
 \item A large part of the work on \osrank{} is experimentation and tuning of the
 various parameters to the algorithm, \eg edge weights, damping factor, thresholds
-etc. We are working on building a better intuition of how exactly these parameters
-affect reward distribution, and through what mechanism and in what circumstance
-can the community coordinate in tuning them.
+etc. that are ongoing.
 \end{itemize}
