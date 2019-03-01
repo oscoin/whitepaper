@@ -25,15 +25,15 @@ described by Nakamoto \cite{bitcoin} and Wood \cite{ethereum}.
 
 Blockchain protocols solve the problem of trust at scale by allowing monetary
 transactions to be processed without middleman, while remaining
-censorship-resistant---an essential characteristic of open networks. Our
-proposed solution introduces a new financial asset, \oscoin{}, designed to be
-governed by network participants, rather than a central entity. We believe community
-ownership is crucial to establishing egalitarian economy, and that the
-blockchain's singleton data structure is the most promising solution to this end.
+censorship-resistant---an essential characteristic of open networks.  Our
+proposed solution introduces a new cryptocurrency, \oscoin{}, designed to be
+governed by network participants, rather than a central entity. We believe this is
+crucial to the success of \oscoin{}, and that blockchain technology offers the
+most promising solution to this end.
 
 Though the specific choice of the underlying consensus mechanism is not
 critical to \oscoin{}, we believe that one which allows open
-participation is best for the long term health of the network. Furthermore,
+participation is best for the long term success of the network. Furthermore,
 it is important that reliable support for light clients be possible, as
 running a full node is prohibitively expensive for many that could
 benefit from participation in the \oscoin{} network. As of today, the only family of
@@ -62,10 +62,9 @@ protocols outlined in Filecoin~\cite{filecoin}.
 \label{s:treasury}
 
 The treasury system (Figure \ref{f:treasury}) is designed to continuously
-rank projects on the network based on relative importance, and reward them with
+rank projects on the network based on their relative importance, and reward them with
 \oscoin{}. This mechanism is an essential component of the network and fulfills the
-role of stimulating the economy by providing sustainable incentives for
-maintainers.
+role of providing continuous incentives to maintainers.
 
 \subsubsection{Overview}
 
@@ -114,7 +113,7 @@ into account a minimum threshold for $\omega(P)$ under which a project does not
 receive funds. Rewards can be further equalized by adjusting $\psi$ to
 compress or expand the reward range.
 
-\subsubsection{Vesting} To align incentives within the network, \oscoin{} received
+\subsubsection{Vesting} To align incentives, \oscoin{} received
 as a reward follows a fixed \emph{vesting schedule}. Practically, this means
 that full ownership of the rewarded balance is not immediate, but acquired over time. The
 intention of such a system is to discourage opportunistic behavior and give \oscoin{}
