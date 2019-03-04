@@ -17,7 +17,7 @@ remuneration model, and whether or not they would be rewarded for their work.
 A smart contract is a set of functions, or \emph{handlers}, invoked as part
 of regular transaction processing. Certain transactions, such as $\mathsf{transfer}$
 make use of smart contracts to extend their behavior and allow projects to
-program and automate aspects of their finances, ownership model, or governance.
+configure and automate aspects of their finances, ownership model, or governance.
 
 \subsection{Receiving \oscoin{}}
 
@@ -26,7 +26,7 @@ project's fund is invoked. The specific handler called in the smart contract
 depends on the \emph{sender}: for \oscoin{} received from the treasury system,
 the \handler{receiveReward} handler is called, while for transfers received
 from any other source, the \handler{receiveTransfer} handler is called. This
-for instance, allows projects to handle funds received by the treasury differently
+allows projects to handle funds received by the treasury differently
 than funds received as donations.
 
 \subsubsection{Rewards from the treasury}
@@ -38,7 +38,7 @@ of \oscoin{} being awarded to the project this epoch and $k \in \mathbb{N}$ is t
 current epoch. The function must return a \emph{distribution}, a set of tuples
 assigning an amount of \oscoin{} to a set of accounts. The function is valid
 as long as it doesn't distribute more than $r$ \oscoin{} in total. Any \oscoin{}
-that isn't distributed is effectively \emph{burnt}.
+that isn't distributed is effectively \emph{burned}.
 
 When a project is first registered, \handler{receiveReward} returns the empty
 distribution, that is, the entirety of the reward $r$ is burned:
@@ -69,10 +69,10 @@ would be rewarded for their contributions to a project, and in what proportion.
 
 When a transfer of \oscoin{} is received from a source other than the treasury,
 the \handler{receiveTransfer} handler is invoked. This function takes the same
-three arguments as \handler{receiveReward}, plus a fourth argument $s$ which
+three arguments as \handler{receiveReward}, in addition to a fourth argument $s$ which
 represents the sender or ``source'' account of the transfer. The function is
 expected to return a distribution, just like \handler{receiveReward}. Initially,
-this handler is set to simply transfer the funds to the project fund:
+this handler is set to simply transfer the balance to the project fund:
 \medskip
 \begin{algorithmic}[0]
     \Procedure{receiveTransfer}{$p, r, k, s$}
@@ -136,8 +136,8 @@ another account. For example, in a scenario where a project receives a large
 donation, the maintainers may want to hold some funds in reserve for future
 organizational expenditures.
 
-Hence, it is possible to spend project funds with the $\mathsf{transfer}$
-transaction and an additional set of parameters:
+To spend project funds in an \emph{ad-hoc} manner, the $\mathsf{transfer}$
+transaction is used with an additional set of parameters:
 \[
     \tx{transfer}{P_a, a, n, \nu, v} \mid n \in \posnat,
 \]
@@ -148,8 +148,8 @@ parameters are a set of votes.
 The transaction's validity is determined by the \handler{sendTransfer} handler,
 which works in a similar way to \handler{updateContract}. For
 example, the function might specify that the project maintainers may spend a small
-amount $x$ of \oscoin{} per month without seeking community agreement, however
-large sums may need over half of the contributors and donors to sign off:
+amount $x$ of \oscoin{} per month without seeking community agreement, while
+large sums require over half of the contributors and donors to sign off:
 \medskip
 \begin{algorithmic}[0]
     \Procedure{sendTransfer}{$p, n, a, v$}
@@ -167,8 +167,8 @@ large sums may need over half of the contributors and donors to sign off:
 
 \section*{}
 
-Leveraged the right way, smart contracts are a powerful tool the community has
-to:
+Leveraged the right way, smart contracts are a powerful tool the community has,
+which can:
 
 \begin{enumerate}
     \item Provide transparency and trust within projects, by making reward
