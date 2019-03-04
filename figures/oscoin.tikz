@@ -112,7 +112,7 @@
     \node[proj-s] (proj-b-4)  [right=of proj-b-3]             {\small{$P^4$}};
 
     % Miner
-    \node[miner]  (miner)     [left=of distribution, label=\Small{Miner}]          {\small{$M^1$}};
+    \node[miner]  (miner)     [left=of distribution, label=\Small{Operator}]          {\small{$M^1$}};
 
     \begin{scope}[on background layer]
         \draw[thick-arrow] (netgraph.south)              to    (osrank.north);

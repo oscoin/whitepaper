@@ -12,7 +12,7 @@ $B_0$ is the ``genesis block'', and a set of outputs.
 The \oscoin{} ledger, formally $\ledger$, is the ordered set of all
 transactions agreed upon by the network. The ledger can be updated by submitting
 a valid transaction to the network. Transactions operate on the current state
-$\state$ of the ledger, which is a materialization of all processed transactions.
+$\state$ of the ledger, materialized from all valid transactions.
 
 The transactions available on the ledger are described in this section, as well
 as how they affect the state $\state$.
@@ -171,7 +171,7 @@ The dependency update list $D^*$ is a list of \emph{dependency
 \[
     \depend(P'_a, n) \quad \text{or} \quad \undepend(P'_a, n)
 \]
-which refers to the $n$th checkpoint of a project $P'$ ($0$-indexed
+which refer to the $n$th checkpoint of a project $P'$ ($0$-indexed
 from the first checkpoint). The $\depend$ update adds a new dependency
 while the $\undepend$ update removes a dependency. The updates are
 processed in order with $\depend$ only being valid if it adds a
@@ -187,12 +187,11 @@ depending of the nature of the project:
 \item That $P'$ is suitable as a dependency for $P$, \eg{} if $P$ has
   very high security requirements, that $P'$ fulfills these.
 \end{itemize}
-
-\noindent The incentive for maintainers to checkpoint their projects is that
-contributions to the project carry additional weight, potentially increasing a
-project's \osrank{}. Similarly, adding dependencies may increase
-connectivity in the network graph, which can also indirectly improve a project's
-\osrank{}, by walking through contributor vertices shared between projects.
+\noindent Since contributions to a project carry additional
+weight---potentially increasing a project's \osrank{}---there is an incentive
+for maintainers to checkpoint their projects regularly.  Similarly, adding
+dependencies may increase connectivity in the network graph, which may in turn
+indirectly improve a project's \osrank{}.
 
 \subsection{Smart contracts}
 

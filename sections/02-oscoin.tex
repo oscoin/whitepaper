@@ -27,16 +27,16 @@ Blockchain protocols solve the problem of trust at scale by allowing monetary
 transactions to be processed without middleman, while remaining
 censorship-resistant---an essential characteristic of open networks.  Our
 proposed solution introduces a new cryptocurrency, \oscoin{}, designed to be
-governed by network participants, rather than a central entity. We believe this is
-crucial to the success of \oscoin{}, and that blockchain technology offers the
+governed by network participants rather than a central entity. We believe this is
+crucial to the success of \oscoin{}, and blockchain technology offers the
 most promising solution to this end.
 
-Though the specific choice of the underlying consensus mechanism is not
+Though the specific choice of the underlying consensus protocol is not
 critical to \oscoin{}, we believe that one which allows open
 participation is best for the long term success of the network. Furthermore,
 it is important that reliable support for light clients be possible, as
 running a full node is prohibitively expensive for many that could
-benefit from participation in the \oscoin{} network. As of today, the only family of
+benefit from participating in the \oscoin{} network. As of today, the only family of
 blockchain protocols with these characteristics are \emph{proof-of-work}
 protocols.\footnote{Proof-of-work blocks
 can be verified cheaply and securely on most mobile devices available
@@ -87,26 +87,24 @@ role of providing continuous incentives to maintainers.
 \medskip
 
 \noindent Each block, the protocol is allowed to mint a certain amount $B_r$ of \oscoin{}
-(the ``block reward''), as part of what we call the \emph{coinbase}
-transaction. These coins are allocated to two distinct groups: network
-operators (``miners''), formally $\miners$, and open source projects ($\projs$)
-through the treasury system.
-% TODO: Are they allocated to contributors?
+(the ``block reward''), as part of what we call the \emph{coinbase}.
+These coins are allocated through the treasury system to two distinct groups: network
+operators ($\miners$), and open source projects ($\projs$).
 
 The key question we must address, is what share of $B_r$ is distributed to
-individual projects and contributors in the network.
+each individual project in the network.
 For this, we leverage the \oscoin{} network graph $\netgraph$ (Section
 \ref{s:netgraph}), which maps value flows between projects and contributors
-and assigns a weight to each. This weight $\omega(x)$ we call \osrank{}, which represents
+and assigns a weight $\omega(x)$ to each. This weight or \osrank{}, represents
 the relative importance of entities within the network.
 
-\subsubsection{Algorithm} Let $t$ be the total amount of \oscoin{} distributed
-to $n$ projects every epoch $\epoch$. The amount $t_P$ distributed to a given
+\subsubsection{Algorithm} Let $t$ be the total amount of \oscoin{} available for
+distribution to $n$ projects every epoch $\epoch$. The amount $t_P$ distributed to a given
 project $P$ over $\epoch$ is a function $\psi$ of its \osrank{} $\omega(P)$,
-which awards higher ranking projects with more \oscoin{}. We describe this
+which awards higher ranking projects more \oscoin{}. We describe this
 \emph{reward function} as
 \[
-    \psi(t, \omega(P)) \to t_P
+    \psi(t, \omega(P)) \to t_P.
 \]
 To prevent trivial Sybil attacks, the payment function takes
 into account a minimum threshold for $\omega(P)$ under which a project does not
@@ -127,7 +125,7 @@ fully vested, it may be transfered out of the account with no restrictions.
 the issues with open source monetization and sustainability. Projects can
 receive income in the form of \oscoin{} while licensing their work as free
 software. This continuous algorithmic funding moves
-away from current ``transactional'' models---which require open source projects
+away from current transactional models---which require open source projects
 to change the way they work, re-license, or setup a business---to a new model,
-in alignment with the motivations that lead to the success of the free software
+aligned with the motivations that lead to the success of the free software
 movement.\footnote{See \emph{The Cathedral and the Bazaar}, by Eric S. Raymond}

@@ -16,8 +16,7 @@ must reach consensus on which projects are ``high value''. To choose which
 projects receive \oscoin{}, and in which proportions, the network uses
 \osrank{}, which is a variant of the well-know \pagerank{}
 algorithm~\cite{pagerank}, applied to the graph of relationships between
-projects and contributions on the network, particularly
-\emph{dependencies} between projects. The output of the \osrank{} algorithm is a score
+projects and contributions on the network. The output of the \osrank{} algorithm is a score
 $\omega(P)$ associated to each project $P$.
 
 \subsection{Intuition}
@@ -30,8 +29,7 @@ contributions.
 Similarly to how Google pioneered a large-scale search engine around PageRank
 that took advantage of the hypertextual structure of the Web, the graph of open
 source software dependencies and contributions offers an important resource
-that can be thought of as an implicit form of trust and relative value in the
-ecosystem.
+representing trust and relative value in the ecosystem.
 
 \subsection{Rationale}
 
@@ -91,7 +89,7 @@ ledger are:
 \end{itemize}
 We summarize these interactions with a weighted directed graph $G$
 (Figure~\ref{fig:G}), the weights corresponding to the relative importance of
-the edge, which can be set as parameters to the algorithm.  The weights on all
+the edges, set as hyperparameters to the algorithm.  The weights on all
 edges outgoing from a vertex sum to $1$.
 
 \begin{center}
@@ -105,7 +103,7 @@ edges outgoing from a vertex sum to $1$.
   \draw[arr] (p) to[out=195,in=-15] node[below]  {\Small $\contrib \ (\frac{1}{7})$} (u);
   \draw[arr] (u) to[out=-55,in=-125] node[below] {\Small $\cocontrib \ (\frac{2}{5})$} (p);
 \end{tikzpicture}
-\captionof{figure}{\small Entity relations in open source software development with example weights.\label{fig:G}}
+\captionof{figure}{\small Schema of entity relations in open source software development, with example weights.\label{fig:G}}
 \end{center}
 \medskip
 
@@ -128,7 +126,7 @@ While the graph of dependencies between projects is the most straightforward
 indication that a project derives value from another, adding edges corresponding
 to contribution and maintenance serves two purposes:
 \begin{itemize}
-\item The graph is directed: it flows from user-facing applications to core
+\item The graph of dependencies is directed: it flows from user-facing applications to core
   libraries. This biases the score greatly towards basic libraries and
   development tools. Incorporating contributions brings flows in the
   opposite direction that indicate valued user-facing applications. For example,
@@ -137,22 +135,19 @@ to contribution and maintenance serves two purposes:
   piece of software. However, developers contributing to this text editor are
   also likely to contribute to packages upon which the text editor depends, and this
   allows the algorithm to flow back up from libraries to user-facing
-  packages. For example, an open source developer may contribute
-  heavily to both the \texttt{atom} text editor (mostly JavaScript), and to
-  one of its dependencies, \texttt{tree-sitter}, an incremental parser written
-  in Rust.
+  packages.
 \item While the dependency graph alone is unlikely to adequately bridge
   differing domains, developers often contribute to neighboring ecosystem and
   to tooling such that these niches can interconnect. Thus a graph incorporating
   dependencies as well as contributions may be sufficiently connected to
   reveal the latent value of open source projects.
 \end{itemize}
-We propose to record these artefacts as transactions in a blockchain, so that
-one may verifiably construct---and reach consensus on---a finite directed graph
-$\netgraph$ over $G$ (\ie{} in the slice category $\Graph/G$). We will refer to
-$\netgraph$ as the \emph{network graph}.
+We propose to record these artefacts (dependencies, contributions, etc.) as
+transactions in a blockchain, so that one may verifiably construct---and reach
+consensus on---a finite directed graph $\netgraph$ over $G$ (\ie in the slice
+category $\Graph/G$), representing the \oscoin{} \emph{network graph}.
 
-This in turn allows global value scores to be assigned to entities
+In turn, this allows global value scores to be assigned to entities
 according to a specific stochastic process simulating \emph{random
   walks}, that is, activity traces in $\netgraph$ with sampling
 probabilities taken from $G$. For example: a contributor decides to
@@ -164,7 +159,7 @@ links, this simulated activity informs us on the value flows
 between subsystems within the wider OSS ecosystem.
 
 This score, which we call \osrank{}, is used to distribute a portion of the
-newly minted tokens to projects as a function of their value to the \oscoin{}
+block reward to projects as a function of their value to the \oscoin{}
 network.
 
 \subsection{Definition}
@@ -187,7 +182,7 @@ the type of edge:
   contributions $p$ has received from all contributors.
 \end{itemize}
 
-\noindent At each step the walk might terminate with probability $1 - \epsilon_\proj$ at a
+\noindent At each step, the walk might terminate with probability $1 - \epsilon_\proj$ at a
 project vertex, and $1 - \epsilon_\contributor$ at an account vertex, (here
 $\epsilon_\proj, \epsilon_\contributor \in (0,1)$ are the \emph{damping factors}). This
 produces a set $W$ of $nR$ random walks, where $n$ is the total number of
@@ -238,14 +233,14 @@ However, this will be elaborated in future work.
 \subsection{Information reliability and \osrank{}}
 
 An important factor to consider when implementing \osrank{} is the reliablility
-of information on the ledger, namely dependencies from which the
+of information on the ledger, namely dependencies, from which the
 network graph $\netgraph$ is materialized.
 
 In order for \osrank{} to be a good proxy for value in the network, the
 information on the ledger needs to be accurate. While the proposed algorithm
 can tolerate a certain error margin, we have to rely on a greater part of the
 stated ``facts'' about dependencies and contributions to be correct and up to
-date. As it stands, there exist certain intrinsic social incentives for
+date. As it stands, there exist intrinsic social incentives for
 projects and maintainers to keep dependency information up to date -- namely,
 dependency information is public and visible to everyone, and projects have a
 reputation to withhold towards their dependents. In addition, projects carry
@@ -300,6 +295,6 @@ does not become prohibitively expensive for network operators to compute.
 
 \noindent Storing \osrank{} on the ledger is fundamental to the \oscoin{}
 ``monetary policy'', as explained in \S \ref{s:treasury}. Furthermore,
-\osrank{} and $\netgraph$ as a whole will be available to smart contracts
+\osrank{} and $\netgraph$ will be available to smart contracts
 (\S\ref{s:smart-contracts}) so that projects can script custom behaviors using
 this data.
