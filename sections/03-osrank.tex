@@ -188,7 +188,7 @@ $\epsilon_\proj, \epsilon_\contributor \in (0,1)$ are the \emph{damping factors}
 produces a set $W$ of $nR$ random walks, where $n$ is the total number of
 vertices. The \osrank{} for a project $x$ is then:
 \[
-  \omega(x) = \frac{W_x \epsilon_\proj}{n R}
+  \omega(x) = \frac{W_x (1-\epsilon_\proj)}{n R}
 \]
 where $W_x$ is the number of times all the walks in $W$ visit $x$, that is:
 \[
@@ -196,7 +196,7 @@ where $W_x$ is the number of times all the walks in $W$ visit $x$, that is:
 \]
 Similarly, the \osrank{} of an account $a$ is:
 \[
-  \omega(a) = \frac{W_a \epsilon_\contributor}{n R}.
+  \omega(a) = \frac{W_a (1-\epsilon_\contributor)}{n R}.
 \]
 
 \subsection{Sybil networks}
